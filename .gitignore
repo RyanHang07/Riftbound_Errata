@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Fetched corpus. Riot's text never enters the repository; data/corpus.json
+# (hashes and metadata only) is what gets committed.
+data/raw/

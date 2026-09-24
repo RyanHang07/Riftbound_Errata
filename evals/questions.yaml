@@ -1,0 +1,6 @@
+# The labelled question set. Written in slice 4, sized by power analysis first.
+#
+# A retrieved chunk counts as a hit only if its source_ref is expected AND its
+# [valid_from, valid_to) window contains the question's as_of. See
+# docs/BRIEF.md, Amendment A1.
+[]

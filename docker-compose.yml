@@ -1,0 +1,27 @@
+services:
+  db:
+    # Pinned by tag AND digest. The tag says what we meant (pgvector 0.8.1 on
+    # Postgres 17); the digest guarantees we get the same bytes even if the
+    # tag is re-pushed. This is the Datum lucide-react lesson applied to the
+    # database image.
+    image: pgvector/pgvector:0.8.1-pg17@sha256:3e8b3adfd27b5707128f60956f62a793c3c9326ea8cfaf0eab7adccb5d700b21
+    environment:
+      POSTGRES_USER: rb_errata
+      POSTGRES_PASSWORD: rb_errata
+      POSTGRES_DB: rb_errata
+    # 5433 on the host so it cannot collide with a locally installed Postgres
+    # on 5432. Bound to localhost: this is a dev database with a known password.
+    ports: ["127.0.0.1:5433:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Runs once, on an empty volume only. `make db-init` covers volumes
+      # created before this script existed.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rb_errata -d rb_errata"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:
