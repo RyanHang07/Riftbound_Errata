@@ -242,23 +242,29 @@ def check_generate(
     if found is None:
         return Check(name, Status.FAIL, f"{tag} not pulled: `ollama pull {tag}`"), None
     try:
+        # Also pays the model load, and the reload when cpu_only changes the
+        # placement, so no timed probe includes it.
         warm = client.generate("Reply with the single word OK.", max_tokens=8)
-        probe = client.generate(
-            throughput_probe_prompt(settings, str(time.time_ns())),
-            max_tokens=settings.budget_answer_tokens,
-        )
+        probes = [
+            client.generate(
+                # A fresh nonce per probe, so no probe reuses another's cache.
+                throughput_probe_prompt(settings, str(time.time_ns())),
+                max_tokens=settings.budget_answer_tokens,
+            )
+            for _ in range(settings.doctor_probe_runs)
+        ]
         vram = client.loaded_vram_fraction(tag)
     except httpx.HTTPError as exc:
         return Check(name, Status.FAIL, f"generate call failed: {exc}"), None
-    return judge_generation(settings, warm, probe, vram)
+    return judge_generation(settings, warm, probes, vram)
 
 
 def judge_generation(
-    settings: Settings, warm: Generation, probe: Generation, vram: float | None
+    settings: Settings, warm: Generation, probes: list[Generation], vram: float | None
 ) -> tuple[Check, Throughput | None]:
-    """Pure: turns two measured generations into a verdict. Unit-tested."""
+    """Pure: turns measured generations into a verdict. Unit-tested."""
     name = "generation model"
-    for g in (warm, probe):
+    for g in (warm, *probes):
         if not settings.gen_think and (g.thinking or "<think>" in g.text):
             # The tag may now resolve to a thinking-only build that ignores
             # think=false. Pin a non-thinking tag rather than accept it.
@@ -267,35 +273,53 @@ def judge_generation(
             ), None
     if not warm.text.strip():
         return Check(name, Status.FAIL, "model responded with empty text"), None
+    if settings.cpu_only and vram:
+        # Found on the first real run: an RTX 2060 SUPER took the whole model
+        # while the brief targets a machine with no GPU. If the CPU-only switch
+        # is on and the GPU is still used, the numbers describe the wrong box.
+        return Check(name, Status.FAIL, f"cpu_only is set but {vram:.0%} is in GPU memory"), None
 
-    # Truncation guard: if prompt plus answer filled the context, Ollama may
-    # have dropped the start of the prompt, and the prefill figure is suspect.
-    if probe.prompt_tokens + settings.budget_answer_tokens >= settings.gen_num_ctx:
-        return Check(
-            name,
-            Status.FAIL,
-            f"probe used {probe.prompt_tokens} of num_ctx={settings.gen_num_ctx}; "
-            "prompt may have been truncated",
-        ), None
-    if probe.prompt_tokens < 100 or probe.answer_tokens < MIN_TOKENS_TO_TIME:
-        # Responded, but too little work was done to time. That is not a
-        # measurement of slowness or speed, so it is not a pass either.
-        return Check(
-            name,
-            Status.UNKNOWN,
-            f"responded, but only {probe.prompt_tokens} prompt / {probe.answer_tokens} answer "
-            "tokens were evaluated; throughput not measurable",
-        ), None
+    for probe in probes:
+        # Truncation guard: if prompt plus answer filled the context, Ollama
+        # may have dropped the start of the prompt; the prefill figure is suspect.
+        if probe.prompt_tokens + settings.budget_answer_tokens >= settings.gen_num_ctx:
+            return Check(
+                name,
+                Status.FAIL,
+                f"probe used {probe.prompt_tokens} of num_ctx={settings.gen_num_ctx}; "
+                "prompt may have been truncated",
+            ), None
+        if probe.prompt_tokens < 100 or probe.answer_tokens < MIN_TOKENS_TO_TIME:
+            # Responded, but too little work was done to time. That is not a
+            # measurement of slowness or speed, so it is not a pass either.
+            return Check(
+                name,
+                Status.UNKNOWN,
+                f"responded, but only {probe.prompt_tokens} prompt / {probe.answer_tokens} "
+                "answer tokens were evaluated; throughput not measurable",
+            ), None
 
-    tp = Throughput(
-        prefill_tok_s=probe.prompt_tokens / (probe.prompt_ns / 1e9),
-        decode_tok_s=probe.answer_tokens / (probe.answer_ns / 1e9),
-    )
-    gpu = "not loaded?" if vram is None else f"{vram:.0%} in GPU memory"
+    # Median, with the range shown. Found on the first real run: two identical
+    # doctor runs on the same GPU measured 2197 and 1062 tok/s prefill. One
+    # probe lets one unlucky moment set the budget; the range makes the
+    # instability visible instead of hiding it.
+    prefill = sorted(p.prompt_tokens / (p.prompt_ns / 1e9) for p in probes)
+    decode = sorted(p.answer_tokens / (p.answer_ns / 1e9) for p in probes)
+    tp = Throughput(statistics.median(prefill), statistics.median(decode))
+    first_token_s = statistics.median(p.prompt_ns / 1e9 for p in probes)
+
+    if settings.cpu_only:
+        placement = "CPU only"
+    elif vram is None:
+        placement = "not loaded?"
+    else:
+        placement = f"{vram:.0%} in GPU memory"
     detail = (
-        f"{settings.gen_model}, prefill {tp.prefill_tok_s:.1f} tok/s ({probe.prompt_tokens} tok), "
-        f"decode {tp.decode_tok_s:.1f} tok/s ({probe.answer_tokens} tok), "
-        f"first token {probe.prompt_ns / 1e9:.1f}s warm, load {warm.load_ns / 1e9:.1f}s, {gpu}"
+        f"{settings.gen_model}, {placement}. Median of {len(probes)}: "
+        f"prefill {tp.prefill_tok_s:.1f} tok/s [{prefill[0]:.0f}-{prefill[-1]:.0f}] "
+        f"({probes[0].prompt_tokens} tok), "
+        f"decode {tp.decode_tok_s:.1f} tok/s [{decode[0]:.1f}-{decode[-1]:.1f}], "
+        f"first token {first_token_s:.1f}s warm, load {warm.load_ns / 1e9:.1f}s"
     )
     return Check(name, Status.PASS, detail), tp
 
@@ -315,7 +339,7 @@ def budget(settings: Settings, tp: Throughput | None) -> Check:
         f"{s.budget_questions} q x {s.budget_configs} configs x "
         f"({s.budget_prompt_tokens} prompt + {s.budget_answer_tokens} answer tok) "
         f"= {per_answer_s:.1f}s/answer, {per_config_h:.2f} h/config, {total_h:.1f} h total. "
-        "Token lengths ASSUMED, rates MEASURED",
+        f"Token lengths ASSUMED, median rates MEASURED{' on CPU only' if s.cpu_only else ''}",
     )
 
 

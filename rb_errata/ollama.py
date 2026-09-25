@@ -56,6 +56,11 @@ class Ollama:
     def close(self) -> None:
         self._http.close()
 
+    def _placement(self) -> dict[str, Any]:
+        # num_gpu is the number of model layers offloaded to the GPU. Zero
+        # keeps the whole model on the CPU; omitting it lets Ollama decide.
+        return {"num_gpu": 0} if self._s.cpu_only else {}
+
     def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
         r = self._http.post(path, json=body)
         r.raise_for_status()
@@ -103,6 +108,7 @@ class Ollama:
                 # context and embed only its beginning. A chunk whose vector
                 # ignores its second half is a retrieval miss nobody can see.
                 "truncate": False,
+                "options": self._placement(),
             },
         )
         embeddings: list[list[float]] = data["embeddings"]
@@ -121,6 +127,7 @@ class Ollama:
                     "seed": self._s.gen_seed,
                     "num_ctx": self._s.gen_num_ctx,
                     "num_predict": max_tokens,
+                    **self._placement(),
                 },
             },
         )

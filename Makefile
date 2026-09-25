@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init verify lint typecheck test fmt doctor
+.PHONY: help install db-up db-down db-init verify lint typecheck test fmt doctor doctor-cpu
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -41,3 +41,8 @@ fmt:  ## apply formatting and safe lint fixes
 # The next layer up: real database, real models, no corpus.
 doctor:  ## can the pipeline run at all? no corpus needed
 	$(UV) python -m rb_errata.cli doctor
+
+# Same checks with both models kept off the GPU. Use this for any number that
+# goes into a budget or the writeup: the target machine has no GPU.
+doctor-cpu:  ## doctor on CPU only (target-hardware numbers)
+	RB_CPU_ONLY=true $(UV) python -m rb_errata.cli doctor

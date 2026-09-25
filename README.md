@@ -31,6 +31,7 @@ ollama pull nomic-embed-text
 ollama pull qwen3:4b
 make verify                  # free: lint, typecheck, contract tests
 make doctor                  # real database and models, no corpus
+make doctor-cpu              # same, models kept off the GPU: target numbers
 ```
 
 The first `make doctor` **fails on purpose**: the model digests aren't pinned

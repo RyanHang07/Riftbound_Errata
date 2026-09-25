@@ -31,6 +31,13 @@ class Settings:
     embed_doc_prefix: str = "search_document: "
     embed_query_prefix: str = "search_query: "
 
+    # --- Hardware --------------------------------------------------------
+    # Keeps both models off the GPU (Ollama's num_gpu=0). The brief targets a
+    # 16 GB machine with no GPU; development machines often have one, and a
+    # GPU figure in a budget describes hardware a judge may not own. Off for
+    # day-to-day speed, on for any number that goes into a budget or writeup.
+    cpu_only: bool = False
+
     # --- Generation ------------------------------------------------------
     gen_model: str = "qwen3:4b"
     gen_digest: str = ""
@@ -52,6 +59,9 @@ class Settings:
     budget_configs: int = 6
     budget_prompt_tokens: int = 3000
     budget_answer_tokens: int = 180
+
+    # Timed generations per doctor run; the budget uses the median.
+    doctor_probe_runs: int = 3
 
     # --- Timeouts --------------------------------------------------------
     # A first call loads the model from disk; on a 16 GB CPU box that can take

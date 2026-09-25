@@ -993,3 +993,35 @@ the password is in the repository.
 explicitly, and one fewer dependency whose defaults can drift); `make verify`
 = `ruff` + `mypy --strict` + `pytest`. doctor exits 0 when all checks pass,
 1 on any fail, and 2 when nothing failed but something could not be judged.
+
+### A13. First run on real hardware: a GPU, and a 2x swing between runs
+
+*Recorded 2026-09-25 from the first two doctor runs on the development PC
+(i5-10600K, 7.7 GB visible to WSL, RTX 2060 SUPER 8 GB). Both runs green.*
+
+| | Run 1 | Run 2 |
+|:--|:--|:--|
+| Prefill | 2196.7 tok/s | 1062.4 tok/s |
+| Decode | 76.7 tok/s | 36.8 tok/s |
+| Budget (600 answers) | 0.6 h | 1.3 h |
+| Placement | 100% GPU | 100% GPU |
+
+Two findings, each now handled in doctor:
+
+1. **The development PC has a GPU and Ollama used it without being asked.**
+   The brief targets a machine without one. A8's GPU line caught this on the
+   first run. **Now:** `RB_CPU_ONLY` (`make doctor-cpu`) keeps both models off
+   the GPU with Ollama's `num_gpu = 0`, and doctor fails if the model still
+   lands in GPU memory. GPU for everyday speed; CPU-only for any number that
+   goes into a budget or the writeup.
+2. **Two identical runs, minutes apart, differed by 2x.** A single probe let
+   one moment set the budget. **Now:** doctor times three probes (each with
+   its own nonce) and reports the median with the range. Cause not yet
+   established (candidates: other GPU users, GPU power state).
+
+Also noted: WSL sees 7.7 GB of the PC's RAM, not the 16 GB target. Enough for
+`qwen3:4b`, but CPU-only numbers from this machine are from a smaller memory
+budget than the target, which matters if the 8B fallback is ever tried.
+
+Rejected: always CPU-only (every development run several times slower);
+keeping one probe (budget swings 2x between runs).

@@ -28,6 +28,8 @@ def fake_ollama(
     dims: int = 768,
     thinking: str = "",
     models: list[str] | None = None,
+    vram: int = 0,
+    seen: list[dict[str, Any]] | None = None,
 ) -> Callable[[Settings], Ollama]:
     tags = models if models is not None else ["nomic-embed-text:latest", "qwen3:4b"]
     digests = {"nomic-embed-text:latest": EMBED_DIGEST, "qwen3:4b": f"sha256:{GEN_DIGEST}"}
@@ -43,13 +45,17 @@ def fake_ollama(
                 )
             case "/api/ps":
                 return httpx.Response(
-                    200, json={"models": [{"name": "qwen3:4b", "size": 100, "size_vram": 0}]}
+                    200, json={"models": [{"name": "qwen3:4b", "size": 100, "size_vram": vram}]}
                 )
             case "/api/embed":
                 assert body["truncate"] is False
+                if seen is not None:
+                    seen.append(body)
                 return httpx.Response(200, json={"embeddings": [[0.1] * dims]})
             case "/api/generate":
                 assert body["think"] is False and body["options"]["num_ctx"] == 8192
+                if seen is not None:
+                    seen.append(body)
                 long = len(body["prompt"]) > 1000
                 return httpx.Response(
                     200,
@@ -141,13 +147,13 @@ def _gen(prompt_tokens: int, answer_tokens: int) -> Generation:
 
 
 def test_filled_context_is_a_fail_because_the_prompt_may_be_truncated() -> None:
-    check, tp = doctor.judge_generation(pinned(), _gen(10, 1), _gen(8100, 180), 0.0)
+    check, tp = doctor.judge_generation(pinned(), _gen(10, 1), [_gen(8100, 180)], 0.0)
     assert check.status is Status.FAIL and tp is None
 
 
 def test_too_little_work_to_time_is_unknown_not_pass() -> None:
     # A cached prefix makes prefill look instant. That is not a measurement.
-    check, _ = doctor.judge_generation(pinned(), _gen(10, 1), _gen(20, 180), 0.0)
+    check, _ = doctor.judge_generation(pinned(), _gen(10, 1), [_gen(20, 180)], 0.0)
     assert check.status is Status.UNKNOWN
 
 
@@ -163,3 +169,35 @@ def test_probe_prompt_starts_with_nonce_to_defeat_prefix_cache() -> None:
     b = doctor.throughput_probe_prompt(pinned(), "222")
     assert a[:12] != b[:12]
     assert "<retrieved_passages>" in a
+
+
+def _timed(prefill_s: float, decode_s: float) -> Generation:
+    return Generation("x", "", 3000, int(prefill_s * 1e9), 180, int(decode_s * 1e9), 0, "stop")
+
+
+def test_budget_uses_the_median_probe_and_shows_the_range() -> None:
+    # Prefill 3000 tokens in 1, 2 and 3 s -> 3000, 1500, 1000 tok/s; median 1500.
+    probes = [_timed(1, 18), _timed(3, 18), _timed(2, 18)]
+    check, tp = doctor.judge_generation(pinned(), _gen(10, 1), probes, 0.0)
+    assert tp is not None and tp.prefill_tok_s == 1500
+    assert "Median of 3" in check.detail and "[1000-3000]" in check.detail
+
+
+def test_cpu_only_keeps_both_models_off_the_gpu() -> None:
+    seen: list[dict[str, Any]] = []
+    checks = doctor.run(pinned(RB_CPU_ONLY="true"), fake_ollama(seen=seen))
+    assert doctor.exit_code(checks) == 0, doctor.render(checks, "test")
+    assert seen and all(b["options"]["num_gpu"] == 0 for b in seen)
+    assert "CPU only" in by_name(checks)["generation model"].detail
+
+
+def test_gpu_is_left_to_ollama_by_default() -> None:
+    seen: list[dict[str, Any]] = []
+    doctor.run(pinned(), fake_ollama(seen=seen))
+    assert seen and all("num_gpu" not in b.get("options", {}) for b in seen)
+
+
+def test_cpu_only_with_model_still_on_gpu_fails() -> None:
+    checks = by_name(doctor.run(pinned(RB_CPU_ONLY="true"), fake_ollama(vram=100)))
+    assert checks["generation model"].status is Status.FAIL
+    assert checks["budget"].status is Status.UNKNOWN
