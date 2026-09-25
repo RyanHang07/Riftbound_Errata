@@ -1025,3 +1025,34 @@ budget than the target, which matters if the 8B fallback is ever tried.
 
 Rejected: always CPU-only (every development run several times slower);
 keeping one probe (budget swings 2x between runs).
+
+### A14. The target-hardware budget is an overnight job, not "a coffee"
+
+*Recorded 2026-09-25, same PC as A13, run back to back.*
+
+| | CPU only (`make doctor-cpu`) | GPU (`make doctor`) |
+|:--|:--|:--|
+| Prefill, median [range] | 37.7 tok/s [37-38] | 465.5 tok/s [452-602] |
+| Decode, median [range] | 5.6 tok/s [5.5-6.0] | 20.6 tok/s [17.2-40.9] |
+| Warm first token | 63.1 s | 5.1 s |
+| Per answer | 111.6 s | 15.2 s |
+| 100 q x 6 configs | **18.6 h** | 2.5 h |
+
+What this changes:
+
+1. **Section 7 said six hundred generations would be "a coffee, not a bill."
+   On the target hardware it is 18.6 hours.** The original text stays as it
+   was; this is the measured correction. The brief's own remedy becomes
+   mandatory rather than optional: compute recall@k (free) across all
+   configurations first, and generate only for the ones that survive it,
+   with the generation cache.
+2. **Prefill is most of the cost on CPU:** 80 of the 112 seconds per answer
+   are spent reading the prompt. The brief's example budget (decode only,
+   ~180 tokens) would have underestimated by about 6x. A5 was right to
+   measure it. It also means **prompt length is the biggest lever on
+   runtime**: the 3,000-token prompt is still an assumption, and slice 2
+   will replace it with measured passage lengths.
+3. **CPU numbers are stable; GPU numbers are not.** CPU ranges are within a
+   few percent. GPU decode ranged 17-41 tok/s within one run, and three GPU
+   runs gave medians from 465 to 2197 prefill. Cause still unknown. Budgets
+   come from CPU-only runs, which is also the target hardware.
