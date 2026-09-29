@@ -15,7 +15,8 @@ The full specification is [`docs/BRIEF.md`](docs/BRIEF.md). Read its
 | Slice | | State |
 |:--|:--|:--|
 | 0 | Setup: `make verify` and `doctor` | done |
-| 1 | Corpus availability spike (**a gate**: if versioned rules are unobtainable, the thesis dies) | next |
+| 1 | Corpus availability spike ([report](docs/SPIKE_1.md)) | done: proceed |
+| 2 | Ingest, chunk, naive vector retrieval | waiting on two design decisions |
 
 ## Setup
 

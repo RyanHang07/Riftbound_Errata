@@ -1056,3 +1056,23 @@ What this changes:
    few percent. GPU decode ranged 17-41 tok/s within one run, and three GPU
    runs gave medians from 465 to 2197 prefill. Cause still unknown. Budgets
    come from CPU-only runs, which is also the target hardware.
+
+### A15. Slice 1 result: proceed, and two things the brief did not anticipate
+
+*2026-09-29. Full report with sources: `docs/SPIKE_1.md`.*
+
+The gate passed: all five Core Rules versions are obtainable (five of nine
+rules PDFs proven byte-identical to Riot's CDN copies) and every one prints its
+date. Two findings change the design and need decisions before slice 2:
+
+1. **Rule numbers are renumbered heavily between versions.** Hundreds of rules
+   keep their exact text under a new number at every transition. A1's
+   version-aware hit still works, but `source_ref` only means something
+   *within* one version, and nothing may join versions on rule number.
+2. **The printed "Last Updated" date is not the effective date** (v1.4 is
+   dated 2026-07-16 and took effect 2026-07-24). `valid_from` must be the
+   effective date from the patch notes; `published_at` the printed one. The
+   brief's schema already has both columns; this is why.
+
+Also: the corpus is ~410k tokens across versions, not ~175k (about 145k for
+the current snapshot alone).
