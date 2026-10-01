@@ -8,6 +8,16 @@
 # so ranking it first is "inconclusive", never "captured".
 #
 # `change` is written in our words. It quotes no rule text beyond keywords.
+#
+# PREDICTION, written 2026-10-01 before the first real run (brief section 2:
+# predicting afterwards is how a null result becomes a success story):
+#   1 or 2 of the 4 captured. A miss is plausible for each one, because the
+#   current and stale chunks share most of their wording, so their vectors sit
+#   close together and small differences decide the order.
+#   legion-countered-spell is the LEAST likely capture: only the v1.4 chunk
+#   mentions Legion by name (in its new example), which should pull it up.
+#   deflect-chosen-twice is the MOST likely: the stale text says "choose me",
+#   echoing the question's "chooses my ... unit", while v1.4 says "target".
 
 - id: legion-countered-spell
   question: "If my spell gets countered, does it still count as having played a card this turn for Legion?"
