@@ -1,0 +1,62 @@
+[
+  {
+    "version": "1.0",
+    "url": null,
+    "status": "unknown",
+    "effective": null,
+    "reason": "no announcement exists for this version",
+    "candidates": [],
+    "page_sha1": null,
+    "basis": null
+  },
+  {
+    "version": "1.1",
+    "url": "https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-patch-notes/",
+    "status": "known",
+    "effective": "2025-10-24",
+    "reason": "no stated date; announcement publish date used",
+    "candidates": [],
+    "page_sha1": "126e167a313f509a322833212442b58996c5ac34",
+    "basis": "announcement-date"
+  },
+  {
+    "version": "1.2",
+    "url": "https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-spiritforged-patch-notes/",
+    "status": "known",
+    "effective": "2025-12-12",
+    "reason": "one distinct date",
+    "candidates": [
+      {
+        "date": "2025-12-12",
+        "offset": 83830
+      }
+    ],
+    "page_sha1": "63a6faa95793836c1009ab74ed36d0241392c042",
+    "basis": "stated"
+  },
+  {
+    "version": "1.3",
+    "url": "https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-unleashed-patch-notes/",
+    "status": "known",
+    "effective": "2026-03-30",
+    "reason": "no stated date; announcement publish date used",
+    "candidates": [],
+    "page_sha1": "9ceca3fdaf4328cfb6bec635fc9212d372c1bee0",
+    "basis": "announcement-date"
+  },
+  {
+    "version": "1.4",
+    "url": "https://playriftbound.com/en-us/news/announcements/core-rules-vendetta-patch-notes/",
+    "status": "known",
+    "effective": "2026-07-24",
+    "reason": "one distinct date",
+    "candidates": [
+      {
+        "date": "2026-07-24",
+        "offset": 82356
+      }
+    ],
+    "page_sha1": "89a01b3dac549b42917b607ed9f25b78ed925bfa",
+    "basis": "stated"
+  }
+]

@@ -18,7 +18,7 @@ from typing import Any
 from rb_errata import db
 from rb_errata.config import Settings
 from rb_errata.ingest.chunk import Chunk, chunk_rules
-from rb_errata.ingest.dates import find_effective_date, intervals
+from rb_errata.ingest.dates import Interval, find_effective_date, intervals
 from rb_errata.ingest.fetch import FETCH_LOG, RAW, patch_notes_path, sha1_of
 from rb_errata.ingest.pdf import extract_text, printed_date
 from rb_errata.ingest.rules import parse_rules
@@ -129,6 +129,25 @@ def doc_chunks(
     return printed_date(text), chunk_rules(parse_rules(text), count)
 
 
+def manifest_entry(
+    doc: RulesDoc, c: Chunk, iv: Interval, printed: date, tokens: int
+) -> dict[str, Any]:
+    """One chunk's committed record: everything about it except its text."""
+    return {
+        "source_doc": doc.filename, "source_ref": f"{doc.id}:{c.source_ref}", "refs": list(c.refs),
+        "kind": "rule", "published_at": printed.isoformat(),
+        "valid_from": iv.valid_from.isoformat(),
+        "valid_to": iv.valid_to.isoformat() if iv.valid_to else None,
+        "content_hash": "sha256:" + hashlib.sha256(c.text.encode()).hexdigest(), "tokens": tokens,
+    }  # fmt: skip
+
+
+def chunks_sha256(entries: list[dict[str, Any]]) -> str:
+    """One fingerprint for a whole manifest's chunk list, so two ingestions on
+    different machines can be compared without exchanging the file."""
+    return hashlib.sha256(json.dumps(entries, sort_keys=True).encode()).hexdigest()
+
+
 def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
     count = token_counter()
     effective = _load_effective()
@@ -166,13 +185,7 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
                         (doc.id, ref, list(c.refs), c.text, n, vec, iv.valid_from, iv.valid_to,
                          printed[doc.version], settings.embed_model, digest, f"sha256:{h}"),
                     )  # fmt: skip
-                    manifest.append({
-                        "source_doc": doc.filename, "source_ref": ref, "refs": list(c.refs),
-                        "kind": "rule", "published_at": printed[doc.version].isoformat(),
-                        "valid_from": iv.valid_from.isoformat(),
-                        "valid_to": iv.valid_to.isoformat() if iv.valid_to else None,
-                        "content_hash": f"sha256:{h}", "tokens": n,
-                    })  # fmt: skip
+                    manifest.append(manifest_entry(doc, c, iv, printed[doc.version], n))
                 window = f"{iv.valid_from} to {iv.valid_to or 'now'}"
                 lines.append(f"ingested {doc.id}: {len(chunks)} chunks, valid {window}")
     finally:
@@ -185,6 +198,7 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
                 "embed_model": settings.embed_model,
                 "embed_digest": digest,
                 "tokenizer": TOKENIZER,
+                "chunks_sha256": chunks_sha256(manifest),
                 "chunks": manifest,
             },
             indent=1,

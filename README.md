@@ -16,7 +16,8 @@ The full specification is [`docs/BRIEF.md`](docs/BRIEF.md). Read its
 |:--|:--|:--|
 | 0 | Setup: `make verify` and `doctor` | done |
 | 1 | Corpus availability spike ([report](docs/SPIKE_1.md)) | done: proceed |
-| 2 | Ingest, chunk, naive vector retrieval | built; first real run on the user's machine |
+| 2 | Ingest, chunk, naive vector retrieval | done: 3,308 chunks, v1.1-v1.4, reproduced on two machines |
+| 3 | Demonstrate temporal drift | next |
 
 ## Setup
 
