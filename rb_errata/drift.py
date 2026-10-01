@@ -158,10 +158,13 @@ def _generate(
 
 
 def run(settings: Settings) -> list[str]:
-    # One folder per run date: a rerun never overwrites an earlier run's
-    # evidence, including evidence that later turned out to be misread.
-    out_dir = FIXTURES / f"drift-{datetime.now(UTC).date().isoformat()}"
-    out_dir.mkdir(parents=True, exist_ok=True)
+    # One folder per run, stamped to the minute: a rerun never overwrites an
+    # earlier run's evidence, including evidence later found to be misread.
+    # (A date alone was not enough: the second run happened the same day.)
+    out_dir = FIXTURES / f"drift-{datetime.now(UTC).strftime('%Y-%m-%dT%H%MZ')}"
+    if out_dir.exists():
+        raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
+    out_dir.mkdir(parents=True)
     client = Ollama(settings)
     lines = []
     try:
