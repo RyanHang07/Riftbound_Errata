@@ -48,10 +48,29 @@ def test_two_different_dates_is_unknown_not_a_pick() -> None:
     assert len(r.candidates) == 2
 
 
-def test_a_date_without_an_effective_phrase_is_ignored() -> None:
-    # The printed date must never stand in for the effective date (A16).
+HEAD = '<script type="application/ld+json">{"datePublished":"2026-03-30T16:00:00.000Z"}</script>'
+
+
+def test_no_stated_date_uses_the_announcement_date_and_says_so() -> None:
+    # A17. A body date with no effective phrase is still ignored: the result
+    # comes from the page's publish metadata, and is labelled as inferred.
+    r = find_effective_date("1.3", URL, HEAD + "<p>Released in China on April 8, 2026.</p>")
+    assert (r.status, r.effective, r.basis) == ("known", "2026-03-30", "announcement-date")
+
+
+def test_no_stated_date_and_no_publish_date_is_unknown() -> None:
     r = find_effective_date("1.3", URL, "Published March 30, 2026. New rules for Unleashed.")
-    assert r.status == "unknown" and r.reason == "no effective-date phrase found"
+    assert r.status == "unknown" and r.reason == "no stated date and no publish date"
+
+
+def test_publish_dates_of_related_articles_are_not_used() -> None:
+    page = "<p>Rules notes.</p>" + "x" * 7000 + '{"datePublished":"2026-08-14T01:00:00.000Z"}'
+    assert find_effective_date("1.3", URL, page).status == "unknown"
+
+
+def test_a_stated_date_beats_the_announcement_date() -> None:
+    r = find_effective_date("1.2", URL, HEAD + "<p>An effective date of December 12, 2025.</p>")
+    assert (r.effective, r.basis) == ("2025-12-12", "stated")
 
 
 def test_date_in_the_next_sentence_is_not_attached() -> None:
@@ -107,8 +126,20 @@ def test_parsed_effective_dates_match_the_known_answers() -> None:
     for version, expected in KNOWN.items():
         assert rows[version]["status"] == "known", rows[version]["reason"]
         assert rows[version]["effective"] == expected
+        # Both known answers were stated on their pages; inferring either
+        # would mean the parser missed the sentence it exists to find.
+        assert rows[version]["basis"] == "stated"
 
 
 def test_debug_shows_yearless_dates_the_parser_ignores() -> None:
     out = "\n".join(debug_page("<p>The new rules go live Friday, May 8th for everyone.</p>"))
     assert "dates without a year: 1 found" in out and "full dates: 0 found" in out
+
+
+def test_dates_in_related_articles_are_not_this_articles_date() -> None:
+    page = (
+        "<article>The rules update will be effective on July 24, 2026.</article>"
+        "<aside>Related Articles <a>Ban List Updates (Effective September 18, 2026)</a></aside>"
+    )
+    r = find_effective_date("1.4", URL, page)
+    assert (r.status, r.effective) == ("known", "2026-07-24")

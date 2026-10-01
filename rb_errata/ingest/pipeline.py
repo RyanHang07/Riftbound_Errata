@@ -49,7 +49,7 @@ def run_dates(raw: Path = RAW) -> list[str]:
         results.append(r)
     EFFECTIVE_DATES.write_text(json.dumps([r.as_dict() for r in results], indent=2) + "\n")
     return [
-        f"{r.status:<8}{r.version:<6}{r.effective or '-':<12}{r.reason} "
+        f"{r.status:<8}{r.version:<6}{r.effective or '-':<12}{r.basis or '-':<18}{r.reason} "
         f"({len(r.candidates)} candidate phrases)"
         for r in results
     ]

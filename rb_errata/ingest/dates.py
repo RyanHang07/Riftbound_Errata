@@ -68,6 +68,41 @@ def page_text(raw_html: str) -> str:
     return " ".join(unescaped.split())
 
 
+# Every patch-notes page lists other news under this heading. Found on the
+# first real run: the v1.4 page linked "September Ban List Updates (Effective
+# September 18, 2026)" there, which made v1.4 look ambiguous. The article body,
+# and only the article body, comes before the first occurrence.
+_RELATED = "Related Articles"
+
+
+def article_text(text: str) -> str:
+    """The page text up to the related-articles list (the whole text if absent;
+    the ambiguity guard still applies then)."""
+    cut = text.find(_RELATED)
+    return text if cut == -1 else text[:cut]
+
+
+# The page head carries schema.org metadata: "datePublished":"2025-10-24T01:00:00.000Z".
+# Only the head is searched; related-article entries further down carry
+# their own publish dates.
+_PUBLISHED = re.compile(r'"datePublished"\s*:\s*"(20\d\d-\d\d-\d\d)T')
+_HEAD_CHARS = 6000
+
+
+def announcement_date(raw_html: str) -> date | None:
+    """The page's own publish date, if its head states exactly one.
+
+    The timestamp is UTC. A late-evening US Pacific post lands on the next UTC
+    day (v1.1's 01:00Z is Oct 23 in California), so these dates can be one day
+    late for a reader in the Americas. Recorded, not corrected: the effect is
+    confined to questions dated on that single day.
+    """
+    found = {m.group(1) for m in _PUBLISHED.finditer(raw_html[:_HEAD_CHARS])}
+    if len(found) != 1:
+        return None
+    return date.fromisoformat(found.pop())
+
+
 @dataclass
 class EffectiveDate:
     version: str
@@ -79,6 +114,10 @@ class EffectiveDate:
     # Offsets, not quotes: the audit file must not contain Riot's text.
     candidates: list[dict[str, Any]] = field(default_factory=list)
     page_sha1: str | None = None
+    # "stated": the page says when the rules take effect.
+    # "announcement-date": it says nothing, so the page's publish date is used
+    # (A17). Kept separate so the audit file shows which dates are inferred.
+    basis: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -91,7 +130,7 @@ def find_effective_date(version: str, url: str | None, raw_html: str | None) -> 
         )
     if raw_html is None:
         return EffectiveDate(version, url, "unknown", reason="page not fetched")
-    text = page_text(raw_html)
+    text = article_text(page_text(raw_html))
     candidates: list[dict[str, Any]] = []
     for m in _EFFECTIVE.finditer(text):
         try:
@@ -100,9 +139,24 @@ def find_effective_date(version: str, url: str | None, raw_html: str | None) -> 
             continue  # an impossible date like 2/30 is not a candidate
     distinct: list[str] = sorted({str(c["date"]) for c in candidates})
     if len(distinct) == 1:
-        return EffectiveDate(version, url, "known", distinct[0], "one distinct date", candidates)
-    reason = "no effective-date phrase found" if not distinct else f"ambiguous: {distinct}"
-    return EffectiveDate(version, url, "unknown", None, reason, candidates)
+        return EffectiveDate(
+            version, url, "known", distinct[0], "one distinct date", candidates, basis="stated"
+        )
+    if distinct:
+        return EffectiveDate(version, url, "unknown", None, f"ambiguous: {distinct}", candidates)
+    # A17: no stated date means the rules took effect when announced. Riot's
+    # own wording supports this default: the Spiritforged notes say "Rather
+    # than taking effect immediately, these rules will have an effective
+    # date of...", treating immediate effect as the norm and a delay as the
+    # thing worth stating. The announcement's machine-readable publish date
+    # is used, NOT the PDF's printed date, which can be weeks earlier.
+    published = announcement_date(raw_html)
+    if published is None:
+        return EffectiveDate(version, url, "unknown", None, "no stated date and no publish date")
+    return EffectiveDate(
+        version, url, "known", published.isoformat(),
+        "no stated date; announcement publish date used", candidates, basis="announcement-date",
+    )  # fmt: skip
 
 
 @dataclass(frozen=True)

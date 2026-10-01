@@ -40,7 +40,7 @@ def _dates(args: argparse.Namespace) -> int:
         print("\n".join(run_dates_debug()))
         return 0
 
-    print("status  ver   effective   reason")
+    print("status  ver   effective   basis             reason")
     print("\n".join(run_dates()))
     return 0
 

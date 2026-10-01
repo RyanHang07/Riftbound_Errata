@@ -1110,3 +1110,45 @@ a version. Guards required in slice 2:
   If the parser disagrees with either, the parser is wrong.
 - **Runs on the user's machine.** The patch-notes pages are unreachable from
   the cloud session (Finding 8).
+
+### A17. A version with no stated effective date took effect when announced
+
+*2026-10-01, after the first real run of the date parser on the user's machine.*
+
+The run found what the pages actually say:
+
+| Version | Patch notes say | Result |
+|:--|:--|:--|
+| 1.1 | no effective date; published 2025-10-24 | announcement date |
+| 1.2 | "an effective date of December 12, 2025" | stated |
+| 1.3 | no effective date; published 2026-03-30 | announcement date |
+| 1.4 | "will be effective on July 24, 2026" | stated |
+
+**Refines A16**, which refused any version without a stated date. Applied
+strictly, that refused 1.1 and 1.3, and therefore also 1.2 (its end date is
+1.3's start), leaving only 1.4: a single version, with nothing to drift from.
+
+**Now:** with no stated date, the announcement's own machine-readable publish
+date (`datePublished` in the page head) is used. Riot's wording supports this
+as the default: the Spiritforged notes say "Rather than taking effect
+immediately, these rules will have an effective date of...", treating
+immediate effect as normal and a delay as the thing worth stating. Every date
+records its `basis` (`stated` or `announcement-date`), so inferred dates stay
+distinguishable in `data/effective_dates.json`.
+
+Still refused: a page stating two different dates (ambiguous), and a page with
+neither a stated date nor a publish date. The PDF's printed date is still
+never used.
+
+**Known imprecision:** publish timestamps are UTC. v1.1's `01:00Z` is the
+evening of October 23 in California, so its start may be one day late for a
+reader in the Americas. Recorded, not corrected.
+
+**Also fixed in the same run:** the v1.4 page looked ambiguous because its
+"Related Articles" list linked "September Ban List Updates (Effective
+September 18, 2026)". The parser now reads only the article body, which ends
+at that heading.
+
+Rejected: strict A16 (one version, no demonstration possible); assuming v1.3
+took effect at its China release on April 8 by analogy with v1.2 (the page
+does not say so).
