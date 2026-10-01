@@ -158,6 +158,19 @@ def _generate(
 
 
 def run(settings: Settings) -> list[str]:
+    client = Ollama(settings)
+    try:
+        # Both pins are checked before any search or file write. Found on the
+        # user's machine: checking the generation pin only at the first
+        # captured candidate crashed the run halfway, leaving a partial folder.
+        embed_digest = checked_digest(client, settings.embed_model, settings.embed_digest)
+        checked_digest(client, settings.gen_model, settings.gen_digest)
+    finally:
+        client.close()
+    return _run(settings, embed_digest)
+
+
+def _run(settings: Settings, embed_digest: str) -> list[str]:
     # One folder per run, stamped to the minute: a rerun never overwrites an
     # earlier run's evidence, including evidence later found to be misread.
     # (A date alone was not enough: the second run happened the same day.)
@@ -168,7 +181,6 @@ def run(settings: Settings) -> list[str]:
     client = Ollama(settings)
     lines = []
     try:
-        embed_digest = checked_digest(client, settings.embed_model, settings.embed_digest)
         for c in load_candidates():
             ranked = search(settings, client, c.question, K)
             v = verdict(c, ranked)

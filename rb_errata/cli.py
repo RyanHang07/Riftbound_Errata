@@ -185,7 +185,14 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("query")
             p.add_argument("-k", type=int, default=5)
     args = parser.parse_args(argv)
-    code: int = args.fn(args)
+    from rb_errata.ollama import PinError
+
+    try:
+        code: int = args.fn(args)
+    except PinError as exc:
+        # An unpinned model is a setup step, not a crash: say what to do.
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     return code
 
 

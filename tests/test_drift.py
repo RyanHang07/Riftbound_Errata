@@ -4,9 +4,13 @@ import json
 from datetime import date
 from pathlib import Path
 
-from rb_errata import config
+import httpx
+import pytest
+
+from rb_errata import config, drift
 from rb_errata.drift import Candidate, fixture, load_candidates, regrade, verdict
 from rb_errata.generate import prompt
+from rb_errata.ollama import Ollama, PinError
 from rb_errata.retrieve.vector import Passage
 
 C = Candidate(
@@ -81,3 +85,19 @@ def test_the_first_runs_deflect_capture_is_regraded_inconclusive() -> None:
     f = json.loads(Path("evals/fixtures/drift-2026-10-01/deflect-chosen-twice.json").read_text())
     c = next(x for x in load_candidates() if x.id == "deflect-chosen-twice")
     assert f["verdict"] == "captured" and regrade(f, c) == "inconclusive"
+
+
+def test_drift_refuses_to_start_with_an_unpinned_generator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Found on the user's machine: the pin was checked only at the first
+    # capture, crashing the run halfway. Now nothing runs until both pins hold.
+    def handle(req: httpx.Request) -> httpx.Response:
+        tags = [{"name": "nomic-embed-text:latest", "digest": "a" * 64},
+                {"name": "qwen3:4b-instruct-2507-q4_K_M", "digest": "b" * 64}]  # fmt: skip
+        return httpx.Response(200, json={"models": tags})
+
+    monkeypatch.setattr(drift, "Ollama", lambda s: Ollama(s, transport=httpx.MockTransport(handle)))
+    monkeypatch.setattr(drift, "_run", lambda *a: pytest.fail("ran with an unpinned generator"))
+    with pytest.raises(PinError):
+        drift.run(config.load({"RB_EMBED_DIGEST": "a" * 64, "RB_GEN_DIGEST": ""}))
