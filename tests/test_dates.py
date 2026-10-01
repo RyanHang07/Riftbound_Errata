@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from rb_errata.ingest.dates import find_effective_date, intervals
+from rb_errata.ingest.dates import debug_page, find_effective_date, intervals
 from rb_errata.ingest.pdf import parse_date, printed_date
 
 URL = "https://example.test/patch-notes"
@@ -107,3 +107,8 @@ def test_parsed_effective_dates_match_the_known_answers() -> None:
     for version, expected in KNOWN.items():
         assert rows[version]["status"] == "known", rows[version]["reason"]
         assert rows[version]["effective"] == expected
+
+
+def test_debug_shows_yearless_dates_the_parser_ignores() -> None:
+    out = "\n".join(debug_page("<p>The new rules go live Friday, May 8th for everyone.</p>"))
+    assert "dates without a year: 1 found" in out and "full dates: 0 found" in out

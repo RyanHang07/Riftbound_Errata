@@ -143,3 +143,43 @@ def intervals(
         else:
             ok[v] = Interval(start, None)
     return ok, refused
+
+
+_PHRASE = re.compile(
+    r"effective|in effect|take[sn]? effect|go(?:es)? into effect|as of|starting|go(?:es)? live",
+    re.IGNORECASE,
+)
+# Dates with no year ("Friday, May 8th"): the effective-date pattern ignores
+# them, so if a page only uses this form the diagnostic must show it.
+_YEARLESS = re.compile(
+    rf"(?:{_MONTHS})\s+\d{{1,2}}(?:st|nd|rd|th)?(?!\d|,?\s+20\d\d)", re.IGNORECASE
+)
+
+
+def debug_page(raw_html: str, limit: int = 8) -> list[str]:
+    """Where a page mentions dates and effective-ness, with a little context.
+
+    For tuning the parser against pages the authoring session could not see.
+    Prints short excerpts of Riot's text to the local terminal only; nothing
+    here is written to disk or committed.
+    """
+    text = page_text(raw_html)
+    out = [
+        f"  page text: {len(text):,} chars; client-rendered JSON present: "
+        f"{'__NEXT_DATA__' in raw_html}"
+    ]
+
+    def show(label: str, pattern: re.Pattern[str], before: int, after: int) -> None:
+        hits = list(pattern.finditer(text))
+        out.append(
+            f"  {label}: {len(hits)} found"
+            + (f", first {limit} shown" if len(hits) > limit else "")
+        )
+        for m in hits[:limit]:
+            a, b = max(0, m.start() - before), min(len(text), m.end() + after)
+            out.append(f"    @{m.start():>6}: ...{text[a:b]}...")
+
+    show("effective-type phrases", _PHRASE, 30, 90)
+    show("full dates", re.compile(_DATE, re.IGNORECASE), 70, 10)
+    show("dates without a year", _YEARLESS, 70, 10)
+    return out

@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates inspect ingest search
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -54,6 +54,9 @@ fetch:  ## download Core Rules PDFs + patch notes into data/raw (SHA-1 verified)
 
 dates:  ## parse effective dates -> data/effective_dates.json (committed)
 	$(UV) python -m rb_errata.cli dates
+
+dates-debug:  ## show every date mention in the patch notes, in context (local only)
+	$(UV) python -m rb_errata.cli dates --debug
 
 inspect:  ## parse and chunk the PDFs; no database, no model, free
 	$(UV) python -m rb_errata.cli inspect

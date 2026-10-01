@@ -55,6 +55,19 @@ def run_dates(raw: Path = RAW) -> list[str]:
     ]
 
 
+def run_dates_debug(raw: Path = RAW) -> list[str]:
+    from rb_errata.ingest.dates import debug_page
+
+    lines = []
+    for doc in CORE_RULES:
+        page = patch_notes_path(doc, raw)
+        if not doc.patch_notes or not page.exists():
+            continue
+        lines.append(f"\n=== {doc.version}  {doc.patch_notes}")
+        lines += debug_page(page.read_text())
+    return lines
+
+
 def _load_effective() -> dict[str, date | None]:
     if not EFFECTIVE_DATES.exists():
         raise SystemExit("data/effective_dates.json missing: run `make dates` first")

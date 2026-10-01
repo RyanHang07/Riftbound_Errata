@@ -33,8 +33,12 @@ def _fetch(_: argparse.Namespace) -> int:
     return 0 if ok else 1
 
 
-def _dates(_: argparse.Namespace) -> int:
-    from rb_errata.ingest.pipeline import run_dates
+def _dates(args: argparse.Namespace) -> int:
+    from rb_errata.ingest.pipeline import run_dates, run_dates_debug
+
+    if args.debug:
+        print("\n".join(run_dates_debug()))
+        return 0
 
     print("status  ver   effective   reason")
     print("\n".join(run_dates()))
@@ -99,6 +103,8 @@ def main(argv: list[str] | None = None) -> int:
     for name, (fn, help_text) in commands.items():
         p = sub.add_parser(name, help=help_text)
         p.set_defaults(fn=fn)
+        if name == "dates":
+            p.add_argument("--debug", action="store_true", help="show date mentions in context")
         if name == "search":
             p.add_argument("query")
             p.add_argument("-k", type=int, default=5)
