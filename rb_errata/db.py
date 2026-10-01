@@ -1,7 +1,10 @@
 """Database connection and schema.
 
-Slice 0 owns only the pgvector extension. The chunks table arrives in slice 2,
-once slice 1 has shown what the corpus actually needs.
+The database is derived data: everything in it can be rebuilt from the fetched
+documents plus `make ingest`. That is why the schema is created with plain
+CREATE IF NOT EXISTS and changed by `make db-reset` rather than migrations, for
+now. When the database holds something that cannot be rebuilt (eval runs are
+committed as JSON instead), this stops being true and migrations arrive.
 """
 
 from __future__ import annotations
@@ -17,7 +20,69 @@ def connect(settings: Settings, *, timeout_s: int = 5) -> psycopg.Connection[tup
     return psycopg.connect(settings.database_url, connect_timeout=timeout_s, autocommit=True)
 
 
+def schema(dims: int) -> str:
+    return f"""
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- One row per document version: where it came from and when it was the rule.
+CREATE TABLE IF NOT EXISTS documents (
+  id            text PRIMARY KEY,        -- 'core@1.4'
+  doc           text NOT NULL,
+  version       text NOT NULL,
+  sha1          text NOT NULL,           -- the exact bytes ingested
+  source_url    text NOT NULL,
+  provenance    text NOT NULL,           -- 'cdn-verified' | 'mirror-only-unverified'
+  published_at  date NOT NULL,           -- printed "Last Updated"
+  valid_from    date NOT NULL,           -- effective date, from patch notes (A16)
+  valid_to      date                     -- NULL means "still current", never a sentinel
+);
+
+CREATE TABLE IF NOT EXISTS chunks (
+  id            bigserial PRIMARY KEY,
+  document_id   text NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  kind          text NOT NULL,           -- 'rule' for now; 'card' | 'faq' | 'errata' later
+  source_ref    text NOT NULL,           -- 'core@1.4:315.2'
+  refs          text[] NOT NULL,         -- every rule number inside: recall hits match on these
+  text          text NOT NULL,
+  tokens        integer NOT NULL,        -- cl100k, counted
+  embedding     vector({dims}) NOT NULL,
+  -- Copied from the document so the as_of predicate (slice 10) is one table.
+  valid_from    date NOT NULL,
+  valid_to      date,
+  published_at  date NOT NULL,
+  model_tag     text NOT NULL,           -- which embedder produced `embedding`
+  model_digest  text NOT NULL,           -- ...and exactly which weights (A3)
+  content_hash  text NOT NULL
+);
+-- No vector index, on purpose (A2): an exact scan over a few thousand rows
+-- takes milliseconds and never drops rows that a date filter would keep.
+CREATE INDEX IF NOT EXISTS chunks_validity ON chunks (valid_from, valid_to);
+
+-- Embed an unchanged text once, ever, per model and prefix (brief section 7).
+-- Keyed by digest, not tag: a re-pushed tag must not reuse old vectors.
+CREATE TABLE IF NOT EXISTS embedding_cache (
+  content_hash  text NOT NULL,
+  model_digest  text NOT NULL,
+  prefix        text NOT NULL,
+  embedding     vector({dims}) NOT NULL,
+  PRIMARY KEY (content_hash, model_digest, prefix)
+);
+"""
+
+
 def init(settings: Settings) -> None:
-    """Idempotent. Covers volumes created before db/init/ existed."""
+    """Idempotent: creates whatever is missing."""
     with connect(settings) as conn:
-        conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        conn.execute(schema(settings.embed_dims))
+
+
+def reset(settings: Settings) -> None:
+    """Drop the derived tables and recreate them. The cache survives on purpose:
+    it is keyed by content and model, so it stays valid across re-chunking."""
+    with connect(settings) as conn:
+        conn.execute("DROP TABLE IF EXISTS chunks, documents")
+        conn.execute(schema(settings.embed_dims))
+
+
+def vector_literal(v: list[float]) -> str:
+    return "[" + ",".join(f"{x:.8g}" for x in v) + "]"

@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init verify lint typecheck test fmt doctor doctor-cpu
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates inspect ingest search
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -18,7 +18,7 @@ db-up:  ## start Postgres 17 + pgvector on localhost:5433 and wait until healthy
 db-down:  ## stop the database (data volume is kept)
 	docker compose down
 
-db-init:  ## ensure the pgvector extension exists (idempotent)
+db-init:  ## create the schema if missing (idempotent)
 	$(UV) python -m rb_errata.cli init-db
 
 # The free layer. No database, no model, seconds. Runs after every change.
@@ -46,3 +46,21 @@ doctor:  ## can the pipeline run at all? no corpus needed
 # goes into a budget or the writeup: the target machine has no GPU.
 doctor-cpu:  ## doctor on CPU only (target-hardware numbers)
 	RB_CPU_ONLY=true $(UV) python -m rb_errata.cli doctor
+
+# --- Ingestion (slice 2). Runs on a machine that can reach Riot's site. ---
+
+fetch:  ## download Core Rules PDFs + patch notes into data/raw (SHA-1 verified)
+	$(UV) python -m rb_errata.cli fetch
+
+dates:  ## parse effective dates -> data/effective_dates.json (committed)
+	$(UV) python -m rb_errata.cli dates
+
+inspect:  ## parse and chunk the PDFs; no database, no model, free
+	$(UV) python -m rb_errata.cli inspect
+
+ingest: fetch dates  ## everything: fetch, dates, chunk, embed, store -> data/corpus.json
+	$(UV) python -m rb_errata.cli ingest
+
+# Usage: make search Q="can a unit with deflect be targeted"
+search:  ## naive vector search, NO date filter (slice 2 baseline)
+	$(UV) python -m rb_errata.cli search "$(Q)"

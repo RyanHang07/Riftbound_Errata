@@ -16,7 +16,7 @@ The full specification is [`docs/BRIEF.md`](docs/BRIEF.md). Read its
 |:--|:--|:--|
 | 0 | Setup: `make verify` and `doctor` | done |
 | 1 | Corpus availability spike ([report](docs/SPIKE_1.md)) | done: proceed |
-| 2 | Ingest, chunk, naive vector retrieval | waiting on two design decisions |
+| 2 | Ingest, chunk, naive vector retrieval | built; first real run on the user's machine |
 
 ## Setup
 
@@ -33,6 +33,8 @@ ollama pull qwen3:4b
 make verify                  # free: lint, typecheck, contract tests
 make doctor                  # real database and models, no corpus
 make doctor-cpu              # same, models kept off the GPU: target numbers
+make ingest                  # fetch + dates + chunk + embed + store (slice 2)
+make search Q="your question"  # naive search, no date filter (on purpose)
 ```
 
 The first `make doctor` **fails on purpose**: the model digests aren't pinned

@@ -15,6 +15,13 @@ dependencies = [
     # library that changes its defaults between releases would change every
     # generation without a code diff here. uv.lock pins exact versions.
     "httpx>=0.27,<1",
+    # PDF text extraction. Chosen over pypdf after measuring both on Core Rules
+    # v1.4: pypdf took minutes per file and put every word on its own line;
+    # pypdfium2 took 9 s and keeps one rule per line, which rule parsing needs.
+    "pypdfium2>=4.30,<5",
+    # Token counting, as the brief requires ("never estimate what can be
+    # counted"). cl100k_base, recorded in the corpus manifest.
+    "tiktoken>=0.7,<1",
 ]
 
 [dependency-groups]
