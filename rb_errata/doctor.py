@@ -36,6 +36,13 @@ EMBED_TIMED_CALLS = 5
 MIN_TOKENS_TO_TIME = 16
 
 
+WARM_PROMPT = "Reply with the single word OK."
+
+
+def follows_one_word_instruction(text: str) -> bool:
+    return text.strip().strip(".!\"'*").lower() == "ok"
+
+
 class Status(StrEnum):
     PASS = "pass"
     FAIL = "fail"
@@ -244,7 +251,7 @@ def check_generate(
     try:
         # Also pays the model load, and the reload when cpu_only changes the
         # placement, so no timed probe includes it.
-        warm = client.generate("Reply with the single word OK.", max_tokens=8)
+        warm = client.generate(WARM_PROMPT, max_tokens=16)
         probes = [
             client.generate(
                 # A fresh nonce per probe, so no probe reuses another's cache.
@@ -273,6 +280,14 @@ def judge_generation(
             ), None
     if not warm.text.strip():
         return Check(name, Status.FAIL, "model responded with empty text"), None
+    if not follows_one_word_instruction(warm.text):
+        # Found in the first drift run (A18): a model can reason aloud in its
+        # visible answer with nothing tagged as thinking, so the check above
+        # passes. Asked for one word, it has to give one word.
+        return Check(
+            name, Status.FAIL,
+            f"asked for the single word OK, answered {warm.text.strip()[:40]!r}: reasons aloud?",
+        ), None  # fmt: skip
     if settings.cpu_only and vram:
         # Found on the first real run: an RTX 2060 SUPER took the whole model
         # while the brief targets a machine with no GPU. If the CPU-only switch

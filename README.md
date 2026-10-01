@@ -30,7 +30,7 @@ cp .env.example .env
 make install                 # exact versions from uv.lock
 make db-up                   # Postgres 17 + pgvector on localhost:5433
 ollama pull nomic-embed-text
-ollama pull qwen3:4b
+ollama pull qwen3:4b-instruct-2507-q4_K_M
 make verify                  # free: lint, typecheck, contract tests
 make doctor                  # real database and models, no corpus
 make doctor-cpu              # same, models kept off the GPU: target numbers

@@ -39,7 +39,10 @@ class Settings:
     cpu_only: bool = False
 
     # --- Generation ------------------------------------------------------
-    gen_model: str = "qwen3:4b"
+    # The instruct-only 2507 build, not plain "qwen3:4b". Found in the first
+    # drift run (A18, A19): with think=false the plain tag still reasoned aloud
+    # in its visible answer, ran out of tokens and never answered.
+    gen_model: str = "qwen3:4b-instruct-2507-q4_K_M"
     gen_digest: str = ""
     # qwen3 emits a hidden reasoning trace by default. Off: it inflates token
     # counts, makes the time budget meaningless, and changes answers. Turning

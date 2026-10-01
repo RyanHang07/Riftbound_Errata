@@ -1184,3 +1184,31 @@ Three findings, none of them the one slice 3 set out to produce:
 
 Process fix: candidate labels are verified with `make check-candidates`, which
 prints full rule texts. Truncated output is how the mislabel got through.
+
+### A19. Generation model switched to the instruct-only build
+
+*2026-10-01, the user's decision after A18.*
+
+**From** `qwen3:4b` **to** `qwen3:4b-instruct-2507-q4_K_M` (the same 2.5 GB
+size). The plain tag reasoned aloud in its visible answer despite
+`think: false`, so the answer ran out of tokens before answering (A18).
+
+**Likely cause, not confirmed:** the plain tag may point at the Thinking build
+of the 2507 release, which has no non-thinking mode for `think: false` to
+select. The same thing was reported for Ollama's `qwen3-vl:4b` default tag.
+This is the mutable-tag hazard of A3 in a new form: the digest was pinned, so
+the weights never changed under us, but the tag's *meaning* was never what we
+assumed.
+
+**What changes:**
+- `doctor` now asks for the single word "OK" and fails on anything else. A
+  model that reasons aloud fails this, even with nothing tagged as thinking,
+  which the old check missed.
+- The new model needs its own digest pin (A3), so `doctor` fails until it is
+  pinned.
+- **The A14 time budget is out of date.** It was measured on the old model and
+  assumed 180-token answers; both must be re-measured with `make doctor-cpu`.
+
+Rejected: fixing the prompt only (cheaper, but it fights the model rather than
+choosing one that matches the task); leaving it to slice 6 (any slice 3
+capture would come with an unfinished answer).

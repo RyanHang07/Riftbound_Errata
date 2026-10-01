@@ -24,6 +24,7 @@ GEN_DIGEST = "b" * 64
 
 def fake_ollama(
     *,
+    warm_reply: str = "OK",
     version: str = "0.12.0",
     dims: int = 768,
     thinking: str = "",
@@ -31,8 +32,15 @@ def fake_ollama(
     vram: int = 0,
     seen: list[dict[str, Any]] | None = None,
 ) -> Callable[[Settings], Ollama]:
-    tags = models if models is not None else ["nomic-embed-text:latest", "qwen3:4b"]
-    digests = {"nomic-embed-text:latest": EMBED_DIGEST, "qwen3:4b": f"sha256:{GEN_DIGEST}"}
+    tags = (
+        models
+        if models is not None
+        else ["nomic-embed-text:latest", "qwen3:4b-instruct-2507-q4_K_M"]
+    )
+    digests = {
+        "nomic-embed-text:latest": EMBED_DIGEST,
+        "qwen3:4b-instruct-2507-q4_K_M": f"sha256:{GEN_DIGEST}",
+    }
 
     def handle(req: httpx.Request) -> httpx.Response:
         body: dict[str, Any] = json.loads(req.content) if req.content else {}
@@ -45,7 +53,16 @@ def fake_ollama(
                 )
             case "/api/ps":
                 return httpx.Response(
-                    200, json={"models": [{"name": "qwen3:4b", "size": 100, "size_vram": vram}]}
+                    200,
+                    json={
+                        "models": [
+                            {
+                                "name": "qwen3:4b-instruct-2507-q4_K_M",
+                                "size": 100,
+                                "size_vram": vram,
+                            }
+                        ]
+                    },
                 )
             case "/api/embed":
                 assert body["truncate"] is False
@@ -60,7 +77,7 @@ def fake_ollama(
                 return httpx.Response(
                     200,
                     json={
-                        "response": "OK" if not long else "Rule 1.0 says...",
+                        "response": warm_reply if not long else "Rule 1.0 says...",
                         "thinking": thinking,
                         "prompt_eval_count": 3000 if long else 12,
                         "prompt_eval_duration": 30_000_000_000,  # 30 s -> 100 tok/s
@@ -143,7 +160,7 @@ def test_unreachable_ollama_is_a_fail_not_a_crash() -> None:
 
 
 def _gen(prompt_tokens: int, answer_tokens: int) -> Generation:
-    return Generation("x", "", prompt_tokens, 10**9, answer_tokens, 10**9, 0, "stop")
+    return Generation("OK", "", prompt_tokens, 10**9, answer_tokens, 10**9, 0, "stop")
 
 
 def test_filled_context_is_a_fail_because_the_prompt_may_be_truncated() -> None:
@@ -201,3 +218,16 @@ def test_cpu_only_with_model_still_on_gpu_fails() -> None:
     checks = by_name(doctor.run(pinned(RB_CPU_ONLY="true"), fake_ollama(vram=100)))
     assert checks["generation model"].status is Status.FAIL
     assert checks["budget"].status is Status.UNKNOWN
+
+
+def test_a_model_that_reasons_aloud_fails_even_with_nothing_tagged_as_thinking() -> None:
+    # What qwen3:4b did in the first drift run: no thinking field, just prose.
+    checks = by_name(doctor.run(pinned(), fake_ollama(warm_reply="Okay, let me think about")))
+    assert checks["generation model"].status is Status.FAIL
+    assert "reasons aloud" in checks["generation model"].detail
+
+
+def test_one_word_check_tolerates_punctuation_and_case() -> None:
+    assert doctor.follows_one_word_instruction(" ok.\n")
+    assert doctor.follows_one_word_instruction('"OK"')
+    assert not doctor.follows_one_word_instruction("OK, here is why")

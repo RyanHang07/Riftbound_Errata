@@ -6,7 +6,11 @@ from rb_errata import config
 def test_defaults_match_the_brief() -> None:
     s = config.load({})
     assert s.database_url.endswith(":5433/rb_errata")
-    assert (s.embed_model, s.embed_dims, s.gen_model) == ("nomic-embed-text", 768, "qwen3:4b")
+    assert (s.embed_model, s.embed_dims, s.gen_model) == (
+        "nomic-embed-text",
+        768,
+        "qwen3:4b-instruct-2507-q4_K_M",
+    )
     assert s.gen_think is False
 
 
@@ -23,4 +27,4 @@ def test_bad_boolean_is_refused_not_guessed() -> None:
 def test_run_record_omits_credentials() -> None:
     record = config.load({}).as_record()
     assert "database_url" not in record
-    assert record["gen_model"] == "qwen3:4b"
+    assert record["gen_model"] == "qwen3:4b-instruct-2507-q4_K_M"
