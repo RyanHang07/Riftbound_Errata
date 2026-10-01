@@ -72,6 +72,25 @@ def verdict(c: Candidate, ranked: list[Passage]) -> str:
     return "inconclusive"
 
 
+def regrade(f: dict[str, Any], c: Candidate) -> str:
+    """Re-grade a stored fixture against (possibly corrected) labels.
+
+    The fixture keeps every ranked result's version-qualified refs, so a label
+    fix never needs the search re-run: the evidence is fixed, only the
+    reading of it changes, and both stay on record.
+    """
+    if not f["results"]:
+        return "inconclusive"
+    top = f["results"][0]
+    doc = top["source_ref"].split(":", 1)[0]
+    refs = {f"{doc}:{r}" for r in top["refs"]}
+    if refs & c.stale:
+        return "captured"
+    if refs & c.current:
+        return "not captured"
+    return "inconclusive"
+
+
 def _first_rank(c_refs: frozenset[str], ranked: list[Passage]) -> int | None:
     return next((i + 1 for i, p in enumerate(ranked) if p.qualified_refs & c_refs), None)
 
@@ -139,7 +158,10 @@ def _generate(
 
 
 def run(settings: Settings) -> list[str]:
-    FIXTURES.mkdir(parents=True, exist_ok=True)
+    # One folder per run date: a rerun never overwrites an earlier run's
+    # evidence, including evidence that later turned out to be misread.
+    out_dir = FIXTURES / f"drift-{datetime.now(UTC).date().isoformat()}"
+    out_dir.mkdir(parents=True, exist_ok=True)
     client = Ollama(settings)
     lines = []
     try:
@@ -148,7 +170,7 @@ def run(settings: Settings) -> list[str]:
             ranked = search(settings, client, c.question, K)
             v = verdict(c, ranked)
             gen = _generate(settings, client, c, ranked) if v == "captured" else None
-            (FIXTURES / f"{c.id}.json").write_text(
+            (out_dir / f"{c.id}.json").write_text(
                 json.dumps(fixture(c, ranked, v, settings, embed_digest, gen), indent=2) + "\n"
             )
             top = ranked[0]
@@ -160,6 +182,60 @@ def run(settings: Settings) -> list[str]:
     finally:
         client.close()
     return lines
+
+
+def regrade_dir(path: Path) -> list[str]:
+    cands = {c.id: c for c in load_candidates()}
+    lines = []
+    for p in sorted(path.glob("*.json")):
+        f = json.loads(p.read_text())
+        c = cands.get(f["id"])
+        now = regrade(f, c) if c else "no candidate"
+        flag = "" if now == f["verdict"] else "   <- CHANGED by corrected labels"
+        lines.append(f"{f['id']:<28} recorded {f['verdict']:<14} now {now}{flag}")
+    return lines
+
+
+def check_candidates() -> list[str]:
+    """Full text of every rule a candidate names, in every version, for review.
+
+    Never truncated: truncation is how the Deflect label error got through.
+    Each line says how the candidate classifies that version. Prints Riot's
+    text to the local terminal only.
+    """
+    from rb_errata.ingest.align import align
+    from rb_errata.ingest.fetch import RAW
+    from rb_errata.ingest.pdf import extract_text
+    from rb_errata.ingest.rules import parse_rules
+    from rb_errata.ingest.sources import CORE_RULES
+
+    rules = {
+        d.version: parse_rules(extract_text(RAW / d.filename))
+        for d in CORE_RULES
+        if (RAW / d.filename).exists()
+    }
+    latest = CORE_RULES[-1].version
+    out = []
+    for c in load_candidates():
+        out.append(f"\n===== {c.id}: {c.question}")
+        for ref in sorted(c.current):
+            ver, num = ref.split("@", 1)[1].split(":")
+            text = next((r.text for r in rules[ver] if r.number == num), "(missing)")
+            out.append(f"  CURRENT {ref}\n      {text}")
+            if ver != latest:
+                continue
+            # Every older version's counterpart of this rule, labelled.
+            for v, rs in rules.items():
+                if v == latest:
+                    continue
+                for m in align(rs, rules[latest])[0]:
+                    if m.new is not None and m.new.number == num:
+                        q = f"core@{v}:{m.old.number}"
+                        label = (
+                            "stale" if q in c.stale else "current" if q in c.current else "NEITHER"
+                        )
+                        out.append(f"  {label:<7} {q}\n      {m.old.text}")
+    return out
 
 
 def show(settings: Settings, path: Path) -> list[str]:

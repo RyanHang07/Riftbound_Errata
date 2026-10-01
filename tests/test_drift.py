@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 
 from rb_errata import config
-from rb_errata.drift import Candidate, fixture, load_candidates, verdict
+from rb_errata.drift import Candidate, fixture, load_candidates, regrade, verdict
 from rb_errata.generate import prompt
 from rb_errata.retrieve.vector import Passage
 
@@ -67,3 +67,17 @@ def test_every_candidate_ref_exists_in_the_committed_corpus() -> None:
     for cand in load_candidates():
         missing = (cand.current | cand.stale) - known
         assert not missing, f"{cand.id}: {sorted(missing)}"
+
+
+def test_regrade_matches_live_verdict_on_the_same_ranking() -> None:
+    for ranked in ([OLD, NEW], [NEW, OLD], [OTHER, OLD]):
+        f = fixture(C, ranked, verdict(C, ranked), config.load({}), "d" * 64, None)
+        assert regrade(f, C) == f["verdict"]
+
+
+def test_the_first_runs_deflect_capture_is_regraded_inconclusive() -> None:
+    # The recorded verdict stays "captured" on file; the corrected labels
+    # (v1.3 already said "for each time") re-grade it as inconclusive.
+    f = json.loads(Path("evals/fixtures/drift-2026-10-01/deflect-chosen-twice.json").read_text())
+    c = next(x for x in load_candidates() if x.id == "deflect-chosen-twice")
+    assert f["verdict"] == "captured" and regrade(f, c) == "inconclusive"

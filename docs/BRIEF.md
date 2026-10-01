@@ -1152,3 +1152,35 @@ at that heading.
 Rejected: strict A16 (one version, no demonstration possible); assuming v1.3
 took effect at its China release on April 8 by analogy with v1.2 (the page
 does not say so).
+
+### A18. First drift run: no capture, two misses, and a long-winded generator
+
+*2026-10-01. Evidence: `evals/fixtures/drift-2026-10-01/`, with `CORRECTION.md`.*
+
+**Result: 0 of 4 captured** (1 not captured, 3 inconclusive), against a
+written prediction of 1 or 2. The run first recorded one capture; it came from
+a mislabelled candidate and was re-graded inconclusive (see `CORRECTION.md`).
+The correction sits beside the original, which is unchanged.
+
+Three findings, none of them the one slice 3 set out to produce:
+
+1. **Right passage absent, not just mis-ordered.** For two questions (Legion,
+   2v2) the rule that answers them is not in the top 5 at all; naive search
+   matched a surface word ("Legion", "2v2") in unrelated passages. This is the
+   brief's "right passage ranked below cutoff" failure, the target of hybrid
+   search and reranking (slices 8-9), appearing before the wrong-version
+   failure it was looking for.
+2. **Right answer, outdated version.** For Deflect, the top passage was v1.3,
+   not in effect, but saying the same as today's rule. The answer would be
+   correct with a stale citation: a third kind of outcome the failure taxonomy
+   (slice 7) needs a category for.
+3. **The generator reasons aloud and runs out of room.** With `think: false`,
+   qwen3:4b still wrote a stream of "let me figure this out" prose, used all
+   400 answer tokens and stopped before answering. `doctor`'s thinking check
+   passed because nothing was tagged as thinking. Two consequences: the
+   180-token answer assumed in the A14 budget is too low, and slice 6 must
+   decide between prompting for a short answer and pinning an instruct-only
+   model tag. Not changed now; recorded.
+
+Process fix: candidate labels are verified with `make check-candidates`, which
+prints full rule texts. Truncated output is how the mislabel got through.

@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -77,6 +77,13 @@ diff:  ## rules whose meaning changed between two versions
 drift:  ## run evals/drift_candidates.yaml; writes evals/fixtures/*.json
 	$(UV) python -m rb_errata.cli drift
 
-# Usage: make show F=evals/fixtures/legion-countered-spell.json
+# Usage: make regrade D=evals/fixtures/drift-2026-10-01
+regrade:  ## re-grade stored fixtures against the current candidate labels (no model)
+	$(UV) python -m rb_errata.cli regrade $(D)
+
+check-candidates:  ## FULL text of each candidate rule in every version (local only)
+	$(UV) python -m rb_errata.cli check-candidates
+
+# Usage: make show F=evals/fixtures/drift-2026-10-01/deflect-chosen-twice.json
 show:  ## re-display a fixture with rule text from the local database
 	$(UV) python -m rb_errata.cli show $(F)

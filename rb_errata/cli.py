@@ -126,6 +126,22 @@ def _drift(_: argparse.Namespace) -> int:
     return 0
 
 
+def _regrade(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.drift import regrade_dir
+
+    print("\n".join(regrade_dir(Path(args.dir))))
+    return 0
+
+
+def _check_candidates(_: argparse.Namespace) -> int:
+    from rb_errata.drift import check_candidates
+
+    print("\n".join(check_candidates()))
+    return 0
+
+
 def _show(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -149,6 +165,8 @@ def main(argv: list[str] | None = None) -> int:
         "diff": (_diff, "rules whose text changed between two versions"),
         "drift": (_drift, "run the slice 3 drift candidates and write fixtures"),
         "show": (_show, "re-display a fixture with rule text from the local database"),
+        "regrade": (_regrade, "re-grade stored fixtures against the current labels"),
+        "check-candidates": (_check_candidates, "full text of every candidate rule, per version"),
     }
     for name, (fn, help_text) in commands.items():
         p = sub.add_parser(name, help=help_text)
@@ -161,6 +179,8 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("-n", type=int, default=15)
         if name == "show":
             p.add_argument("fixture")
+        if name == "regrade":
+            p.add_argument("dir")
         if name == "search":
             p.add_argument("query")
             p.add_argument("-k", type=int, default=5)

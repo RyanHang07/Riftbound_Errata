@@ -18,6 +18,10 @@
 #   mentions Legion by name (in its new example), which should pull it up.
 #   deflect-chosen-twice is the MOST likely: the stale text says "choose me",
 #   echoing the question's "chooses my ... unit", while v1.4 says "target".
+#
+# OUTCOME of the first run (2026-10-01, evals/fixtures/drift-2026-10-01/):
+#   graded 1 captured (deflect). Re-graded after correcting a wrong label:
+#   0 captured, 1 not captured, 3 inconclusive. The prediction was wrong.
 
 - id: legion-countered-spell
   question: "If my spell gets countered, does it still count as having played a card this turn for Legion?"
@@ -34,11 +38,23 @@
   question: "If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?"
   as_of: 2026-10-01
   current: ["core@1.4:809.1.c"]
-  stale: ["core@1.1:725.1.c", "core@1.2:735.1.c", "core@1.3:809.1.c"]
+  stale: ["core@1.1:725.1.c", "core@1.2:735.1.c"]
+  # core@1.3:809.1.c is neither: it already says "for each time they choose me".
+  #
+  # WRONG, as first written (left visible; brief section 10):
+  #   stale: [..., "core@1.3:809.1.c"]
+  #   change: "Up to v1.3 Deflect added its cost once ..."
+  # The first real run graded this candidate "captured" because v1.3 ranked
+  # first. Reading the evidence showed v1.3 already gives today's answer: the
+  # per-choice wording arrived in v1.3, and v1.4 changed "choose" to "target".
+  # Cause: the cross-version trace printed rule texts cut at 140 characters,
+  # and the deciding words start at character 170. Fix: `make check-candidates`
+  # prints full texts, and every candidate is verified with it.
   change: >-
-    Up to v1.3 Deflect added its cost once to an enemy spell or ability that
-    chose the unit. v1.4 makes it apply to spells that target the unit, once
-    for each time they choose it. Old answer: once. Current: twice.
+    Up to v1.2 Deflect added its cost once to an enemy spell or ability that
+    chose the unit. v1.3 made it apply for each time the unit is chosen, and
+    v1.4 kept that while changing "choose" to "target". Old answer (v1.1-1.2):
+    once. Answer since v1.3: once per choice, so twice.
 
 - id: teammate-spells-2v2
   question: "In 2v2, can my teammate play spells during my turn whenever they want?"
