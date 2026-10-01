@@ -1196,6 +1196,11 @@ size). The plain tag reasoned aloud in its visible answer despite
 **Likely cause, not confirmed:** the plain tag may point at the Thinking build
 of the 2507 release, which has no non-thinking mode for `think: false` to
 select. The same thing was reported for Ollama's `qwen3-vl:4b` default tag.
+
+**Confirmed on the user's machine, same day:** `ollama show qwen3:4b` lists
+the capability `thinking` with `default true`, and a context length of
+262,144, which is the 2507 release's window. The tag is the 2507 Thinking
+build.
 This is the mutable-tag hazard of A3 in a new form: the digest was pinned, so
 the weights never changed under us, but the tag's *meaning* was never what we
 assumed.
