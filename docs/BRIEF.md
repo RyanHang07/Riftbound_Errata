@@ -1076,3 +1076,37 @@ date. Two findings change the design and need decisions before slice 2:
 
 Also: the corpus is ~410k tokens across versions, not ~175k (about 145k for
 the current snapshot alone).
+
+### A16. Decisions on the two slice 1 findings
+
+*2026-10-01, made before slice 2.*
+
+**1. Labels name a rule by number within a version.** An expected source is
+written as document + version + rule number (e.g. `core@1.4:108.7.e`), and the
+version is the one in effect on the question's `as_of`. This makes A1's hit
+rule exact: the retrieved chunk must come from that version and carry that
+number. Matching one rule across versions is needed only by `what_changed`,
+and is solved in that slice by text alignment, never by number.
+
+Rejected: a cross-version rule map built now (slow, and an alignment mistake
+silently corrupts the labels the evaluation rests on); labelling by quoted
+text (breaks whenever Riot rewords a rule, which happened hundreds of times
+per update).
+
+**2. Effective dates are parsed automatically from the patch notes.** Chosen
+over a hand-made table of about 20 rows, which was the recommendation. The
+risk accepted: a parsing mistake puts a wrong `valid_from` on every chunk of
+a version. Guards required in slice 2:
+
+- **Three states.** A page where the parser finds no effective date, or more
+  than one candidate, yields `unknown` for that version. It never falls back
+  to the printed date, and ingestion refuses a version whose date is unknown.
+- **Committable output.** Extracted dates go to `data/effective_dates.json`:
+  version, printed date, effective date, source URL, and the matched phrase's
+  position. Dates and URLs only, no Riot text, so a stranger can audit every
+  date against its source.
+- **Known answers as tests.** The two effective dates already established from
+  search results (v1.2: 2025-12-12, v1.4: 2026-07-24) become contract tests.
+  If the parser disagrees with either, the parser is wrong.
+- **Runs on the user's machine.** The patch-notes pages are unreachable from
+  the cloud session (Finding 8).
