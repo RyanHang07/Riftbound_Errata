@@ -16,6 +16,11 @@ set -u
 CDN="https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live"
 check() {  # label url
   code=$(curl -sS -o /dev/null -I -L -m 20 -A "Mozilla/5.0 rb_errata-spike" -w "%{http_code}" "$2" 2>/dev/null)
+  # Some APIs refuse HEAD with 405 (found on Riftcodex, first home run). That
+  # is not a block, so retry once with a GET that discards the body.
+  if [ "$code" = "405" ]; then
+    code=$(curl -sS -o /dev/null -L -m 20 -A "Mozilla/5.0 rb_errata-spike" -w "%{http_code}" "$2" 2>/dev/null)
+  fi
   case "$code" in
     200) state="obtained" ;;
     000) state="blocked (no connection)" ;;

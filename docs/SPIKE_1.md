@@ -34,7 +34,8 @@ for web fetches. Only web **search** and **GitHub** were reachable. So:
 - Every **count** (pages, tokens, rules, cards) was computed here from files
   obtained through GitHub, with the method stated.
 - `scripts/spike1_check.sh` runs on the user's machine to record which
-  official pages a home connection can reach. **Its result is still pending.**
+  official pages a home connection can reach. Run on 2026-10-01: every
+  official page answered (see Finding 8).
 
 Token counts use `tiktoken` with `cl100k_base`, as the brief specifies. The
 project's models (nomic, qwen3) tokenize differently, so absolute numbers will
@@ -53,17 +54,24 @@ of the GitHub copies, so those five are byte-for-byte Riot's files:
 
 | File | SHA-1 | Matches an official CDN URL? |
 |:--|:--|:--|
-| CR-v1.0.pdf | `c780858c…` | not yet checked |
-| CR-v1.1.pdf | `dbc96e31…` | not yet checked |
+| CR-v1.0.pdf | `c780858c…` | **yes** (home check, 2026-10-01) |
+| CR-v1.1.pdf | `dbc96e31…` | **yes** (home check, 2026-10-01) |
 | CR-v1.2.pdf | `572377fc…` | **yes** [S1] |
-| CR-v1.3.pdf | `7affc578…` | not yet checked |
-| CR-v1.4.pdf | `e9ac8e3d…` | not yet checked |
+| CR-v1.3.pdf | `7affc578…` | **no: 404** (see below) |
+| CR-v1.4.pdf | `e9ac8e3d…` | **yes** (home check, 2026-10-01) |
 | Tournament-Rules-2025-07-21.pdf | `1efc974a…` | **yes** [S2] |
 | Tournament-Rules-2026-03-30.pdf | `d77651bc…` | **yes** [S3] |
 | Tournament-Rules-2026-04-29.pdf | `e7086661…` | **yes** [S4] |
 | Tournament-Rules-2026-07-16.pdf | `503da656…` | **yes** [S5] |
 
-Part 1 of `scripts/spike1_check.sh` tests the remaining four the same way.
+**8 of 9 files are proven byte-identical to Riot's.** The exception is
+CR v1.3: Riot's CDN has no file with its hash. A 404 does not prove the copy is
+fake. One possible explanation, *not established*: its metadata shows a
+modification on 2026-04-02, three days after its printed date of 2026-03-30,
+so Riot may have replaced the file with a revised one while keeping the
+printed date. If so, **one printed date can cover more than one text**, which
+matters for dating. Until resolved, v1.3 is the one version that should be
+re-obtained from the Rules Hub and hash-compared.
 
 ## Finding 2: size, counted
 
@@ -219,6 +227,18 @@ an interpretation, not a ruling. The repository already commits no Riot text
 (brief section 7). The README's legal section should be completed once the
 pages have been read.
 
+## Finding 8: a home connection reaches every official source
+
+`scripts/spike1_check.sh`, run on the user's machine on 2026-10-01, got an
+answer from all 20 official URLs: the Rules Hub, all four patch notes, three
+errata pages, all four FAQs, both ban-list announcements, the card gallery,
+the 2025-10-21 card errata PDF, and the three legal pages. **So the cloud
+session's blocks are a property of this environment, not of the corpus.**
+
+The one failure, Riftcodex at `HTTP 405`, is the script's fault, not a block:
+405 means "method not allowed", and the script sent `HEAD` requests, which
+that API does not accept. The script now retries with `GET` on a 405.
+
 ## The brief's open questions 1-4
 
 | # | Question | Answer |
@@ -230,8 +250,7 @@ pages have been read.
 
 ## Still open
 
-- Home-machine reachability of each official page (`spike1_check.sh`).
-- CDN verification of Core Rules v1.0, v1.1, v1.3, v1.4.
+- Why CR v1.3's hash is not on Riot's CDN; re-obtain it from the Rules Hub.
 - Effective dates of CR v1.1 and v1.3.
 - Token counts of the article-based documents.
 - A full read of the three legal pages.
