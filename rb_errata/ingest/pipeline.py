@@ -23,7 +23,7 @@ from rb_errata.ingest.fetch import FETCH_LOG, RAW, patch_notes_path, sha1_of
 from rb_errata.ingest.pdf import extract_text, printed_date
 from rb_errata.ingest.rules import parse_rules
 from rb_errata.ingest.sources import CORE_RULES, RulesDoc
-from rb_errata.ollama import Ollama, normalise_digest
+from rb_errata.ollama import Ollama, checked_digest
 
 EFFECTIVE_DATES = Path("data/effective_dates.json")
 CORPUS = Path("data/corpus.json")
@@ -76,17 +76,6 @@ def _load_effective() -> dict[str, date | None]:
         r["version"]: date.fromisoformat(r["effective"]) if r["status"] == "known" else None
         for r in rows
     }
-
-
-def _checked_digest(client: Ollama, settings: Settings) -> str:
-    # The same rule doctor enforces, enforced again at the one place it costs
-    # the most to get wrong: vectors written under an unpinned model.
-    found = client.find(settings.embed_model)
-    if found is None:
-        raise SystemExit(f"{settings.embed_model} not pulled")
-    if not settings.embed_digest or found.digest != normalise_digest(settings.embed_digest):
-        raise SystemExit("embedding model digest unpinned or mismatched: run `make doctor`")
-    return found.digest
 
 
 def _embed_all(
@@ -161,7 +150,7 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
     manifest: list[dict[str, Any]] = []
     client = Ollama(settings)
     try:
-        digest = _checked_digest(client, settings)
+        digest = checked_digest(client, settings.embed_model, settings.embed_digest)
         db.reset(settings)
         with db.connect(settings) as conn:
             for doc in CORE_RULES:

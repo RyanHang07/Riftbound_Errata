@@ -1,0 +1,53 @@
+# Slice 3 drift candidates: rules whose MEANING changed, found with the
+# alignment diff (rb_errata/ingest/align.py) and chosen by reading the changes,
+# before any search was run.
+#
+# Refs are version-qualified (A16). `stale` lists every version whose text
+# gives the old answer; `current` the text in effect on `as_of`. A version
+# whose wording differs but whose meaning matches today's rule is in neither,
+# so ranking it first is "inconclusive", never "captured".
+#
+# `change` is written in our words. It quotes no rule text beyond keywords.
+
+- id: legion-countered-spell
+  question: "If my spell gets countered, does it still count as having played a card this turn for Legion?"
+  as_of: 2026-10-01
+  current: ["core@1.4:419.4.a.1", "core@1.4:419.4.b"]
+  stale: ["core@1.1:406.4.b", "core@1.2:406.4.b", "core@1.3:419.4.b"]
+  change: >-
+    Up to v1.3 the rules said a countered card was not played at all. v1.4
+    keeps that play-triggers do not fire, but adds that checks of whether a
+    card was played look at whether it was Finalized, with the example that a
+    spell countered by Defy still turns on Legion. Old answer: no. Current: yes.
+
+- id: deflect-chosen-twice
+  question: "If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?"
+  as_of: 2026-10-01
+  current: ["core@1.4:809.1.c"]
+  stale: ["core@1.1:725.1.c", "core@1.2:735.1.c", "core@1.3:809.1.c"]
+  change: >-
+    Up to v1.3 Deflect added its cost once to an enemy spell or ability that
+    chose the unit. v1.4 makes it apply to spells that target the unit, once
+    for each time they choose it. Old answer: once. Current: twice.
+
+- id: teammate-spells-2v2
+  question: "In 2v2, can my teammate play spells during my turn whenever they want?"
+  as_of: 2026-10-01
+  current: ["core@1.4:316.5.b.1"]
+  stale: ["core@1.1:316.2.b.1", "core@1.2:316.2.b.1"]
+  # core@1.3:316.2.b.1 already says the same as v1.4: neither stale nor current.
+  change: >-
+    Up to v1.2 the turn player's teammates could play spells and abilities on
+    the turn player's turn. From v1.3 they may do so only when the turn player
+    invites them with their own priority. Old answer: yes. Current: only when
+    invited.
+
+- id: gear-to-battlefield
+  question: "Can an effect play a gear directly to a battlefield?"
+  as_of: 2026-10-01
+  current: ["core@1.4:152.2"]
+  stale: ["core@1.3:151.2"]
+  change: >-
+    In v1.3 gear was always played to base, with playing it from facedown as
+    the only exception. v1.4 says gear is played to base unless an effect says
+    otherwise. Old answer: no. Current: yes, if the effect says so.

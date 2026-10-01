@@ -22,11 +22,14 @@ dependencies = [
     # Token counting, as the brief requires ("never estimate what can be
     # counted"). cl100k_base, recorded in the corpus manifest.
     "tiktoken>=0.7,<1",
+    # The labelled question sets are hand-written YAML (brief section 4).
+    "pyyaml>=6,<7",
 ]
 
 [dependency-groups]
 dev = [
     "mypy>=1.11",
+    "types-PyYAML>=6",
     "pytest>=8",
     "ruff>=0.6",
 ]

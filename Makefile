@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -67,3 +67,16 @@ ingest: fetch dates  ## everything: fetch, dates, chunk, embed, store -> data/co
 # Usage: make search Q="can a unit with deflect be targeted"
 search:  ## naive vector search, NO date filter (slice 2 baseline)
 	$(UV) python -m rb_errata.cli search "$(Q)"
+
+# --- Temporal drift (slice 3) ---
+
+# Usage: make diff OLD=1.3 NEW=1.4   (prints rule excerpts locally)
+diff:  ## rules whose meaning changed between two versions
+	$(UV) python -m rb_errata.cli diff $(or $(OLD),1.3) $(or $(NEW),1.4)
+
+drift:  ## run evals/drift_candidates.yaml; writes evals/fixtures/*.json
+	$(UV) python -m rb_errata.cli drift
+
+# Usage: make show F=evals/fixtures/legion-countered-spell.json
+show:  ## re-display a fixture with rule text from the local database
+	$(UV) python -m rb_errata.cli show $(F)

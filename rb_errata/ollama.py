@@ -46,6 +46,24 @@ def _with_latest(name: str) -> str:
     return name if ":" in name else f"{name}:latest"
 
 
+class PinError(RuntimeError):
+    pass
+
+
+def checked_digest(client: Ollama, tag: str, pinned: str) -> str:
+    """The local digest of `tag`, refusing an absent, unpinned or mismatched model.
+
+    The rule doctor checks, enforced again wherever a model's output is
+    recorded: vectors in the database, answers in a committed fixture.
+    """
+    found = client.find(tag)
+    if found is None:
+        raise PinError(f"{tag} not pulled: `ollama pull {tag}`")
+    if not pinned or found.digest != normalise_digest(pinned):
+        raise PinError(f"{tag} digest unpinned or mismatched: run `make doctor`")
+    return found.digest
+
+
 class Ollama:
     def __init__(self, settings: Settings, transport: httpx.BaseTransport | None = None) -> None:
         self._s = settings
