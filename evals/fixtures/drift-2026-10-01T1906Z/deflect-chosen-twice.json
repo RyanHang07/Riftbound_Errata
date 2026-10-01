@@ -1,0 +1,123 @@
+{
+  "id": "deflect-chosen-twice",
+  "question": "If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?",
+  "as_of": "2026-10-01",
+  "captured_at": "2026-10-01T19:06:49+00:00",
+  "verdict": "inconclusive",
+  "change": "Up to v1.2 Deflect added its cost once to an enemy spell or ability that chose the unit. v1.3 made it apply for each time the unit is chosen, and v1.4 kept that while changing \"choose\" to \"target\". Old answer (v1.1-1.2): once. Answer since v1.3: once per choice, so twice.",
+  "current": [
+    "core@1.4:809.1.c"
+  ],
+  "stale": [
+    "core@1.1:725.1.c",
+    "core@1.2:735.1.c"
+  ],
+  "first_current_rank": 3,
+  "first_stale_rank": 2,
+  "retrieval": {
+    "method": "naive-vector, no date filter",
+    "k": 5,
+    "embed_model": "nomic-embed-text",
+    "embed_digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+    "query_prefix": "search_query: "
+  },
+  "results": [
+    {
+      "rank": 1,
+      "source_ref": "core@1.3:809.1",
+      "refs": [
+        "809",
+        "809.1",
+        "809.1.a",
+        "809.1.b",
+        "809.1.b.1",
+        "809.1.b.2",
+        "809.1.b.3",
+        "809.1.c",
+        "809.1.c.1",
+        "809.1.d"
+      ],
+      "valid_from": "2026-03-30",
+      "valid_to": "2026-07-24",
+      "in_effect_on_as_of": false,
+      "distance": 0.2405,
+      "content_hash": "sha256:edc7be915b24f215bd3a9bbea6630287b90c293d71192ce3832f0bf37a19b0c5"
+    },
+    {
+      "rank": 2,
+      "source_ref": "core@1.1:725.1",
+      "refs": [
+        "725",
+        "725.1",
+        "725.1.a",
+        "725.1.b",
+        "725.1.b.1",
+        "725.1.b.2",
+        "725.1.b.3",
+        "725.1.c",
+        "725.1.c.1",
+        "725.1.d"
+      ],
+      "valid_from": "2025-10-24",
+      "valid_to": "2025-12-12",
+      "in_effect_on_as_of": false,
+      "distance": 0.2446,
+      "content_hash": "sha256:ea3bcafd54d40a810c0f49654611030954c2cb6a3d1a915f80e01b463f0ee5fd"
+    },
+    {
+      "rank": 3,
+      "source_ref": "core@1.4:809.1",
+      "refs": [
+        "809",
+        "809.1",
+        "809.1.a",
+        "809.1.b",
+        "809.1.b.1",
+        "809.1.b.2",
+        "809.1.b.3",
+        "809.1.c",
+        "809.1.c.1",
+        "809.1.d"
+      ],
+      "valid_from": "2026-07-24",
+      "valid_to": null,
+      "in_effect_on_as_of": true,
+      "distance": 0.245,
+      "content_hash": "sha256:fda64a2fc91237d38ba79bbf9b121963379e1ae7b1635eafff5add9c970fde00"
+    },
+    {
+      "rank": 4,
+      "source_ref": "core@1.2:735.1",
+      "refs": [
+        "735",
+        "735.1",
+        "735.1.a",
+        "735.1.b",
+        "735.1.b.1",
+        "735.1.b.2",
+        "735.1.b.3",
+        "735.1.c",
+        "735.1.c.1",
+        "735.1.d"
+      ],
+      "valid_from": "2025-12-12",
+      "valid_to": "2026-03-30",
+      "in_effect_on_as_of": false,
+      "distance": 0.2503,
+      "content_hash": "sha256:9ed92d59c8c91e97003a7f51951a2538d8cd8d6eee18e08a026910095d761f45"
+    },
+    {
+      "rank": 5,
+      "source_ref": "core@1.4:766",
+      "refs": [
+        "766"
+      ],
+      "valid_from": "2026-07-24",
+      "valid_to": null,
+      "in_effect_on_as_of": true,
+      "distance": 0.2524,
+      "content_hash": "sha256:211d3b65db92e1547ddb7cef783599621b0ed9f0bcafdeccf2db5722543aed51"
+    }
+  ],
+  "generation": null
+}

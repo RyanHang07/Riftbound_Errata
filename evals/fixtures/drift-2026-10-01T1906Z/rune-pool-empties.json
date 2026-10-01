@@ -1,0 +1,105 @@
+{
+  "id": "rune-pool-empties",
+  "question": "When does my Rune Pool empty during my turn?",
+  "as_of": "2026-10-01",
+  "captured_at": "2026-10-01T19:06:51+00:00",
+  "verdict": "captured",
+  "change": "Until v1.4 the Rune Pool emptied at the end of each player's draw phase (and at end of turn). v1.4 moves the first emptying to the start of each player's Main Phase.",
+  "current": [
+    "core@1.4:167"
+  ],
+  "stale": [
+    "core@1.1:160",
+    "core@1.2:163",
+    "core@1.3:166"
+  ],
+  "first_current_rank": 3,
+  "first_stale_rank": 1,
+  "retrieval": {
+    "method": "naive-vector, no date filter",
+    "k": 5,
+    "embed_model": "nomic-embed-text",
+    "embed_digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+    "query_prefix": "search_query: "
+  },
+  "results": [
+    {
+      "rank": 1,
+      "source_ref": "core@1.2:163.1",
+      "refs": [
+        "163",
+        "163.1"
+      ],
+      "valid_from": "2025-12-12",
+      "valid_to": "2026-03-30",
+      "in_effect_on_as_of": false,
+      "distance": 0.1542,
+      "content_hash": "sha256:97e3a247b28f0ee30e40fdd2a145b0d776b2ba5af6f83df9329b4c6894169a3a"
+    },
+    {
+      "rank": 2,
+      "source_ref": "core@1.1:160.1",
+      "refs": [
+        "160",
+        "160.1"
+      ],
+      "valid_from": "2025-10-24",
+      "valid_to": "2025-12-12",
+      "in_effect_on_as_of": false,
+      "distance": 0.1544,
+      "content_hash": "sha256:fadb07cb2deecb8b9f440431a197561e2cbb5b091858b0626f7dd67c8d800ca9"
+    },
+    {
+      "rank": 3,
+      "source_ref": "core@1.4:167.1",
+      "refs": [
+        "167",
+        "167.1"
+      ],
+      "valid_from": "2026-07-24",
+      "valid_to": null,
+      "in_effect_on_as_of": true,
+      "distance": 0.1559,
+      "content_hash": "sha256:a860b40d330ee89696de6163aa40400a681cce3d3adf2395e72817e585c66237"
+    },
+    {
+      "rank": 4,
+      "source_ref": "core@1.3:166.1",
+      "refs": [
+        "166",
+        "166.1"
+      ],
+      "valid_from": "2026-03-30",
+      "valid_to": "2026-07-24",
+      "in_effect_on_as_of": false,
+      "distance": 0.1567,
+      "content_hash": "sha256:519f191242822f90193c739d3d7d66c410c3948617b2bf7ad2f30f080424d678"
+    },
+    {
+      "rank": 5,
+      "source_ref": "core@1.4:316.3",
+      "refs": [
+        "316",
+        "316.3"
+      ],
+      "valid_from": "2026-07-24",
+      "valid_to": null,
+      "in_effect_on_as_of": true,
+      "distance": 0.1933,
+      "content_hash": "sha256:f145ccae05e2de88576903f010d2b8fc16ef5b0fa29e67950702b9c2053f38de"
+    }
+  ],
+  "generation": {
+    "model": "qwen3:4b-instruct-2507-q4_K_M",
+    "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "think": false,
+    "temperature": 0.0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "cpu_only": false,
+    "prompt_template_sha256": "77ae5735af4172d28390b749aa7b167a03d4ab856bf3c78deb3fee71644c3140",
+    "prompt_tokens": 406,
+    "answer_tokens": 81,
+    "answer": "Your Rune Pool empties at the end of your draw phase and at the end of your turn [core@1.2:163.1]. It also empties at the start of your Main Phase [core@1.4:167.1]. Any unspent Energy or Power are lost in each case [core@1.2:163.1]."
+  }
+}

@@ -92,6 +92,11 @@
 #   accelerate-two-domains and c-cost-two-domains are the likeliest misses:
 #   their questions use game shorthand ("[C]", "power") that may match many
 #   cost rules better than the specific one.
+#
+# OUTCOME (2026-10-01, evals/fixtures/drift-2026-10-01T1906Z/): 3 of 6
+#   captured (rune-pool, replacement-order, accelerate), inside the predicted
+#   range. Of the two named likeliest misses, c-cost missed and accelerate was
+#   captured: half right. Full write-up: docs/DRIFT.md.
 # ---------------------------------------------------------------------------
 
 - id: rune-pool-empties

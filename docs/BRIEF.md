@@ -1217,3 +1217,22 @@ assumed.
 Rejected: fixing the prompt only (cheaper, but it fights the model rather than
 choosing one that matches the task); leaving it to slice 6 (any slice 3
 capture would come with an unfinished answer).
+
+### A20. Slice 3 result, and a measurement gap it exposed
+
+*2026-10-01. Full write-up: `docs/DRIFT.md`.*
+
+Naive retrieval ranked an outdated rule first for 3 of 10 candidates, and the
+generator, given the Rune Pool question, stated a rule that stopped applying
+on 2026-07-24 as current, with citations. That is the slice 3 artifact.
+
+**The gap.** In all three captures the current rule was also in the top 5, so
+A1's version-aware recall@5 counts each as a hit, yet one answer was wrong
+because outdated copies came with it. Recall@k alone cannot see this. Slice 5
+should report, alongside recall@k, how often an outdated version of an
+expected rule appears in the top k ("stale contamination"), and slice 7's
+taxonomy needs a category for it. Not built now; recorded so slice 5 starts
+from it.
+
+Also from slice 3: missing the answering rule entirely happened in 4 of 10
+candidates, as often as the wrong-version failure it was looking for.
