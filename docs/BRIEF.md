@@ -1287,7 +1287,7 @@ instrument); the original six study sessions (the effort the user chose not
 to spend); building the confidence score first (it could not be checked, so
 its numbers would mean nothing).
 
-## A22. Sampled review results (2026-10-02)
+### A22. Sampled review results (2026-10-02)
 
 **Trim.** 60 questions were drawn (A21). After the first 20, all expert
 rulings, came back 19 agree, 1 unsure, 0 disagree, the remaining 20 rulings
