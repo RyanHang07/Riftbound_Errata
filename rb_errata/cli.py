@@ -151,6 +151,37 @@ def _show(args: argparse.Namespace) -> int:
     return 0
 
 
+def _questions(args: argparse.Namespace) -> int:
+    """Build evals/questions.yaml from the pinned rulings clone + the diff questions."""
+    import collections
+    from pathlib import Path
+
+    from rb_errata.ingest.fetch import RAW
+    from rb_errata.ingest.pdf import extract_text
+    from rb_errata.ingest.rules import parse_rules
+    from rb_errata.ingest.sources import CORE_RULES
+    from rb_errata.labels.build import build
+
+    versions = {
+        d.version: parse_rules(extract_text(Path(RAW) / d.filename))
+        for d in CORE_RULES
+        if d.version != "1.0"  # refused at ingestion (A16): not in the corpus
+    }
+    entries, problems = build(Path(args.rulings), versions, CORE_RULES[-1].version)
+    strata = collections.Counter(e["stratum"] for e in entries)
+    print(f"{len(entries)} questions -> evals/questions.yaml: {dict(strata)}")
+    for p in problems:
+        print(f"PROBLEM {p}")
+    return 1 if problems else 0
+
+
+def _power(_: argparse.Namespace) -> int:
+    from rb_errata.labels.power import report
+
+    print("\n".join(report()))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="rb_errata")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -167,6 +198,8 @@ def main(argv: list[str] | None = None) -> int:
         "show": (_show, "re-display a fixture with rule text from the local database"),
         "regrade": (_regrade, "re-grade stored fixtures against the current labels"),
         "check-candidates": (_check_candidates, "full text of every candidate rule, per version"),
+        "questions": (_questions, "build evals/questions.yaml (needs the rulings clone)"),
+        "power": (_power, "how many questions are needed (exact, no model)"),
     }
     for name, (fn, help_text) in commands.items():
         p = sub.add_parser(name, help=help_text)
@@ -179,6 +212,8 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("-n", type=int, default=15)
         if name == "show":
             p.add_argument("fixture")
+        if name == "questions":
+            p.add_argument("rulings", help="path to a clone of ChristianIvicevic/riftboundfaq")
         if name == "regrade":
             p.add_argument("dir")
         if name == "search":

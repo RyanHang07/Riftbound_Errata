@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -87,3 +87,13 @@ check-candidates:  ## FULL text of each candidate rule in every version (local o
 # Usage: make show F=evals/fixtures/drift-2026-10-01/deflect-chosen-twice.json
 show:  ## re-display a fixture with rule text from the local database
 	$(UV) python -m rb_errata.cli show $(F)
+
+# --- Labelled question set (slice 4) ---
+
+# Usage: make questions RULINGS=../riftboundfaq   (a clone of ChristianIvicevic/riftboundfaq;
+# the commit is pinned in rb_errata/labels/rulings.py)
+questions:  ## build evals/questions.yaml and check every expected ref against the corpus
+	$(UV) python -m rb_errata.cli questions $(RULINGS)
+
+power:  ## how many questions are needed (exact calculation, no model)
+	$(UV) python -m rb_errata.cli power

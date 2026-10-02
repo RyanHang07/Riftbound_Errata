@@ -1,0 +1,5 @@
+# Sampled human review of evals/questions.yaml (A21). Sample drawn by
+# rb_errata/labels/review.py with seed 20261002; anyone can reproduce it.
+# One row per reviewed question: id, verdict (agree | disagree | unsure), note,
+# reviewer, date. `unsure` never counts as agreement.
+[]
