@@ -1365,3 +1365,60 @@ recall@k, and every pair is committed for audit.
 
 Budget update to A23: real k = 5 prompts are median 846 cl100k tokens, so a
 600-generation run is about 7.6 h on CPU (10.6 h at p90), not 15.9 h.
+
+### A25. Slices 6 to 14 re-planned: an agent, a card database, more breadth (2026-10-02)
+
+*Decided by the user after slice 5. Replaces the order of section 7's slices
+6 to 14; their content is kept, renumbered, and four pieces are added.*
+
+**What it becomes.** A local agent, not only a pipeline: a LangGraph graph
+that routes, retrieves, checks dates and confidence, re-searches when
+confidence is low, and answers with versioned citations. The same
+capabilities are served over MCP so other agents (e.g. Claude Desktop) can
+call them. The brief's rule still holds: LangGraph is earned. Here it is
+earned by a cycle (re-search on low confidence) and by branching (cards vs
+rules), and the agent slice carries a written prediction; if the loop does
+not help, that is reported as a null result with its bound.
+
+**Why a card database.** Counted on the slice 5 run: 113 of 160 expert-ruling
+questions are about a card, and their recall@5 is 35% [26, 44] against 86%
+[65, 95] for mechanics questions (50% [32, 68] general rules). The corpus has
+no card text, so the search cannot look a card up. A card database also gives
+the router something real to route: SQL for card facts, retrieval for rules,
+both for card rulings.
+
+**Legal gate on the card database.** Card data is Riot's. Before any card
+data is fetched, the user reads Riot's Legal Jibber Jabber, developer policy
+and Digital Tools Policy (deferred since slice 1), and the source is chosen
+against them. Same IP rule as the rules PDFs: fetched to the user's machine,
+never committed; committed files hold ids and hashes only.
+
+**New order.**
+
+| # | Slice | Adds to the stack | Measured by |
+|---|---|---|---|
+| 5b | CI: `make verify` on every push | GitHub Actions | Green check on the branch |
+| 6 | Version-aware retrieval (`as_of` in SQL) | SQL predicate before ranking | recall@k vs A24; wrong-version above hit should be 0 by construction |
+| 7 | Embedding comparison | Qwen3-Embedding-0.6B | recall@k, paired McNemar against nomic |
+| 8 | Hybrid search | Postgres full-text + pgvector, rank fusion | recall@k, prediction first |
+| 9 | Reranking | bge-reranker cross-encoder | recall@k and latency, prediction first |
+| 10 | Card database (legal gate first) | Card tables, name resolution | recall@5 on card questions, baseline 35% |
+| 11 | Generation + judge validation | Ollama generation, LLM judge, Cohen's kappa | kappa with interval vs hand labels |
+| 12 | Failure taxonomy, deterministic | | Every failure classified, no unclassified bucket hidden |
+| 13 | Confidence score, calibrated (A21) | Calibration curve | Stated confidence vs measured accuracy |
+| 14 | The agent | LangGraph; OpenTelemetry tracing viewed in Arize Phoenix (local) | Accuracy and calibration with vs without the re-search loop |
+| 15 | MCP server | MCP Python SDK | Tools callable from an MCP client |
+| 16 | Prompt injection defense | Adversarial test set | Injection success rate |
+| 17 | Web UI | TypeScript (Vite + React) over a thin HTTP API | Works offline against the local agent |
+
+**Why this order.** Version-aware retrieval first: it is the project's
+contribution, needs no model, and every later retrieval slice is then
+measured on the date-filtered baseline instead of a strawman. Retrieval
+slices (6 to 10) all run before generation (11), so the overnight generation
+runs only for configurations that survive recall@k (A14). The confidence
+score comes before the agent because the agent's loop is driven by it.
+
+Rejected: keeping the pipeline as an MCP tool only (no agent of its own, no
+LangGraph); an agent without MCP (loses the product surface); the brief's
+original order (the main improvement would come last and every ablation
+before it would be measured against the naive baseline).
