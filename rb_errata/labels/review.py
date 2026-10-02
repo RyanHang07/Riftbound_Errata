@@ -15,9 +15,11 @@ from typing import Any
 import yaml
 
 SEED = 20261002
-# Stratified so every stratum is checked, roughly in proportion, with the
-# small FAQ stratum guaranteed one.
-PLAN = {"expert-ruling": 15, "expert-ruling-faq": 1, "version-change": 4}
+# Stratified so every stratum is checked, roughly in proportion to the set
+# (160 / 8 / 56), with the small FAQ stratum over-sampled so it is not zero.
+# 60, not the 20 first planned: the user chose the larger review, which
+# narrows the agreement interval from about +/-20 to about +/-12 points.
+PLAN = {"expert-ruling": 40, "expert-ruling-faq": 4, "version-change": 16}
 REVIEW = Path("evals/review.yaml")
 
 

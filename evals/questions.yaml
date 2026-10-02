@@ -8335,27 +8335,30 @@
   question: Can an effect play a gear directly to a battlefield?
   as_of: '2026-10-01'
   expect_sources:
+  - core@1.4:148.1.a.1
   - core@1.4:152.2
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'In v1.3 gear was always played to base, with playing it from facedown as the only exception.
-    v1.4 says gear is played to base unless an effect says otherwise. Old answer: no. Current: yes, if
-    the effect says so.'
+  change: 'In v1.1 and v1.2 gear could only be played to base. v1.3 added "unless an effect specifies
+    otherwise" to one rule but kept "always played to base" in another, contradicting itself. v1.4 made
+    both say base unless an effect says otherwise. Old answer (v1.1-1.2): no. Current: yes, if the effect
+    says so.'
   source: &id004
     from: evals/drift_candidates.yaml
     id: gear-to-battlefield
-- id: v-gear-to-battlefield-v1.3
+- id: v-gear-to-battlefield-v1.2
   question: Can an effect play a gear directly to a battlefield?
-  as_of: '2026-05-27'
+  as_of: '2026-02-04'
   expect_sources:
-  - core@1.3:151.2
+  - core@1.2:147.2
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'In v1.3 gear was always played to base, with playing it from facedown as the only exception.
-    v1.4 says gear is played to base unless an effect says otherwise. Old answer: no. Current: yes, if
-    the effect says so.'
+  change: 'In v1.1 and v1.2 gear could only be played to base. v1.3 added "unless an effect specifies
+    otherwise" to one rule but kept "always played to base" in another, contradicting itself. v1.4 made
+    both say base unless an effect says otherwise. Old answer (v1.1-1.2): no. Current: yes, if the effect
+    says so.'
   source: *id004
 - id: v-rune-pool-empties-current
   question: When does my Rune Pool empty during my turn?
@@ -8507,3 +8510,445 @@
   change: Until v1.4 a [C] on a card with no domain or several domains was treated as [A], a power of
     any domain. v1.4 keeps that only for cards with no domain.
   source: *id010
+- id: v-attached-gear-moves-current
+  question: When a unit with gear attached moves, does the attached gear count as moving too?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:446.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 any permanent changing position on the board was a move. v1.4 excludes an attached
+    permanent changing location with its top card. Old answer: yes. Current: no.'
+  source: &id011
+    from: evals/drift_candidates.yaml
+    id: attached-gear-moves
+- id: v-attached-gear-moves-v1.3
+  question: When a unit with gear attached moves, does the attached gear count as moving too?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:441.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 any permanent changing position on the board was a move. v1.4 excludes an attached
+    permanent changing location with its top card. Old answer: yes. Current: no.'
+  source: *id011
+- id: v-contested-again-current
+  question: If a battlefield is already contested and more of my units move there, does it become contested
+    again?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:450
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 a destination battlefield not controlled by the mover became contested. v1.4 limits
+    that to battlefields not already contested. Old answer: yes. Current: no.'
+  source: &id012
+    from: evals/drift_candidates.yaml
+    id: contested-again
+- id: v-contested-again-v1.3
+  question: If a battlefield is already contested and more of my units move there, does it become contested
+    again?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:445
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 a destination battlefield not controlled by the mover became contested. v1.4 limits
+    that to battlefields not already contested. Old answer: yes. Current: no.'
+  source: *id012
+- id: v-control-without-contest-current
+  question: Do I have to contest a battlefield before I can gain control of it?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:469.1.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 a player gained control after establishing it by applying Contested first. v1.4
+    drops the contesting requirement. Old answer: yes. Current: no.'
+  source: &id013
+    from: evals/drift_candidates.yaml
+    id: control-without-contest
+- id: v-control-without-contest-v1.3
+  question: Do I have to contest a battlefield before I can gain control of it?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:464.1.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 a player gained control after establishing it by applying Contested first. v1.4
+    drops the contesting requirement. Old answer: yes. Current: no.'
+  source: *id013
+- id: v-no-result-staging-current
+  question: If a combat ends with No Result and both players still have units there, what gets staged
+    at that battlefield?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:466.3.d.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: In v1.3 a combat was staged. v1.4 stages a showdown and a combat. (The rule has no counterpart
+    before v1.3.)
+  source: &id014
+    from: evals/drift_candidates.yaml
+    id: no-result-staging
+- id: v-no-result-staging-v1.3
+  question: If a combat ends with No Result and both players still have units there, what gets staged
+    at that battlefield?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:461.3.d.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: In v1.3 a combat was staged. v1.4 stages a showdown and a combat. (The rule has no counterpart
+    before v1.3.)
+  source: *id014
+- id: v-battlefield-ability-controller-current
+  question: If an uncontrolled battlefield's ability says a specific player controls it, who controls
+    that ability?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:190.6.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 an uncontrolled battlefield''s abilities were always handled by the turn player.
+    v1.4 makes an exception when the ability names a player. Old answer: the turn player. Current: the
+    named player.'
+  source: &id015
+    from: evals/drift_candidates.yaml
+    id: battlefield-ability-controller
+- id: v-battlefield-ability-controller-v1.3
+  question: If an uncontrolled battlefield's ability says a specific player controls it, who controls
+    that ability?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:187.6.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 an uncontrolled battlefield''s abilities were always handled by the turn player.
+    v1.4 makes an exception when the ability names a player. Old answer: the turn player. Current: the
+    named player.'
+  source: *id015
+- id: v-created-permanent-location-current
+  question: If an effect creates a permanent without saying where, can I choose to put it at a battlefield?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:439.2.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'In v1.3 a created permanent could go to any board location it could be played to. v1.4 sends
+    it to the appropriate zone for its type. Old answer: yes. Current: no choice. (No counterpart before
+    v1.3.)'
+  source: &id016
+    from: evals/drift_candidates.yaml
+    id: created-permanent-location
+- id: v-created-permanent-location-v1.3
+  question: If an effect creates a permanent without saying where, can I choose to put it at a battlefield?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:439.2.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'In v1.3 a created permanent could go to any board location it could be played to. v1.4 sends
+    it to the appropriate zone for its type. Old answer: yes. Current: no choice. (No counterpart before
+    v1.3.)'
+  source: *id016
+- id: v-ready-phase-current
+  question: During which part of my turn do I ready my units and gear?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:415.3.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.4: the Ready Step of the Beginning Phase. v1.4: the Awakening Phase.'
+  source: &id017
+    from: evals/drift_candidates.yaml
+    id: ready-phase
+- id: v-ready-phase-v1.3
+  question: During which part of my turn do I ready my units and gear?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:415.3.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.4: the Ready Step of the Beginning Phase. v1.4: the Awakening Phase.'
+  source: *id017
+- id: v-draw-phase-current
+  question: When during my turn do I draw my card?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:410.2.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.4: the Draw Step of the Beginning Phase. v1.4: the Draw Phase.'
+  source: &id018
+    from: evals/drift_candidates.yaml
+    id: draw-phase
+- id: v-draw-phase-v1.3
+  question: When during my turn do I draw my card?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:410.2.b
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.4: the Draw Step of the Beginning Phase. v1.4: the Draw Phase.'
+  source: *id018
+- id: v-token-on-chain-current
+  question: Does a token stop existing when it is put on the chain?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:186.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 a token put into any non-board zone ceased to exist. From v1.3 the chain is excepted.
+    Old answer: yes. Answer since v1.3: no.'
+  source: &id019
+    from: evals/drift_candidates.yaml
+    id: token-on-chain
+- id: v-token-on-chain-v1.2
+  question: Does a token stop existing when it is put on the chain?
+  as_of: '2026-02-04'
+  expect_sources:
+  - core@1.2:180.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 a token put into any non-board zone ceased to exist. From v1.3 the chain is excepted.
+    Old answer: yes. Answer since v1.3: no.'
+  source: *id019
+- id: v-replacement-from-triggered-current
+  question: Can a triggered ability be a replacement effect?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:368.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'v1.1 said triggered abilities can be replacement effects. From v1.2 it is passive abilities.
+    Old answer: yes. Answer since v1.2: no, passive ones.'
+  source: &id020
+    from: evals/drift_candidates.yaml
+    id: replacement-from-triggered
+- id: v-replacement-from-triggered-v1.1
+  question: Can a triggered ability be a replacement effect?
+  as_of: '2025-11-17'
+  expect_sources:
+  - core@1.1:365.2
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'v1.1 said triggered abilities can be replacement effects. From v1.2 it is passive abilities.
+    Old answer: yes. Answer since v1.2: no, passive ones.'
+  source: *id020
+- id: v-standard-move-in-combat-current
+  question: Can my units make a standard move while a combat is happening?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:144.1.c
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 the standard move was barred only during a showdown. From v1.3 it is barred during
+    a showdown or combat. Old answer: yes. Answer since v1.3: no.'
+  source: &id021
+    from: evals/drift_candidates.yaml
+    id: standard-move-in-combat
+- id: v-standard-move-in-combat-v1.2
+  question: Can my units make a standard move while a combat is happening?
+  as_of: '2026-02-04'
+  expect_sources:
+  - core@1.2:143.1.c
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 the standard move was barred only during a showdown. From v1.3 it is barred during
+    a showdown or combat. Old answer: yes. Answer since v1.3: no.'
+  source: *id021
+- id: v-unit-ability-phase-current
+  question: During which phase of my turn can I use my units' activated abilities?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:145.2
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.3: the Action Phase. From v1.3: the Main Phase.'
+  source: &id022
+    from: evals/drift_candidates.yaml
+    id: unit-ability-phase
+- id: v-unit-ability-phase-v1.2
+  question: During which phase of my turn can I use my units' activated abilities?
+  as_of: '2026-02-04'
+  expect_sources:
+  - core@1.2:144.2
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Phase rename. Until v1.3: the Action Phase. From v1.3: the Main Phase.'
+  source: *id022
+- id: v-counter-abilities-current
+  question: Can an ability be countered, or only cards?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:425.1
+  - core@1.4:425.2.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 countering was defined for cards only. From v1.3 it covers cards and abilities.
+    Old answer: only cards. Answer since v1.3: both.'
+  source: &id023
+    from: evals/drift_candidates.yaml
+    id: counter-abilities
+- id: v-counter-abilities-v1.2
+  question: Can an ability be countered, or only cards?
+  as_of: '2026-02-04'
+  expect_sources:
+  - core@1.2:412.1
+  - core@1.2:412.2.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 countering was defined for cards only. From v1.3 it covers cards and abilities.
+    Old answer: only cards. Answer since v1.3: both.'
+  source: *id023
+- id: v-created-token-played-current
+  question: When an effect creates a unit token, does that count as playing it?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:184
+  - core@1.4:185.2.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 tokens "are played" when their card type is played. v1.4 says they "can be" played
+    and qualifies the creation rule with "if the token is played". Old answer: yes. Current: not necessarily.'
+  source: &id024
+    from: evals/drift_candidates.yaml
+    id: created-token-played
+- id: v-created-token-played-v1.3
+  question: When an effect creates a unit token, does that count as playing it?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:181
+  - core@1.3:182.1.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 tokens "are played" when their card type is played. v1.4 says they "can be" played
+    and qualifies the creation rule with "if the token is played". Old answer: yes. Current: not necessarily.'
+  source: *id024
+- id: v-showdown-or-combat-first-current
+  question: If a showdown and a combat are both staged at the same battlefield, which one begins?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:323.12
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 any staged showdown began at its step, before combats. v1.4 begins a showdown only
+    at battlefields without a combat staged. Old answer: the showdown. Current: the combat.'
+  source: &id025
+    from: evals/drift_candidates.yaml
+    id: showdown-or-combat-first
+- id: v-showdown-or-combat-first-v1.3
+  question: If a showdown and a combat are both staged at the same battlefield, which one begins?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:323.11
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 any staged showdown began at its step, before combats. v1.4 begins a showdown only
+    at battlefields without a combat staged. Old answer: the showdown. Current: the combat.'
+  source: *id025
+- id: v-exhaust-off-board-current
+  question: Can an effect exhaust a card that is not on the board?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:414.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 exhausting applied to any non-spell game object. From v1.3 only to those on the
+    board. Old answer: yes. Answer since v1.3: no.'
+  source: &id026
+    from: evals/drift_candidates.yaml
+    id: exhaust-off-board
+- id: v-exhaust-off-board-v1.2
+  question: Can an effect exhaust a card that is not on the board?
+  as_of: '2026-02-04'
+  expect_sources:
+  - core@1.2:401.1
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.3 exhausting applied to any non-spell game object. From v1.3 only to those on the
+    board. Old answer: yes. Answer since v1.3: no.'
+  source: *id026
+- id: v-teammate-conquer-scoring-current
+  question: In 2v2, if my teammate controlled a battlefield during my Beginning Phase, can the other team
+    still score it by conquering it this turn?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:469.1.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 such a battlefield could not be scored through conquer by any means. v1.4 disqualifies
+    it only for my team. Old answer: no. Current: yes.'
+  source: &id027
+    from: evals/drift_candidates.yaml
+    id: teammate-conquer-scoring
+- id: v-teammate-conquer-scoring-v1.3
+  question: In 2v2, if my teammate controlled a battlefield during my Beginning Phase, can the other team
+    still score it by conquering it this turn?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:464.1.a
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 such a battlefield could not be scored through conquer by any means. v1.4 disqualifies
+    it only for my team. Old answer: no. Current: yes.'
+  source: *id027
+- id: v-unit-gear-enters-ready-current
+  question: Does a gear that is also a unit enter the board ready?
+  as_of: '2026-10-01'
+  expect_sources:
+  - core@1.4:359.2.d
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 every gear entered ready at its base. v1.4 limits that to non-unit gear. Old answer:
+    yes. Current: not by this rule.'
+  source: &id028
+    from: evals/drift_candidates.yaml
+    id: unit-gear-enters-ready
+- id: v-unit-gear-enters-ready-v1.3
+  question: Does a gear that is also a unit enter the board ready?
+  as_of: '2026-05-27'
+  expect_sources:
+  - core@1.3:359.2.d
+  provenance: written
+  stratum: version-change
+  version_dependent: true
+  change: 'Until v1.4 every gear entered ready at its base. v1.4 limits that to non-unit gear. Old answer:
+    yes. Current: not by this rule.'
+  source: *id028

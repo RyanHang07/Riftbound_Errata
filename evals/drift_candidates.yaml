@@ -71,12 +71,22 @@
 - id: gear-to-battlefield
   question: "Can an effect play a gear directly to a battlefield?"
   as_of: 2026-10-01
-  current: ["core@1.4:152.2"]
-  stale: ["core@1.3:151.2"]
+  current: ["core@1.4:148.1.a.1", "core@1.4:152.2"]
+  stale: ["core@1.1:144.2", "core@1.2:147.2"]
+  # v1.3 is neither: it contradicts itself. 148.1.a.1 (changed in v1.3) says
+  # gear is played to base "unless an effect specifies otherwise"; 151.2 in
+  # the same version says gear is "always" played to base. No single answer.
+  #
+  # WRONG, as first written (left visible; brief section 10):
+  #   current: ["core@1.4:152.2"]
+  #   stale: ["core@1.3:151.2"]
+  # Found 2026-10-02 while scanning v1.3 changes: the trace looked only at the
+  # rule that changed in v1.4 and missed the sibling rule changed in v1.3.
   change: >-
-    In v1.3 gear was always played to base, with playing it from facedown as
-    the only exception. v1.4 says gear is played to base unless an effect says
-    otherwise. Old answer: no. Current: yes, if the effect says so.
+    In v1.1 and v1.2 gear could only be played to base. v1.3 added "unless an
+    effect specifies otherwise" to one rule but kept "always played to base"
+    in another, contradicting itself. v1.4 made both say base unless an effect
+    says otherwise. Old answer (v1.1-1.2): no. Current: yes, if the effect says so.
 
 # ---------------------------------------------------------------------------
 # BATCH 2 (added 2026-10-01 after the first run). Every rule here changed ONLY
@@ -157,3 +167,188 @@
     Until v1.4 a [C] on a card with no domain or several domains was treated
     as [A], a power of any domain. v1.4 keeps that only for cards with no
     domain.
+
+# ---------------------------------------------------------------------------
+# BATCH 3 (added 2026-10-02 to reach the power analysis target, docs/POWER.md).
+# Chosen from rules that changed at v1.2, v1.3 or v1.4 and stayed changed, so
+# the dated twins spread across all three older windows. Each verified on full
+# rule texts in every version before being written. Two kinds of change:
+# meaning flips, and phase renames (ready-phase, draw-phase,
+# unit-ability-phase), where the answer's wording depends on the date.
+#
+# PREDICTION for batch 3 if run through `make drift` (written before running):
+#   5 to 9 of 18 captured. Same reasoning as batch 2 (several near-identical
+#   stale copies per rule), lowered for the phase renames, whose new names
+#   ("Awakening Phase", "Main Phase") appear in many other v1.4 rules and
+#   should pull current passages up.
+# ---------------------------------------------------------------------------
+
+- id: attached-gear-moves
+  question: "When a unit with gear attached moves, does the attached gear count as moving too?"
+  as_of: 2026-10-01
+  current: ["core@1.4:446.1"]
+  stale: ["core@1.1:420.1", "core@1.2:424.1", "core@1.3:441.1"]
+  change: >-
+    Until v1.4 any permanent changing position on the board was a move. v1.4
+    excludes an attached permanent changing location with its top card. Old
+    answer: yes. Current: no.
+
+- id: contested-again
+  question: "If a battlefield is already contested and more of my units move there, does it become contested again?"
+  as_of: 2026-10-01
+  current: ["core@1.4:450"]
+  stale: ["core@1.1:424", "core@1.2:428", "core@1.3:445"]
+  change: >-
+    Until v1.4 a destination battlefield not controlled by the mover became
+    contested. v1.4 limits that to battlefields not already contested. Old
+    answer: yes. Current: no.
+
+- id: control-without-contest
+  question: "Do I have to contest a battlefield before I can gain control of it?"
+  as_of: 2026-10-01
+  current: ["core@1.4:469.1.b"]
+  stale: ["core@1.1:442.1.b", "core@1.2:446.1.b", "core@1.3:464.1.b"]
+  change: >-
+    Until v1.4 a player gained control after establishing it by applying
+    Contested first. v1.4 drops the contesting requirement. Old answer: yes.
+    Current: no.
+
+- id: no-result-staging
+  question: "If a combat ends with No Result and both players still have units there, what gets staged at that battlefield?"
+  as_of: 2026-10-01
+  current: ["core@1.4:466.3.d.1"]
+  stale: ["core@1.3:461.3.d.1"]
+  change: >-
+    In v1.3 a combat was staged. v1.4 stages a showdown and a combat. (The
+    rule has no counterpart before v1.3.)
+
+- id: battlefield-ability-controller
+  question: "If an uncontrolled battlefield's ability says a specific player controls it, who controls that ability?"
+  as_of: 2026-10-01
+  current: ["core@1.4:190.6.b"]
+  stale: ["core@1.1:181.6.b", "core@1.2:184.6.b", "core@1.3:187.6.b"]
+  change: >-
+    Until v1.4 an uncontrolled battlefield's abilities were always handled by
+    the turn player. v1.4 makes an exception when the ability names a player.
+    Old answer: the turn player. Current: the named player.
+
+- id: created-permanent-location
+  question: "If an effect creates a permanent without saying where, can I choose to put it at a battlefield?"
+  as_of: 2026-10-01
+  current: ["core@1.4:439.2.b"]
+  stale: ["core@1.3:439.2.b"]
+  change: >-
+    In v1.3 a created permanent could go to any board location it could be
+    played to. v1.4 sends it to the appropriate zone for its type. Old
+    answer: yes. Current: no choice. (No counterpart before v1.3.)
+
+- id: ready-phase
+  question: "During which part of my turn do I ready my units and gear?"
+  as_of: 2026-10-01
+  current: ["core@1.4:415.3.a"]
+  stale: ["core@1.1:402.3.a", "core@1.2:402.3.a", "core@1.3:415.3.a"]
+  change: >-
+    Phase rename. Until v1.4: the Ready Step of the Beginning Phase. v1.4:
+    the Awakening Phase.
+
+- id: draw-phase
+  question: "When during my turn do I draw my card?"
+  as_of: 2026-10-01
+  current: ["core@1.4:410.2.b"]
+  stale: ["core@1.1:398.2.b", "core@1.2:398.2.b", "core@1.3:410.2.b"]
+  change: >-
+    Phase rename. Until v1.4: the Draw Step of the Beginning Phase. v1.4: the
+    Draw Phase.
+
+- id: token-on-chain
+  question: "Does a token stop existing when it is put on the chain?"
+  as_of: 2026-10-01
+  current: ["core@1.4:186.1"]
+  stale: ["core@1.1:177.1", "core@1.2:180.1"]
+  change: >-
+    Until v1.3 a token put into any non-board zone ceased to exist. From v1.3
+    the chain is excepted. Old answer: yes. Answer since v1.3: no.
+
+- id: replacement-from-triggered
+  question: "Can a triggered ability be a replacement effect?"
+  as_of: 2026-10-01
+  current: ["core@1.4:368.1"]
+  stale: ["core@1.1:365.2"]
+  change: >-
+    v1.1 said triggered abilities can be replacement effects. From v1.2 it is
+    passive abilities. Old answer: yes. Answer since v1.2: no, passive ones.
+
+- id: standard-move-in-combat
+  question: "Can my units make a standard move while a combat is happening?"
+  as_of: 2026-10-01
+  current: ["core@1.4:144.1.c"]
+  stale: ["core@1.1:141.1.c", "core@1.2:143.1.c"]
+  change: >-
+    Until v1.3 the standard move was barred only during a showdown. From v1.3
+    it is barred during a showdown or combat. Old answer: yes. Answer since
+    v1.3: no.
+
+- id: unit-ability-phase
+  question: "During which phase of my turn can I use my units' activated abilities?"
+  as_of: 2026-10-01
+  current: ["core@1.4:145.2"]
+  stale: ["core@1.1:142.2", "core@1.2:144.2"]
+  change: >-
+    Phase rename. Until v1.3: the Action Phase. From v1.3: the Main Phase.
+
+- id: counter-abilities
+  question: "Can an ability be countered, or only cards?"
+  as_of: 2026-10-01
+  current: ["core@1.4:425.1", "core@1.4:425.2.a"]
+  stale: ["core@1.1:412.1", "core@1.1:412.2.a", "core@1.2:412.1", "core@1.2:412.2.a"]
+  change: >-
+    Until v1.3 countering was defined for cards only. From v1.3 it covers
+    cards and abilities. Old answer: only cards. Answer since v1.3: both.
+
+- id: created-token-played
+  question: "When an effect creates a unit token, does that count as playing it?"
+  as_of: 2026-10-01
+  current: ["core@1.4:185.2.a", "core@1.4:184"]
+  stale: ["core@1.1:176.1.a", "core@1.1:175", "core@1.2:179.1.a", "core@1.2:178",
+          "core@1.3:182.1.a", "core@1.3:181"]
+  change: >-
+    Until v1.4 tokens "are played" when their card type is played. v1.4 says
+    they "can be" played and qualifies the creation rule with "if the token is
+    played". Old answer: yes. Current: not necessarily.
+
+- id: showdown-or-combat-first
+  question: "If a showdown and a combat are both staged at the same battlefield, which one begins?"
+  as_of: 2026-10-01
+  current: ["core@1.4:323.12"]
+  stale: ["core@1.1:322.9", "core@1.2:322.13", "core@1.3:323.11"]
+  change: >-
+    Until v1.4 any staged showdown began at its step, before combats. v1.4
+    begins a showdown only at battlefields without a combat staged. Old
+    answer: the showdown. Current: the combat.
+
+- id: exhaust-off-board
+  question: "Can an effect exhaust a card that is not on the board?"
+  as_of: 2026-10-01
+  current: ["core@1.4:414.1"]
+  stale: ["core@1.1:401.1", "core@1.2:401.1"]
+  change: >-
+    Until v1.3 exhausting applied to any non-spell game object. From v1.3 only
+    to those on the board. Old answer: yes. Answer since v1.3: no.
+
+- id: teammate-conquer-scoring
+  question: "In 2v2, if my teammate controlled a battlefield during my Beginning Phase, can the other team still score it by conquering it this turn?"
+  as_of: 2026-10-01
+  current: ["core@1.4:469.1.a"]
+  stale: ["core@1.1:442.1.a", "core@1.2:446.1.a", "core@1.3:464.1.a"]
+  change: >-
+    Until v1.4 such a battlefield could not be scored through conquer by any
+    means. v1.4 disqualifies it only for my team. Old answer: no. Current: yes.
+
+- id: unit-gear-enters-ready
+  question: "Does a gear that is also a unit enter the board ready?"
+  as_of: 2026-10-01
+  current: ["core@1.4:359.2.d"]
+  stale: ["core@1.1:356.2.d", "core@1.2:356.2.d", "core@1.3:359.2.d"]
+  change: >-
+    Until v1.4 every gear entered ready at its base. v1.4 limits that to
+    non-unit gear. Old answer: yes. Current: not by this rule.
