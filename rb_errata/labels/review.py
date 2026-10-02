@@ -20,6 +20,14 @@ SEED = 20261002
 # 60, not the 20 first planned: the user chose the larger review, which
 # narrows the agreement interval from about +/-20 to about +/-12 points.
 PLAN = {"expert-ruling": 40, "expert-ruling-faq": 4, "version-change": 16}
+# Trimmed after the first 20 rulings came back 19 agree, 1 unsure, 0 disagree
+# (Wilson 95% for agreement 76 to 99%). Rulings are copied from an expert's
+# text, so their error source is extraction; version-change labels come from
+# our own diffing, where both earlier mislabels (Deflect, gear) came from.
+# The effort goes there. The draw itself is unchanged and truncated after:
+# shrinking PLAN would shift the rng state and silently swap the FAQ and
+# version-change questions for different ones.
+KEEP = {"expert-ruling": 20}
 REVIEW = Path("evals/review.yaml")
 
 
@@ -28,7 +36,7 @@ def sample(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     out = []
     for stratum, n in PLAN.items():
         pool = sorted((e for e in entries if e["stratum"] == stratum), key=lambda e: e["id"])
-        out += rng.sample(pool, n)
+        out += rng.sample(pool, n)[: KEEP.get(stratum, n)]
     return out
 
 

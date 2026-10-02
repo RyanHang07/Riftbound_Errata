@@ -86,3 +86,20 @@ def test_committed_question_set_references_only_ingested_rules() -> None:
         "version-change",
     }
     assert all(e["version_dependent"] in (True, None) for e in entries)
+
+
+def test_review_trim_keeps_later_strata(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Trimming rulings must not change which FAQ and version-change questions
+    # are drawn, or answers already given would point at a different sample.
+    from rb_errata.labels import review
+
+    entries = [
+        {"id": f"{s}-{i:03}", "stratum": s}
+        for s, n in [("expert-ruling", 160), ("expert-ruling-faq", 8), ("version-change", 56)]
+        for i in range(n)
+    ]
+    trimmed = review.sample(entries)
+    monkeypatch.setattr(review, "KEEP", {})
+    full = review.sample(entries)
+    assert len(trimmed) == 40
+    assert trimmed == full[:20] + full[40:]
