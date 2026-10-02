@@ -115,3 +115,44 @@ Two are guarantees, not guesses: if either fails, the code is wrong.
 If version-change gains less than 5 points, wrong-version copies were taking
 slots from other wrong chunks, not from the right one, and slice 8 onwards
 matters more than this slice.
+
+### Results: `evals/runs/recall-as-of-2026-10-02T2251Z`, paired with the baseline
+
+| Stratum | Naive recall@5 | As-of recall@5 | Gained | Lost | McNemar p |
+|---|---|---|---|---|---|
+| expert-ruling (160) | 44% [36, 51] | **58% [50, 65]** | 23 | 0 | 2.4e-07 |
+| expert-ruling-faq (8) | 62% | 62% | 0 | 0 | n/a |
+| version-change (56) | 39% [28, 52] | **59% [46, 71]** | 11 | 0 | 0.00098 |
+
+recall@20 under as-of: expert-ruling 80% [73, 85], FAQ 8/8, version-change
+84% [72, 91].
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| Wrong-version copy in top k = 0 (guarantee) | 0 in every stratum | Held. |
+| No question loses its hit (guarantee) | 0 lost | Held. |
+| version-change recall@5 about 52% (45 to 60) | 59% | Right, top of the range. |
+| expert-ruling recall@5 about 47% | 58% | **Wrong, far too low.** |
+| version-change significant, FAQ not | p = 0.00098; FAQ no discordant questions | Right. |
+
+**Why expert rulings gained so much.** The prediction reasoned from the
+"wrong-version copy" column (16%), which counts only copies whose text
+differs. It ignored copies that differ only in rule numbering. Counted on the
+naive run: 63% of expert-ruling top-5 slots (501 of 800) held a chunk not in
+effect on the question's date; 72% for version-change. The corpus holds four
+versions and the text barely changes between them, so a naive top 5 is
+mostly the same rule four times. The date filter's main effect is not
+removing wrong answers; it is giving the slots back.
+
+**What is left.** recall@20 is 80 to 84% but recall@5 is 58 to 59%: for about
+a quarter of questions the right rule is retrieved but ranked 6th to 20th.
+That is a ranking problem, which is what slice 9 (reranking) is for. The
+16 to 20% not in the top 20 at all are a finding problem, for slices 7, 8 and
+10 (embedder, hybrid search, card database). This run is the baseline every
+later slice is measured against.
+
+Prompt length at k = 5 rose to median 988 cl100k tokens (from 846): the
+in-effect chunks the filter promotes are longer on average. At A23's CPU
+rates: about 49 s per answer, 8.2 h per 600.

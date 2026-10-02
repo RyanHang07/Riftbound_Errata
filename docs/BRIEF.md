@@ -1442,3 +1442,20 @@ database ingested before A17 had the right text and the wrong v1.3 date, and
 passed. The guard now fingerprints text hash, ref and validity window, so a
 recall run cannot be measured on dates that differ from `data/corpus.json`.
 Prediction for the run: `docs/RECALL.md`.
+
+### A27. Slice 6 result: the date filter gives the slots back (2026-10-02)
+
+recall@5 with the as_of filter, paired with the naive baseline on the same
+questions: expert-ruling 44% to 58% (23 gained, 0 lost, McNemar p =
+2.4e-07), version-change 39% to 59% (11 gained, 0 lost, p = 0.00098), FAQ
+unchanged at 5 of 8. Both guarantees held (no wrong-version copies, no
+question lost). Two of three guesses were right; expert rulings gained far
+more than predicted because, counted on the naive run, 63% of their top-5
+slots held chunks from a version not in effect. Most of those copies have
+near-identical text, so the column built for A20 could not see them.
+
+From here every retrieval slice is measured against the as-of run
+(`evals/runs/recall-as-of-2026-10-02T2251Z`), not the naive one. Remaining
+gap: recall@20 80 to 84% against recall@5 58 to 59% (a ranking problem,
+slice 9) and 16 to 20% not found in the top 20 (slices 7, 8, 10). Details:
+`docs/RECALL.md`.
