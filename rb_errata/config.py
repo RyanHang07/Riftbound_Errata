@@ -124,7 +124,8 @@ EMBED_PROFILES: dict[str, dict[str, Any]] = {
     # the model card: "Instruct: <task>\nQuery:<query>".
     "qwen3": {
         "embed_model": "qwen3-embedding:0.6b",
-        "embed_digest": "",  # pinned from the first doctor run, like nomic was
+        # From the user's first `make doctor EMBED=qwen3`, 2026-10-02.
+        "embed_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
         "embed_dims": 1024,
         "embed_doc_prefix": "",
         "embed_query_prefix": (

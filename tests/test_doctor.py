@@ -16,7 +16,7 @@ import pytest
 from rb_errata import config, doctor
 from rb_errata.config import Settings
 from rb_errata.doctor import Status
-from rb_errata.ollama import Generation, Ollama
+from rb_errata.ollama import Generation, LocalModel, Ollama
 
 EMBED_DIGEST = "a" * 64
 GEN_DIGEST = "b" * 64
@@ -231,3 +231,13 @@ def test_one_word_check_tolerates_punctuation_and_case() -> None:
     assert doctor.follows_one_word_instruction(" ok.\n")
     assert doctor.follows_one_word_instruction('"OK"')
     assert not doctor.follows_one_word_instruction("OK, here is why")
+
+
+def test_unpinned_profile_hint_names_where_the_pin_lives() -> None:
+    # A non-default profile ignores RB_EMBED_DIGEST; the hint must not send
+    # the user to a setting that changes nothing.
+    check = doctor.check_pin(
+        "embed pin", "m", "", LocalModel("m", EMBED_DIGEST, 0),
+        'embed_digest in EMBED_PROFILES["qwen3"], rb_errata/config.py',
+    )  # fmt: skip
+    assert "EMBED_PROFILES" in check.detail and "RB_EMBED_DIGEST" not in check.detail

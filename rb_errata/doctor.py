@@ -163,7 +163,7 @@ def check_ollama(client: Ollama, settings: Settings) -> Check:
     return Check("ollama", Status.PASS, f"{version} at {settings.ollama_url}")
 
 
-def check_pin(name: str, tag: str, pinned: str, found: LocalModel | None, env_key: str) -> Check:
+def check_pin(name: str, tag: str, pinned: str, found: LocalModel | None, where: str) -> Check:
     """Tag says what we meant; digest says what we got."""
     if found is None:
         return Check(name, Status.UNKNOWN, f"{tag} not pulled, nothing to compare")
@@ -172,7 +172,7 @@ def check_pin(name: str, tag: str, pinned: str, found: LocalModel | None, env_ke
             name,
             Status.FAIL,
             f"{tag} is unpinned. Observed digest: {found.digest}. "
-            f"If this is the model you intend, set {env_key}={found.digest}",
+            f"If this is the model you intend, set {where} to {found.digest}",
         )
     if found.digest != normalise_digest(pinned):
         return Check(
@@ -385,7 +385,13 @@ def run(settings: Settings, client_factory: Callable[[Settings], Ollama] = Ollam
                 settings.embed_model,
                 settings.embed_digest,
                 embed_found,
-                "RB_EMBED_DIGEST",
+                # Found on the first qwen3 doctor run: the hint named
+                # RB_EMBED_DIGEST, which a non-default profile ignores by
+                # design (config.load), so following it changed nothing.
+                "RB_EMBED_DIGEST in .env"
+                if settings.embed_profile == "nomic"
+                else f'embed_digest in EMBED_PROFILES["{settings.embed_profile}"], '
+                "rb_errata/config.py",
             )
         )
         checks.append(check_embed(client, settings, embed_found))
@@ -395,7 +401,7 @@ def run(settings: Settings, client_factory: Callable[[Settings], Ollama] = Ollam
                 settings.gen_model,
                 settings.gen_digest,
                 gen_found,
-                "RB_GEN_DIGEST",
+                "RB_GEN_DIGEST in .env",
             )
         )
         gen_check, tp = check_generate(client, settings, gen_found)
