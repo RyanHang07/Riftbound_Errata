@@ -1236,3 +1236,53 @@ from it.
 
 Also from slice 3: missing the answering rule entirely happened in 4 of 10
 candidates, as often as the wrong-version failure it was looking for.
+
+### A21. Slice 3.5 replaced: an expert-sourced question set plus a measured review
+
+*2026-10-02, the user's decision.*
+
+**Changes:** section 5's "Slice 3.5 is real work, and skipping it poisons
+everything after it", and slice 4's hand-written question set.
+
+The brief's concern stands: a question set labelled by someone who does not
+know the rules measures agreement with a misunderstanding. The answer here is
+to take the labels from people who do know the rules, and to measure, rather
+than assume, how far they can be trusted.
+
+**Now:**
+1. **Expert rulings as the main source.** The community site
+   `ChristianIvicevic/riftboundfaq` (slice 1, S6) holds 168 questions (119
+   card, 28 general, 21 mechanics), each file marked as reviewed against Core
+   Rules v1.4, with answers that cite rule numbers. Provenance `mined`.
+   Licence CC BY-SA 4.0: the derived question file carries attribution and
+   the same licence. These are not in the retrieval corpus (Riot's own FAQs
+   are), so they are not lookups.
+2. **Version-dependent questions from the diff**, the slice 3 method: labels
+   are mechanical and verified on full rule texts.
+3. **A sampled human review.** The user reads Riot's beginner guide (about an
+   hour), then reviews a random sample of about 20 labelled questions with an
+   explanation of each rule. The agreement rate is recorded and reported with
+   every result built on the set.
+
+**Known limits, stated now so the writeup cannot omit them:**
+- The rulings are unofficial and come from one author. They inherit that
+  author's mistakes; the sampled review bounds this, it does not remove it.
+- Every ruling is checked against v1.4 only, so the version-dependent stratum
+  comes almost entirely from source 2.
+- Sample size follows the brief: the power analysis runs before the set is
+  finalised, not after.
+
+**Confidence score (also the user's request).** Every answer will carry its
+sources with versions and validity dates (section 6) and a confidence score.
+The score is computed from measurable signals, never from the model's own
+claim: whether the top passage is in effect on the question's date, the
+margin between top results, whether retrieved versions disagree (A20's stale
+contamination), and whether the answer cites only passages in effect. It is
+**designed now and built after the labelled set exists**, then calibrated
+against it: an answer marked 80% confident must be right about 80% of the
+time, or the score is reported as uncalibrated.
+
+Rejected: a fully automated set with no review (an unchecked measuring
+instrument); the original six study sessions (the effort the user chose not
+to spend); building the confidence score first (it could not be checked, so
+its numbers would mean nothing).

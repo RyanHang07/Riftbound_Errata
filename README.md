@@ -18,7 +18,8 @@ The full specification is [`docs/BRIEF.md`](docs/BRIEF.md). Read its
 | 1 | Corpus availability spike ([report](docs/SPIKE_1.md)) | done: proceed |
 | 2 | Ingest, chunk, naive vector retrieval | done: 3,308 chunks, v1.1-v1.4, reproduced on two machines |
 | 3 | Demonstrate temporal drift ([write-up](docs/DRIFT.md)) | done: 3 of 10 captured, outdated answer recorded |
-| 3.5 | Learn the game | next |
+| 3.5 | ~~Learn the game~~ replaced by a sampled review (A21) | user reads Riot's beginner guide |
+| 4 | Labelled question set: expert rulings + diff questions + sampled review | next |
 
 ## Setup
 
