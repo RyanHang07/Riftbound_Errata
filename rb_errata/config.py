@@ -24,12 +24,15 @@ class Settings:
     embed_model: str = "nomic-embed-text"
     # Empty means "not pinned yet". doctor fails on an empty pin rather than
     # passing, and prints the observed digest so it can be pasted in.
-    embed_digest: str = ""
+    embed_digest: str = "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f"
     embed_dims: int = 768
     # nomic-embed-text was trained with task prefixes. Without them retrieval
     # quality drops, and changing them later re-means every vector.
     embed_doc_prefix: str = "search_document: "
     embed_query_prefix: str = "search_query: "
+    # Which embedder profile (EMBED_PROFILES) the fields above came from. Also
+    # names the Postgres schema holding that profile's vectors (see db_schema).
+    embed_profile: str = "nomic"
 
     # --- Hardware --------------------------------------------------------
     # Keeps both models off the GPU (Ollama's num_gpu=0). The brief targets a
@@ -71,6 +74,18 @@ class Settings:
     # tens of seconds, so a short timeout would report a healthy model as down.
     http_timeout_s: float = 600.0
 
+    @property
+    def db_schema(self) -> str:
+        """Each embedder's chunks and cache live in their own Postgres schema.
+
+        Slice 7 compares two embedders on the same questions. One shared table
+        would mean re-ingesting to switch, destroying the vectors the other
+        run was measured on; a schema per profile keeps both runnable. The
+        default stays in `public`, so the database ingested before profiles
+        existed is still the nomic corpus, untouched.
+        """
+        return "public" if self.embed_profile == "nomic" else f"emb_{self.embed_profile}"
+
     def as_record(self) -> dict[str, Any]:
         """Everything except credentials, for recording alongside a run."""
         record = asdict(self)
@@ -93,13 +108,52 @@ def _coerce(raw: str, target: type[Any]) -> Any:
 _TYPES: dict[str, type[Any]] = {"str": str, "int": int, "float": float, "bool": bool}
 
 
+# The five settings that decide what a stored vector means travel together
+# (A10): a model with another model's prefixes, dimension or digest pin is a
+# silent mismatch, not an error. Digests are committed here, pinned (A3).
+EMBED_PROFILES: dict[str, dict[str, Any]] = {
+    "nomic": {
+        "embed_model": "nomic-embed-text",
+        "embed_digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+        "embed_dims": 768,
+        "embed_doc_prefix": "search_document: ",
+        "embed_query_prefix": "search_query: ",
+    },
+    # Slice 7 (A25). Qwen3-Embedding is trained with an instruction on the
+    # query side only; documents are embedded as they are. The format follows
+    # the model card: "Instruct: <task>\nQuery:<query>".
+    "qwen3": {
+        "embed_model": "qwen3-embedding:0.6b",
+        "embed_digest": "",  # pinned from the first doctor run, like nomic was
+        "embed_dims": 1024,
+        "embed_doc_prefix": "",
+        "embed_query_prefix": (
+            "Instruct: Given a question about the rules of a trading card game, "
+            "retrieve the rule passages that answer it\nQuery:"
+        ),
+    },
+}
+
+
 def load(env: Mapping[str, str] | None = None) -> Settings:
-    """Build Settings from RB_<FIELD> variables, falling back to defaults."""
+    """Build Settings from RB_<FIELD> variables, falling back to defaults.
+
+    RB_EMBED_PROFILE picks an embedder profile. A non-default profile sets all
+    five embedding fields and ignores RB_EMBED_* overrides: a .env written for
+    nomic pins nomic's digest, and applying it to another model would fail
+    every pin check, or worse, pass one by accident.
+    """
     env = os.environ if env is None else env
-    overrides: dict[str, Any] = {}
+    profile = env.get("RB_EMBED_PROFILE", "nomic")
+    if profile not in EMBED_PROFILES:
+        raise ValueError(f"unknown embed profile {profile!r}; one of {sorted(EMBED_PROFILES)}")
+    overrides: dict[str, Any] = {"embed_profile": profile}
+    locked = set(EMBED_PROFILES[profile]) if profile != "nomic" else set()
     for f in fields(Settings):
         key = f"RB_{f.name.upper()}"
-        if key in env:
+        if key in env and f.name not in locked and f.name != "embed_profile":
             # `from __future__ import annotations` makes f.type a string.
             overrides[f.name] = _coerce(env[key], _TYPES[str(f.type)])
+    if profile != "nomic":
+        overrides |= EMBED_PROFILES[profile]
     return Settings(**overrides)

@@ -17,12 +17,22 @@ from rb_errata.config import Settings
 def connect(settings: Settings, *, timeout_s: int = 5) -> psycopg.Connection[tuple[object, ...]]:
     # A short connect timeout: doctor must report "unreachable" in seconds,
     # not hang for the OS default of minutes when the container is down.
-    return psycopg.connect(settings.database_url, connect_timeout=timeout_s, autocommit=True)
+    # search_path picks the embedder profile's schema (Settings.db_schema), so
+    # every query below runs unchanged against whichever corpus is selected.
+    # `public` stays on the path for the vector type itself.
+    return psycopg.connect(
+        settings.database_url,
+        connect_timeout=timeout_s,
+        autocommit=True,
+        options=f"-c search_path={settings.db_schema},public",
+    )
 
 
-def schema(dims: int) -> str:
+def schema(dims: int, name: str = "public") -> str:
     return f"""
-CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS vector WITH SCHEMA public;
+CREATE SCHEMA IF NOT EXISTS {name};
+SET search_path TO {name}, public;
 
 -- One row per document version: where it came from and when it was the rule.
 CREATE TABLE IF NOT EXISTS documents (
@@ -73,15 +83,20 @@ CREATE TABLE IF NOT EXISTS embedding_cache (
 def init(settings: Settings) -> None:
     """Idempotent: creates whatever is missing."""
     with connect(settings) as conn:
-        conn.execute(schema(settings.embed_dims))
+        conn.execute(schema(settings.embed_dims, settings.db_schema))
 
 
 def reset(settings: Settings) -> None:
     """Drop the derived tables and recreate them. The cache survives on purpose:
     it is keyed by content and model, so it stays valid across re-chunking."""
     with connect(settings) as conn:
-        conn.execute("DROP TABLE IF EXISTS chunks, documents")
-        conn.execute(schema(settings.embed_dims))
+        # Schema-qualified on purpose. Unqualified, a profile whose tables do
+        # not exist yet would resolve `chunks` through search_path to
+        # public.chunks and drop the nomic corpus.
+        s = settings.db_schema
+        conn.execute(f"CREATE SCHEMA IF NOT EXISTS {s}")
+        conn.execute(f"DROP TABLE IF EXISTS {s}.chunks, {s}.documents")
+        conn.execute(schema(settings.embed_dims, s))
 
 
 def vector_literal(v: list[float]) -> str:

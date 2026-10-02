@@ -58,11 +58,14 @@ def search(
     settings: Settings, client: Ollama, query: str, k: int = 5, as_of: date | None = None
 ) -> list[Passage]:
     vec = db.vector_literal(client.embed([settings.embed_query_prefix + query])[0])
+    # Schema-qualified: unqualified, a profile not yet ingested would fall
+    # through search_path to another embedder's table.
     where = f"WHERE {IN_EFFECT} " if as_of else ""
     with db.connect(settings) as conn:
         rows = conn.execute(
             "SELECT source_ref, refs, text, embedding <=> %(vec)s::vector AS d, valid_from, "
-            f"valid_to, content_hash FROM chunks {where}ORDER BY d LIMIT %(k)s",
+            f"valid_to, content_hash FROM {settings.db_schema}.chunks {where}"
+            "ORDER BY d LIMIT %(k)s",
             {"vec": vec, "k": k, "as_of": as_of},
         ).fetchall()
     return [

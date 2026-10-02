@@ -1459,3 +1459,26 @@ From here every retrieval slice is measured against the as-of run
 gap: recall@20 80 to 84% against recall@5 58 to 59% (a ranking problem,
 slice 9) and 16 to 20% not found in the top 20 (slices 7, 8, 10). Details:
 `docs/RECALL.md`.
+
+### A28. Slice 7 built: embedder profiles (2026-10-02)
+
+An embedder is a profile in `rb_errata/config.py` (`EMBED_PROFILES`): model,
+pinned digest, dimension and both prefixes, which change together or not at
+all (A10). `EMBED=qwen3` on any make target selects one. Each profile's
+tables live in their own Postgres schema (nomic stays in `public`, so the
+existing database is the nomic corpus untouched); a second ingest must
+reproduce `data/corpus.json`'s chunks exactly and leaves the file unchanged.
+
+**Two traps found while building it, both closed.** Postgres resolves a
+missing table through search_path, so an unqualified `DROP TABLE chunks` for
+a not-yet-ingested profile would have dropped the nomic corpus, and a search
+on it would have silently read nomic's vectors. Drops, searches and the
+corpus guard now name their schema explicitly. A test covers the profile
+rules; an end-to-end run against a stand-in embedder confirmed the nomic
+tables are byte-for-byte unchanged after a qwen3 ingest.
+
+The qwen3 digest is not pinned yet: it is taken from the user's first
+`make doctor EMBED=qwen3`, as nomic's was. `make recall-compare` and every
+report now also break expert rulings down by category; under the as_of
+filter card questions are at 52% [43, 61] recall@5 (naive: 35%), which
+replaces A25's figure as slice 10's baseline. Prediction: `docs/RECALL.md`.

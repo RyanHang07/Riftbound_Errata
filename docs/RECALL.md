@@ -156,3 +156,27 @@ later slice is measured against.
 Prompt length at k = 5 rose to median 988 cl100k tokens (from 846): the
 in-effect chunks the filter promotes are longer on average. At A23's CPU
 rates: about 49 s per answer, 8.2 h per 600.
+
+## Slice 7: a second embedder, Qwen3-Embedding-0.6B
+
+One change from the slice 6 run: the embedder. Same chunks (the ingest
+refuses otherwise), same as_of filter, same questions. nomic-embed-text has
+137M parameters; Qwen3-Embedding-0.6B has 0.6B and is trained with an
+instruction on the query side only (prefix in `rb_errata/config.py`).
+Each embedder's vectors live in their own Postgres schema, so both stay
+runnable. Baseline: `evals/runs/recall-as-of-2026-10-02T2251Z`.
+
+### Prediction (written 2026-10-02, before the run)
+
+| Group | Baseline recall@5 | Prediction | Why |
+|---|---|---|---|
+| expert-ruling | 58% | about 62% (55 to 68) | A larger model; questions and rules use different words. |
+| ruling: cards | 52% | about 58%, the largest gain | Card names are League of Legends names; a larger model is more likely to know them. |
+| version-change | 59% | about 60%, no real change | Written in rule language already; nomic handles that. |
+| Any stratum significant (McNemar p < 0.05) | | **No** | Counted with `power.py`: a 4-point gain on 160 questions is detected with probability 0.15 to 0.28, and a 6-point gain on the 113 card questions 0.23 to 0.42 (discordant rate 10 to 20%). Only a gain near 8 points or more on rulings would likely show. |
+
+So the likely honest outcome is a **null result with its bound**: "no
+difference detected; a gain under about 8 points on rulings could not have
+been." If Qwen3 is worse, nomic stays the default; if it is better but not
+significantly, nomic still stays (cheaper: 768 dims, 4x fewer parameters)
+and the difference is recorded.

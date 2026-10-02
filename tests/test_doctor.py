@@ -115,7 +115,7 @@ def test_all_green_and_budget_uses_measured_rates() -> None:
 
 
 def test_unpinned_model_fails_and_prints_the_observed_digest() -> None:
-    checks = by_name(doctor.run(config.load({}), fake_ollama()))
+    checks = by_name(doctor.run(config.load({"RB_EMBED_DIGEST": ""}), fake_ollama()))
     assert checks["embed pin"].status is Status.FAIL
     assert EMBED_DIGEST in checks["embed pin"].detail
     # The functional check still runs, so one doctor run shows everything.

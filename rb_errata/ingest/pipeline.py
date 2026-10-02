@@ -180,6 +180,17 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
     finally:
         client.close()
 
+    if settings.embed_profile != "nomic":
+        # Another embedder over the SAME chunks: data/corpus.json describes
+        # them already and stays as it is. If the chunks differ, the two
+        # embedders would be compared on different corpora, which is not a
+        # comparison of embedders.
+        committed = json.loads(CORPUS.read_text())["chunks_sha256"]
+        if chunks_sha256(manifest) != committed:
+            raise SystemExit("chunks differ from data/corpus.json; embedders must share a corpus")
+        lines.append(f"chunks match data/corpus.json ({committed[:12]}); file left unchanged")
+        return lines
+
     CORPUS.write_text(
         json.dumps(
             {

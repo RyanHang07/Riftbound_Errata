@@ -68,7 +68,8 @@ def _fingerprint(rows: list[tuple[str, str, str, str | None]]) -> str:
 def _db_corpus(settings: Settings) -> str:
     with db.connect(settings) as conn:
         rows = conn.execute(
-            "SELECT content_hash, source_ref, valid_from, valid_to FROM chunks"
+            "SELECT content_hash, source_ref, valid_from, valid_to "
+            f"FROM {settings.db_schema}.chunks"
         ).fetchall()
     return _fingerprint([(str(h), str(r), str(f), str(t) if t else None) for h, r, f, t in rows])
 
@@ -101,7 +102,8 @@ def run(settings: Settings, method: str = "naive") -> Path:
 
     count = token_counter()
     # Minute-stamped and never overwritten, as with drift fixtures.
-    out_dir = RUNS / f"recall-{method}-{datetime.now(UTC).strftime('%Y-%m-%dT%H%MZ')}"
+    stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")
+    out_dir = RUNS / f"recall-{method}-{settings.embed_profile}-{stamp}"
     if out_dir.exists():
         raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
     questions = load_questions()
@@ -142,6 +144,7 @@ def run(settings: Settings, method: str = "naive") -> Path:
             "k_max": K_MAX,
             "embed_model": settings.embed_model,
             "embed_digest": embed_digest,
+            "embed_profile": settings.embed_profile,
             "query_prefix": settings.embed_query_prefix,
         },
         "corpus_chunks_sha256": json.loads(CORPUS.read_text())["chunks_sha256"],
@@ -270,6 +273,12 @@ def report(run_dir: Path) -> list[str]:
             f"| {_cell(_within([x['outdated_rank'] for x in g], 5))} | {_cell(above)} |"
         )
 
+    by_id = {x["id"]: x for x in graded if x["state"] == "graded"}
+    lines += ["", "## recall@5 by group", "", "| group | recall@5 |", "|---|---|"]
+    for name, members in groups(questions):
+        ranks = [by_id[i]["hit_rank"] for i in members if i in by_id]
+        lines.append(f"| {name} | {_cell(_within(ranks, 5))} |")
+
     tokens = sorted(x["prompt_tokens_cl100k"] for x in graded if x.get("prompt_tokens_cl100k"))
     if tokens:
         lines += [
@@ -278,9 +287,28 @@ def report(run_dir: Path) -> list[str]:
             "",
             f"cl100k tokens over {len(tokens)} prompts: median {statistics.median(tokens):.0f}, "
             f"p90 {tokens[int(0.9 * (len(tokens) - 1))]}, max {tokens[-1]}. "
-            "cl100k is not the generator's tokenizer; Ollama's own counts come with slice 6.",
+            "cl100k is not the generator's tokenizer; Ollama's own counts come with "
+            "generation (slice 11).",
         ]
     return lines
+
+
+def groups(questions: dict[str, dict[str, Any]]) -> list[tuple[str, list[str]]]:
+    """Strata, then expert rulings by category: question ids per row.
+
+    The category split is the A25 finding (card questions 35% recall@5 under
+    the naive search, mechanics 86%), so slices 7 to 10 report it every time
+    rather than recount it by hand. Sub-rows of a stratum, never pooled.
+    """
+    out = []
+    for s in dict.fromkeys(q["stratum"] for q in questions.values()):
+        out.append((s, [i for i, q in questions.items() if q["stratum"] == s]))
+    rulings = {i: q for i, q in questions.items() if q["stratum"] == "expert-ruling"}
+    for c in sorted({str(q.get("category")) for q in rulings.values()}):
+        out.append(
+            (f"  ruling: {c}", [i for i, q in rulings.items() if str(q.get("category")) == c])
+        )
+    return out
 
 
 def compare(a_dir: Path, b_dir: Path, k: int = 5) -> list[str]:
@@ -300,8 +328,7 @@ def compare(a_dir: Path, b_dir: Path, k: int = 5) -> list[str]:
     questions = {q["id"]: q for q in load_questions()}
     cp = counterparts_mod.load()
     graded = [{r["id"]: grade(questions[r["id"]], r, cp) for r in s["results"]} for s in snaps]
-    strata = list(dict.fromkeys(q["stratum"] for q in questions.values()))
-    names = [snaps[0]["retrieval"]["method"], snaps[1]["retrieval"]["method"]]
+    names = [f"{x['retrieval']['method']}; {x['retrieval']['embed_model']}" for x in snaps]
     lines = [
         f"# {b_dir.name} vs {a_dir.name}, recall@{k}",
         "",
@@ -311,11 +338,8 @@ def compare(a_dir: Path, b_dir: Path, k: int = 5) -> list[str]:
         f"| stratum | A recall@{k} | B recall@{k} | B only | A only | McNemar p |",
         "|---|---|---|---|---|---|",
     ]
-    for s in strata:
-        ids = [
-            i for i, q in questions.items() if q["stratum"] == s
-            and all(g.get(i, {}).get("state") == "graded" for g in graded)
-        ]  # fmt: skip
+    for s, members in groups(questions):
+        ids = [i for i in members if all(g.get(i, {}).get("state") == "graded" for g in graded)]
         a = _within([graded[0][i]["hit_rank"] for i in ids], k)
         b = _within([graded[1][i]["hit_rank"] for i in ids], k)
         b_only = sum(1 for x, y in zip(a, b, strict=True) if y and not x)

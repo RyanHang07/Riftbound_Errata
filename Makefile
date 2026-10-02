@@ -2,6 +2,13 @@
 -include .env
 export
 
+# Embedder profile (rb_errata/config.py EMBED_PROFILES): `make ingest EMBED=qwen3`.
+# Unset means the default, nomic. Works with every target that embeds or reads
+# vectors: doctor, ingest, search, recall.
+ifdef EMBED
+export RB_EMBED_PROFILE := $(EMBED)
+endif
+
 UV := uv run
 
 .PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare
