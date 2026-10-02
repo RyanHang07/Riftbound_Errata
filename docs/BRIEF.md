@@ -1345,3 +1345,23 @@ at 3,000 (conservative) and doctor keeps labelling it ASSUMED. Slice 5 counts
 every real prompt and answer, and the budget is recomputed from those counts.
 A14's remedy stands either way: recall@k first (no generation), generate only
 for configurations that survive it.
+
+### A24. Slice 5 result: the naive baseline (2026-10-02)
+
+*Full write-up and prediction check: `docs/RECALL.md`. Snapshot:
+`evals/runs/recall-2026-10-02T2236Z`.*
+
+recall@5, version-aware (A1): expert-ruling 44% [36, 51] of 160,
+version-change 39% [28, 52] of 56, FAQ 5 of 8. Two of six predictions were
+wrong: rulings did better than predicted and version-change worse. On
+version-change questions an outdated or otherwise wrong-version copy of the
+expected rule is ranked above the right one 29% [18, 41] of the time, the
+baseline slice 10 is measured against.
+
+Wrong-version copies are found by text alignment (`evals/counterparts.json`),
+never by rule number (A15). This is a cross-version map, which A16 rejected
+for labels; it is allowed here because it feeds only secondary columns, never
+recall@k, and every pair is committed for audit.
+
+Budget update to A23: real k = 5 prompts are median 846 cl100k tokens, so a
+600-generation run is about 7.6 h on CPU (10.6 h at p90), not 15.9 h.
