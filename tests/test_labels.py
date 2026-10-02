@@ -103,3 +103,14 @@ def test_review_trim_keeps_later_strata(monkeypatch: pytest.MonkeyPatch) -> None
     full = review.sample(entries)
     assert len(trimmed) == 40
     assert trimmed == full[:20] + full[40:]
+
+
+def test_review_file_matches_sample() -> None:
+    # The committed verdicts must cover exactly the seeded sample, so nobody
+    # can add or drop a reviewed question by hand.
+    import yaml
+
+    from rb_errata.labels import review
+
+    rows = yaml.safe_load(review.REVIEW.read_text())
+    assert [r["id"] for r in rows] == [e["id"] for e in review.sample(review.load_questions())]

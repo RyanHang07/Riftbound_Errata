@@ -1286,3 +1286,32 @@ Rejected: a fully automated set with no review (an unchecked measuring
 instrument); the original six study sessions (the effort the user chose not
 to spend); building the confidence score first (it could not be checked, so
 its numbers would mean nothing).
+
+## A22. Sampled review results (2026-10-02)
+
+**Trim.** 60 questions were drawn (A21). After the first 20, all expert
+rulings, came back 19 agree, 1 unsure, 0 disagree, the remaining 20 rulings
+were dropped and the effort kept on the unseen strata. The draw is unchanged
+and truncated afterwards, so the FAQ and version-change questions are the ones
+originally drawn (tested). 40 reviewed.
+
+**Result.** 38 agree, 0 disagree, 2 unsure. `unsure` is not agreement.
+
+| Stratum | Agree / n | Wilson 95% |
+|---|---|---|
+| expert-ruling | 19 / 20 | 76.4 to 99.1% |
+| expert-ruling-faq | 3 / 4 | 30.1 to 95.4% |
+| version-change | 16 / 16 | 80.6 to 100% |
+| **all** | **38 / 40** | **83.5 to 98.6%** |
+
+**The two unsure verdicts, checked against the rule text.** Both labels stand.
+Astral Heron: the reviewer's note restates the labelled answer. Hidden Blade:
+the reviewer doubted that a unit recalled to base is still "on the board";
+core@1.4:107.1 lists Bases under 107 The Board, so it is. Verdicts are left as
+the reviewer gave them and the reason is recorded in `adjudication`; nothing
+was upgraded to agree.
+
+**What this licenses.** No label was found wrong, so none was changed. The
+FAQ stratum's interval is wide at n=4 and is reported, not hidden. Every
+result built on the set is reported with "labels reviewed: 38/40 agree
+(83.5 to 98.6%)". Slice 4 is closed.
