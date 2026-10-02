@@ -1315,3 +1315,33 @@ was upgraded to agree.
 FAQ stratum's interval is wide at n=4 and is reported, not hidden. Every
 result built on the set is reported with "labels reviewed: 38/40 agree
 (83.5 to 98.6%)". Slice 4 is closed.
+
+### A23. CPU budget re-measured with the instruct model (2026-10-02)
+
+*Required by A19. `make doctor-cpu` on the user's PC: i5-10600K, 12 threads,
+7.7 GB RAM visible to WSL (half the 16 GB, WSL's default). Supabase containers
+stopped first. The database check failed only because the project's Postgres
+was not running; it has no effect on timing.*
+
+| CPU only | A14 (Thinking build) | Now (instruct build) |
+|:--|:--|:--|
+| Prefill, median [range] | 37.7 tok/s [37-38] | 42.9 tok/s [42-43] |
+| Decode, median [range] | 5.6 tok/s [5.5-6.0] | 7.0 tok/s [7.0-7.1] |
+| 100 q x 6 configs, assumed 3,000 + 180 tok | 18.6 h | 15.9 h |
+
+**The 3,000-token prompt was an assumption, and real prompts are far shorter.**
+The three generations the instruct model has done (drift fixtures
+`drift-2026-10-01T1906Z`, token counts from Ollama itself, k = 5) used 406,
+507 and 863 prompt tokens and 43, 81 and 400 answer tokens (400 is the drift
+cap). At the measured rates:
+
+| Case | Per answer | 100 q x 6 configs |
+|:--|:--|:--|
+| Median prompt 507, answer 180 | 37.5 s | 6.3 h |
+| Largest seen: prompt 863, answer 400 | 77.3 s | 12.9 h |
+
+Three prompts are too few to replace the assumption in config, so it stays
+at 3,000 (conservative) and doctor keeps labelling it ASSUMED. Slice 5 counts
+every real prompt and answer, and the budget is recomputed from those counts.
+A14's remedy stands either way: recall@k first (no generation), generate only
+for configurations that survive it.
