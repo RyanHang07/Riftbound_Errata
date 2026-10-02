@@ -1,0 +1,29 @@
+# Slice 5b: the free layer (lint, typecheck, contract tests) on every push.
+# No database, no model, no Riot text: the same `make verify` a contributor
+# runs locally, so a change that only passes on one machine is caught here.
+#
+# Actions are pinned to major-version tags, not commit SHAs: the session that
+# wrote this could not reach the GitHub API to read the SHAs, and an invented
+# SHA is worse than a tag. Pinning to SHAs is a known follow-up.
+name: verify
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      # --frozen: install exactly uv.lock. A resolver that picked newer
+      # versions here would test code nobody runs locally.
+      - run: uv sync --frozen
+      - run: make verify

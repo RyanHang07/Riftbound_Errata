@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -65,8 +65,8 @@ ingest: fetch dates  ## everything: fetch, dates, chunk, embed, store -> data/co
 	$(UV) python -m rb_errata.cli ingest
 
 # Usage: make search Q="can a unit with deflect be targeted"
-search:  ## naive vector search, NO date filter (slice 2 baseline)
-	$(UV) python -m rb_errata.cli search "$(Q)"
+search:  ## vector search: make search Q="..." [AS_OF=2026-05-01] (no AS_OF = naive)
+	$(UV) python -m rb_errata.cli search "$(Q)" $(if $(AS_OF),--as-of $(AS_OF))
 
 # --- Temporal drift (slice 3) ---
 
@@ -99,8 +99,12 @@ counterparts:  ## align expected rules to their copies in other versions (needs 
 	$(UV) python -m rb_errata.cli counterparts
 
 # Slice 5. Needs the database and the embedder, no generation: minutes, not hours.
-recall:  ## recall@k for every question; writes evals/runs/recall-<time>/
-	$(UV) python -m rb_errata.cli recall
+METHOD ?= naive
+recall:  ## recall@k for every question: make recall [METHOD=as-of]; writes evals/runs/
+	$(UV) python -m rb_errata.cli recall --method $(METHOD)
+
+recall-compare:  ## pair two runs: make recall-compare A=evals/runs/... B=evals/runs/...
+	$(UV) python -m rb_errata.cli recall-compare $(A) $(B)
 
 recall-report:  ## recompute a report offline: make recall-report RUN=evals/runs/recall-...
 	$(UV) python -m rb_errata.cli recall-report $(RUN)

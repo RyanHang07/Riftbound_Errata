@@ -80,3 +80,43 @@ def test_counterparts_align_by_text_not_number() -> None:
     v14 = [Rule("419.4.a", text + " unless it was finalized")]
     cp = counterparts({"1.3": v13, "1.4": v14}, {"core@1.4:419.4.a"})
     assert cp == {"core@1.4:419.4.a": [{"ref": "core@1.3:406.4.a", "same_text": False}]}
+
+
+def test_sql_and_python_agree_on_in_effect() -> None:
+    # Two definitions of "in effect" exist: the SQL predicate that filters
+    # before ranking, and Passage.in_effect_on used to grade. They must agree
+    # on the boundary days, where a version hands over to the next.
+    from datetime import date
+
+    from rb_errata.retrieve.vector import IN_EFFECT, Passage
+
+    def sql(day: date, start: date, end: date | None) -> bool:
+        # Evaluate the predicate's text as Python on the same values.
+        expr = IN_EFFECT.replace("%(as_of)s", "day").replace("AND", "and").replace("OR", "or")
+        expr = expr.replace("valid_to IS NULL", "end is None").replace("valid_from", "start")
+        return bool(
+            eval(expr.replace("valid_to", "end"), {}, {"day": day, "start": start, "end": end})
+        )
+
+    start, end = date(2026, 3, 30), date(2026, 7, 24)
+    for day in (date(2026, 3, 29), start, date(2026, 7, 23), end):
+        for e in (end, None):
+            p = Passage("core@1.3:1", ["1"], "", 0.0, start, e, "h")
+            assert sql(day, start, e) == p.in_effect_on(day), (day, e)
+
+
+def test_compare_refuses_runs_on_different_questions(tmp_path: Path) -> None:
+    for name, qhash in (("a", "x"), ("b", "y")):
+        (tmp_path / name).mkdir()
+        snap = {"questions_sha256": qhash, "corpus_chunks_sha256": "c", "results": []}
+        (tmp_path / name / "retrieval.json").write_text(json.dumps(snap))
+    with pytest.raises(SystemExit):
+        recall.compare(tmp_path / "a", tmp_path / "b")
+
+
+def test_mcnemar_p_exact() -> None:
+    from rb_errata.labels.power import mcnemar_p
+
+    # 6 of 6 discordant one way: 2 * 0.5**6 = 0.03125.
+    assert mcnemar_p(6, 6) == pytest.approx(0.03125)
+    assert mcnemar_p(0, 0) == 1.0

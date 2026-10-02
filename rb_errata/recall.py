@@ -45,23 +45,44 @@ CORPUS = Path("data/corpus.json")
 K_MAX = 20
 KS = (1, 3, 5, 10, 20)
 PROMPT_K = 5  # the k the answer prompt uses; its length feeds the A23 budget
+# Named retrieval configurations. Each run records which one produced it, and
+# `compare` pairs two runs question by question (brief: pair on the question).
+METHODS = {
+    "naive": "naive-vector, no date filter",
+    "as-of": "vector, as_of filter before ranking",
+}
 
 
-def _hash_set(hashes: list[str]) -> str:
-    return hashlib.sha256("\n".join(sorted(hashes)).encode()).hexdigest()
+def _fingerprint(rows: list[tuple[str, str, str, str | None]]) -> str:
+    """Text hash, ref and validity window of every chunk, order-free.
+
+    Dates are part of it on purpose. Found while building slice 6: a database
+    ingested before the A17 date decision had every chunk's text right and
+    v1.3's valid_from wrong. A text-only check passed it, and the date filter
+    would have been measured on dates nobody can see in data/corpus.json.
+    """
+    lines = sorted(f"{h} {ref} {start} {end}" for h, ref, start, end in rows)
+    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
 
 
 def _db_corpus(settings: Settings) -> str:
     with db.connect(settings) as conn:
-        rows = conn.execute("SELECT content_hash FROM chunks").fetchall()
-    return _hash_set([str(r[0]) for r in rows])
+        rows = conn.execute(
+            "SELECT content_hash, source_ref, valid_from, valid_to FROM chunks"
+        ).fetchall()
+    return _fingerprint([(str(h), str(r), str(f), str(t) if t else None) for h, r, f, t in rows])
 
 
 def _manifest_corpus() -> str:
-    return _hash_set([c["content_hash"] for c in json.loads(CORPUS.read_text())["chunks"]])
+    chunks = json.loads(CORPUS.read_text())["chunks"]
+    return _fingerprint(
+        [(c["content_hash"], c["source_ref"], c["valid_from"], c["valid_to"]) for c in chunks]
+    )
 
 
-def run(settings: Settings) -> Path:
+def run(settings: Settings, method: str = "naive") -> Path:
+    if method not in METHODS:
+        raise SystemExit(f"unknown method {method!r}; one of {sorted(METHODS)}")
     client = Ollama(settings)
     try:
         embed_digest = checked_digest(client, settings.embed_model, settings.embed_digest)
@@ -71,13 +92,16 @@ def run(settings: Settings) -> Path:
     # (another chunker, a missing version) would make every number describe a
     # corpus nobody can inspect, so the run refuses rather than warns.
     if _db_corpus(settings) != _manifest_corpus():
-        raise SystemExit("database chunks differ from data/corpus.json; run `make ingest` first")
+        raise SystemExit(
+            "database chunks (text, refs or validity dates) differ from data/corpus.json; "
+            "run `make ingest` first"
+        )
 
     from rb_errata.ingest.pipeline import token_counter
 
     count = token_counter()
     # Minute-stamped and never overwritten, as with drift fixtures.
-    out_dir = RUNS / f"recall-{datetime.now(UTC).strftime('%Y-%m-%dT%H%MZ')}"
+    out_dir = RUNS / f"recall-{method}-{datetime.now(UTC).strftime('%Y-%m-%dT%H%MZ')}"
     if out_dir.exists():
         raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
     questions = load_questions()
@@ -87,7 +111,8 @@ def run(settings: Settings) -> Path:
         for q in questions:
             row: dict[str, Any] = {"id": q["id"]}
             try:
-                ranked = search(settings, client, q["question"], K_MAX)
+                as_of = date.fromisoformat(str(q["as_of"])) if method == "as-of" else None
+                ranked = search(settings, client, q["question"], K_MAX, as_of=as_of)
             except Exception as exc:
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]
                 results.append(row)
@@ -112,7 +137,8 @@ def run(settings: Settings) -> Path:
     snapshot = {
         "captured_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "retrieval": {
-            "method": "naive-vector, no date filter",
+            "method": METHODS[method],
+            "method_id": method,
             "k_max": K_MAX,
             "embed_model": settings.embed_model,
             "embed_digest": embed_digest,
@@ -254,4 +280,49 @@ def report(run_dir: Path) -> list[str]:
             f"p90 {tokens[int(0.9 * (len(tokens) - 1))]}, max {tokens[-1]}. "
             "cl100k is not the generator's tokenizer; Ollama's own counts come with slice 6.",
         ]
+    return lines
+
+
+def compare(a_dir: Path, b_dir: Path, k: int = 5) -> list[str]:
+    """Pair two runs on the same questions: discordant counts and exact McNemar.
+
+    Only questions both runs graded are paired; a question unknown in either
+    run is left out of both, never counted as a loss.
+    """
+    from rb_errata.labels.power import mcnemar_p
+
+    snaps = [json.loads((d / "retrieval.json").read_text()) for d in (a_dir, b_dir)]
+    for key in ("questions_sha256", "corpus_chunks_sha256"):
+        if snaps[0][key] != snaps[1][key]:
+            # Different questions or a different corpus: the pairing would be
+            # between two experiments, not two configurations.
+            raise SystemExit(f"runs differ in {key}; they cannot be paired")
+    questions = {q["id"]: q for q in load_questions()}
+    cp = counterparts_mod.load()
+    graded = [{r["id"]: grade(questions[r["id"]], r, cp) for r in s["results"]} for s in snaps]
+    strata = list(dict.fromkeys(q["stratum"] for q in questions.values()))
+    names = [snaps[0]["retrieval"]["method"], snaps[1]["retrieval"]["method"]]
+    lines = [
+        f"# {b_dir.name} vs {a_dir.name}, recall@{k}",
+        "",
+        f"A = {a_dir.name} ({names[0]}); B = {b_dir.name} ({names[1]}).",
+        "Exact two-sided McNemar on the discordant questions. Wilson 95% in brackets.",
+        "",
+        f"| stratum | A recall@{k} | B recall@{k} | B only | A only | McNemar p |",
+        "|---|---|---|---|---|---|",
+    ]
+    for s in strata:
+        ids = [
+            i for i, q in questions.items() if q["stratum"] == s
+            and all(g.get(i, {}).get("state") == "graded" for g in graded)
+        ]  # fmt: skip
+        a = _within([graded[0][i]["hit_rank"] for i in ids], k)
+        b = _within([graded[1][i]["hit_rank"] for i in ids], k)
+        b_only = sum(1 for x, y in zip(a, b, strict=True) if y and not x)
+        a_only = sum(1 for x, y in zip(a, b, strict=True) if x and not y)
+        p = mcnemar_p(b_only, b_only + a_only)
+        lines.append(
+            f"| {s} | {_cell(a)} | {_cell(b)} | {b_only} | {a_only} | "
+            + (f"{p:.3g} |" if b_only + a_only else "n/a |")
+        )
     return lines

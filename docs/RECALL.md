@@ -92,3 +92,26 @@ suggested (406 to 863 by Ollama's count; different tokenizer, different
 questions). At A23's measured CPU rates and 180 answer tokens: 45 s per
 answer and 7.6 h per 600 at the median, 10.6 h at p90. Still well under the
 assumed 15.9 h.
+
+## Slice 6: version-aware retrieval (`as_of` filter before ranking)
+
+One change from the baseline: chunks not in effect on the question's as_of
+are removed in SQL before similarity ranks anything. Same embedder, corpus,
+questions and k. Run with `make recall METHOD=as-of`, paired against the
+baseline with `make recall-compare`.
+
+### Prediction (written 2026-10-02, before the run)
+
+Two are guarantees, not guesses: if either fails, the code is wrong.
+
+| Prediction | Kind | Why |
+|---|---|---|
+| Wrong-version copy in top k = 0 in every stratum | Guarantee | Every chunk not in effect is filtered out before ranking. |
+| No question loses its hit at any k ("A only" = 0) | Guarantee | Exact scan (A2): in-effect chunks keep their order and only lose competitors. |
+| version-change recall@5: 39% to about 52% (plausible 45 to 60) | Guess | The 16 questions with a wrong-version copy above the hit get slots back; some of the 7 found only in a wrong version find the right one. |
+| expert-ruling recall@5: 44% to about 47% | Guess | Wrong-version copies were in its top 5 for only 16%. |
+| version-change change significant (McNemar p < 0.05); FAQ not | Guess | All discordant questions go one way, so about 6 wins are enough (6 of 6 gives p = 0.031). FAQ has 8 questions. |
+
+If version-change gains less than 5 points, wrong-version copies were taking
+slots from other wrong chunks, not from the right one, and slice 8 onwards
+matters more than this slice.

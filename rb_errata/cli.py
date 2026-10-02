@@ -74,16 +74,22 @@ def _ingest(_: argparse.Namespace) -> int:
 
 
 def _search(args: argparse.Namespace) -> int:
+    from datetime import date
+
     from rb_errata.ollama import Ollama
     from rb_errata.retrieve.vector import search
 
     settings = config.load()
     client = Ollama(settings)
     try:
-        passages = search(settings, client, args.query, args.k)
+        as_of = date.fromisoformat(args.as_of) if args.as_of else None
+        passages = search(settings, client, args.query, args.k, as_of=as_of)
     finally:
         client.close()
-    print("NAIVE SEARCH: no date filter. Results may come from any rules version.\n")
+    if as_of:
+        print(f"VERSION-AWARE SEARCH: only rules in effect on {as_of}.\n")
+    else:
+        print("NAIVE SEARCH: no date filter. Results may come from any rules version.\n")
     for i, p in enumerate(passages, 1):
         window = f"{p.valid_from} to {p.valid_to or 'now'}"
         print(f"{i}. {p.source_ref}  (valid {window})  distance {p.distance:.3f}")
@@ -130,10 +136,10 @@ def _drift(_: argparse.Namespace) -> int:
     return 0
 
 
-def _recall(_: argparse.Namespace) -> int:
+def _recall(args: argparse.Namespace) -> int:
     from rb_errata.recall import run
 
-    out = run(config.load())
+    out = run(config.load(), args.method)
     print((out / "report.md").read_text())
     print(f"snapshot and report written to {out}/")
     return 0
@@ -145,6 +151,15 @@ def _recall_report(args: argparse.Namespace) -> int:
     from rb_errata.recall import report
 
     print("\n".join(report(Path(args.dir))))
+    return 0
+
+
+def _recall_compare(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.recall import compare
+
+    print("\n".join(compare(Path(args.a), Path(args.b))))
     return 0
 
 
@@ -239,7 +254,7 @@ def main(argv: list[str] | None = None) -> int:
         "dates": (_dates, "parse effective dates from patch notes"),
         "inspect": (_inspect, "parse and chunk fetched PDFs; no database, no model"),
         "ingest": (_ingest, "chunk, embed and store every datable version"),
-        "search": (_search, "naive vector search, no date filter"),
+        "search": (_search, "vector search; --as-of YYYY-MM-DD filters to rules then in effect"),
         "diff": (_diff, "rules whose text changed between two versions"),
         "drift": (_drift, "run the slice 3 drift candidates and write fixtures"),
         "show": (_show, "re-display a fixture with rule text from the local database"),
@@ -249,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
         "counterparts": (_counterparts, "align expected rules to other versions (needs data/raw)"),
         "recall": (_recall, "slice 5: retrieve top 20 for every question, snapshot, report"),
         "recall-report": (_recall_report, "recompute a recall report from a committed snapshot"),
+        "recall-compare": (_recall_compare, "pair two recall runs: discordant counts, McNemar"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
     for name, (fn, help_text) in commands.items():
@@ -266,9 +282,15 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("rulings", help="path to a clone of ChristianIvicevic/riftboundfaq")
         if name in ("regrade", "recall-report"):
             p.add_argument("dir")
+        if name == "recall":
+            p.add_argument("--method", default="naive", help="naive | as-of")
+        if name == "recall-compare":
+            p.add_argument("a")
+            p.add_argument("b")
         if name == "search":
             p.add_argument("query")
             p.add_argument("-k", type=int, default=5)
+            p.add_argument("--as-of", help="YYYY-MM-DD; omit for the naive baseline")
     args = parser.parse_args(argv)
     from rb_errata.ollama import PinError
 

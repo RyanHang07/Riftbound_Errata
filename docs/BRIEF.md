@@ -1422,3 +1422,23 @@ Rejected: keeping the pipeline as an MCP tool only (no agent of its own, no
 LangGraph); an agent without MCP (loses the product surface); the brief's
 original order (the main improvement would come last and every ablation
 before it would be measured against the naive baseline).
+
+### A26. Slices 5b and 6 built together (2026-10-02)
+
+**5b, CI.** `.github/workflows/verify.yml` runs `make verify` on every push
+and pull request: lint, typecheck, contract tests, no database, no model,
+no Riot text. Actions are pinned to major-version tags because the session
+could not read their commit SHAs; pinning to SHAs is a follow-up.
+
+**6, version-aware retrieval.** `search(..., as_of=day)` filters on
+`valid_from <= as_of < valid_to` in SQL before ranking (brief section 5).
+The naive mode stays as `as_of=None`, so the comparison is exactly one
+predicate. Runs are named by method; `make recall-compare` pairs two runs
+on the same questions with an exact McNemar test, and refuses runs whose
+questions or corpus differ.
+
+**Found while building it.** The corpus guard compared chunk text only. A
+database ingested before A17 had the right text and the wrong v1.3 date, and
+passed. The guard now fingerprints text hash, ref and validity window, so a
+recall run cannot be measured on dates that differ from `data/corpus.json`.
+Prediction for the run: `docs/RECALL.md`.

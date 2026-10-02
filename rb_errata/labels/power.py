@@ -42,13 +42,16 @@ def _binom_pmf(k: int, n: int, p: float) -> float:
     return math.comb(n, k) * p**k * (1 - p) ** (n - k)
 
 
-def mcnemar_rejects(wins: int, d: int, alpha: float = 0.05) -> bool:
-    """Exact two-sided binomial test of wins out of d discordant at p = 0.5."""
+def mcnemar_p(wins: int, d: int) -> float:
+    """Exact two-sided binomial p of wins out of d discordant at p = 0.5."""
     if d == 0:
-        return False
+        return 1.0
     tail = min(wins, d - wins)
-    p = 2 * sum(_binom_pmf(i, d, 0.5) for i in range(tail + 1))
-    return min(1.0, p) < alpha
+    return min(1.0, 2 * sum(_binom_pmf(i, d, 0.5) for i in range(tail + 1)))
+
+
+def mcnemar_rejects(wins: int, d: int, alpha: float = 0.05) -> bool:
+    return d > 0 and mcnemar_p(wins, d) < alpha
 
 
 def mcnemar_power(n: int, p_discordant: float, q_favour: float, alpha: float = 0.05) -> float:
