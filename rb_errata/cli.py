@@ -8,8 +8,12 @@ from __future__ import annotations
 
 import argparse
 import sys
+from typing import TYPE_CHECKING
 
 from rb_errata import config, db, doctor
+
+if TYPE_CHECKING:
+    from rb_errata.ingest.rules import Rule
 
 
 def _doctor(_: argparse.Namespace) -> int:
@@ -126,6 +130,24 @@ def _drift(_: argparse.Namespace) -> int:
     return 0
 
 
+def _recall(_: argparse.Namespace) -> int:
+    from rb_errata.recall import run
+
+    out = run(config.load())
+    print((out / "report.md").read_text())
+    print(f"snapshot and report written to {out}/")
+    return 0
+
+
+def _recall_report(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.recall import report
+
+    print("\n".join(report(Path(args.dir))))
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -175,6 +197,31 @@ def _questions(args: argparse.Namespace) -> int:
     return 1 if problems else 0
 
 
+def _versions() -> dict[str, list[Rule]]:
+    from pathlib import Path
+
+    from rb_errata.ingest.fetch import RAW
+    from rb_errata.ingest.pdf import extract_text
+    from rb_errata.ingest.rules import parse_rules
+    from rb_errata.ingest.sources import CORE_RULES
+
+    return {
+        d.version: parse_rules(extract_text(Path(RAW) / d.filename))
+        for d in CORE_RULES
+        if d.version != "1.0"  # refused at ingestion (A16): not in the corpus
+    }
+
+
+def _counterparts(_: argparse.Namespace) -> int:
+    """Align every expected rule to its copies in other versions (needs data/raw)."""
+    from rb_errata.labels import counterparts
+    from rb_errata.labels.review import load_questions
+
+    n = counterparts.write(_versions(), load_questions())
+    print(f"{n} expected refs aligned -> {counterparts.COUNTERPARTS}")
+    return 0
+
+
 def _power(_: argparse.Namespace) -> int:
     from rb_errata.labels.power import report
 
@@ -199,6 +246,9 @@ def main(argv: list[str] | None = None) -> int:
         "regrade": (_regrade, "re-grade stored fixtures against the current labels"),
         "check-candidates": (_check_candidates, "full text of every candidate rule, per version"),
         "questions": (_questions, "build evals/questions.yaml (needs the rulings clone)"),
+        "counterparts": (_counterparts, "align expected rules to other versions (needs data/raw)"),
+        "recall": (_recall, "slice 5: retrieve top 20 for every question, snapshot, report"),
+        "recall-report": (_recall_report, "recompute a recall report from a committed snapshot"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
     for name, (fn, help_text) in commands.items():
@@ -214,7 +264,7 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("fixture")
         if name == "questions":
             p.add_argument("rulings", help="path to a clone of ChristianIvicevic/riftboundfaq")
-        if name == "regrade":
+        if name in ("regrade", "recall-report"):
             p.add_argument("dir")
         if name == "search":
             p.add_argument("query")

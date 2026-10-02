@@ -4,7 +4,7 @@ export
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -94,6 +94,16 @@ show:  ## re-display a fixture with rule text from the local database
 # the commit is pinned in rb_errata/labels/rulings.py)
 questions:  ## build evals/questions.yaml and check every expected ref against the corpus
 	$(UV) python -m rb_errata.cli questions $(RULINGS)
+
+counterparts:  ## align expected rules to their copies in other versions (needs data/raw)
+	$(UV) python -m rb_errata.cli counterparts
+
+# Slice 5. Needs the database and the embedder, no generation: minutes, not hours.
+recall:  ## recall@k for every question; writes evals/runs/recall-<time>/
+	$(UV) python -m rb_errata.cli recall
+
+recall-report:  ## recompute a report offline: make recall-report RUN=evals/runs/recall-...
+	$(UV) python -m rb_errata.cli recall-report $(RUN)
 
 power:  ## how many questions are needed (exact calculation, no model)
 	$(UV) python -m rb_errata.cli power
