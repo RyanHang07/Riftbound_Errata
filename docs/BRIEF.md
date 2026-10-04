@@ -1492,3 +1492,30 @@ expert-ruling 58% to 62% (p = 0.34, not significant); card questions 52% to
 flat, and cards were predicted to gain most. Full write-up:
 `docs/RECALL.md`. Card questions are not fixed by a bigger embedder, which
 strengthens the case for slice 10.
+
+### A30. Qwen3-Embedding is the default embedder (2026-10-04)
+
+*Decided by the user on slice 7's result (A29).*
+
+`DEFAULT_EMBED_PROFILE = "qwen3"` in `rb_errata/config.py`. Every command
+without `EMBED=` now uses qwen3-embedding:0.6b (digest ac6da0dfba84...,
+1024 dims, instruction on queries only), and every later retrieval slice is
+measured against `evals/runs/recall-as-of-qwen3-2026-10-04T1415Z`.
+`EMBED=nomic` still selects the old embedder, whose vectors stay in the
+`public` schema; no re-ingest is needed for either.
+
+**Why.** The decision rule written before the run: nomic stays unless qwen3
+is significantly better. It was on version-change (59% to 79% recall@5,
+McNemar p = 0.0034), the stratum the project exists for, and not measurably
+worse elsewhere. Same speed on the user's machine (23 vs 21 ms per chunk);
+a third more storage per vector (1,024 vs 768 numbers).
+
+**What changed with it.** The embedder is now chosen by profile only.
+`RB_EMBED_MODEL`, `RB_EMBED_DIGEST` and the other per-field variables are
+ignored: the user's `.env`, written for nomic, names nomic's model and digest,
+and letting it through would have paired qwen3 with nomic's digest. The
+default profile writes `data/corpus.json` on ingest; any other profile must
+reproduce its chunks exactly and leaves it unchanged.
+
+Rejected: keeping nomic as default and opting in to qwen3 per command (every
+later slice would be measured on the weaker baseline).

@@ -6,6 +6,7 @@ real Ollama the only unknowns are the real ones.
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from collections.abc import Callable
 from typing import Any
@@ -18,7 +19,8 @@ from rb_errata.config import Settings
 from rb_errata.doctor import Status
 from rb_errata.ollama import Generation, LocalModel, Ollama
 
-EMBED_DIGEST = "a" * 64
+EMBED_TAG = config.EMBED_PROFILES[config.DEFAULT_EMBED_PROFILE]["embed_model"]
+EMBED_DIGEST = config.EMBED_PROFILES[config.DEFAULT_EMBED_PROFILE]["embed_digest"]
 GEN_DIGEST = "b" * 64
 
 
@@ -26,19 +28,15 @@ def fake_ollama(
     *,
     warm_reply: str = "OK",
     version: str = "0.12.0",
-    dims: int = 768,
+    dims: int = 1024,
     thinking: str = "",
     models: list[str] | None = None,
     vram: int = 0,
     seen: list[dict[str, Any]] | None = None,
 ) -> Callable[[Settings], Ollama]:
-    tags = (
-        models
-        if models is not None
-        else ["nomic-embed-text:latest", "qwen3:4b-instruct-2507-q4_K_M"]
-    )
+    tags = models if models is not None else [EMBED_TAG, "qwen3:4b-instruct-2507-q4_K_M"]
     digests = {
-        "nomic-embed-text:latest": EMBED_DIGEST,
+        EMBED_TAG: EMBED_DIGEST,
         "qwen3:4b-instruct-2507-q4_K_M": f"sha256:{GEN_DIGEST}",
     }
 
@@ -93,7 +91,7 @@ def fake_ollama(
 
 
 def pinned(**extra: str) -> Settings:
-    return config.load({"RB_EMBED_DIGEST": EMBED_DIGEST, "RB_GEN_DIGEST": GEN_DIGEST, **extra})
+    return config.load({"RB_GEN_DIGEST": GEN_DIGEST, **extra})
 
 
 @pytest.fixture(autouse=True)
@@ -115,7 +113,9 @@ def test_all_green_and_budget_uses_measured_rates() -> None:
 
 
 def test_unpinned_model_fails_and_prints_the_observed_digest() -> None:
-    checks = by_name(doctor.run(config.load({"RB_EMBED_DIGEST": ""}), fake_ollama()))
+    # The embed digest is pinned in code now, so "unpinned" is constructed.
+    unpinned = dataclasses.replace(config.load({}), embed_digest="")
+    checks = by_name(doctor.run(unpinned, fake_ollama()))
     assert checks["embed pin"].status is Status.FAIL
     assert EMBED_DIGEST in checks["embed pin"].detail
     # The functional check still runs, so one doctor run shows everything.
@@ -128,7 +128,7 @@ def test_repushed_tag_fails_the_pin() -> None:
 
 
 def test_wrong_dimension_fails() -> None:
-    checks = by_name(doctor.run(pinned(), fake_ollama(dims=1024)))
+    checks = by_name(doctor.run(pinned(), fake_ollama(dims=768)))
     assert checks["embed model"].status is Status.FAIL
 
 
@@ -146,7 +146,7 @@ def test_old_ollama_fails_and_downstream_is_unknown_not_fail() -> None:
 
 
 def test_missing_model_fails_function_and_leaves_pin_unknown() -> None:
-    checks = by_name(doctor.run(pinned(), fake_ollama(models=["nomic-embed-text:latest"])))
+    checks = by_name(doctor.run(pinned(), fake_ollama(models=[EMBED_TAG])))
     assert checks["generation model"].status is Status.FAIL
     assert checks["generation pin"].status is Status.UNKNOWN
 

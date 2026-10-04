@@ -19,20 +19,20 @@ class Settings:
     ollama_url: str = "http://localhost:11434"
 
     # --- Embedding -------------------------------------------------------
-    # Changing any of these four changes what every stored vector means,
-    # silently. Treat a change as a new corpus, not an upgrade.
-    embed_model: str = "nomic-embed-text"
-    # Empty means "not pinned yet". doctor fails on an empty pin rather than
-    # passing, and prints the observed digest so it can be pasted in.
-    embed_digest: str = "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f"
-    embed_dims: int = 768
-    # nomic-embed-text was trained with task prefixes. Without them retrieval
-    # quality drops, and changing them later re-means every vector.
-    embed_doc_prefix: str = "search_document: "
-    embed_query_prefix: str = "search_query: "
-    # Which embedder profile (EMBED_PROFILES) the fields above came from. Also
-    # names the Postgres schema holding that profile's vectors (see db_schema).
-    embed_profile: str = "nomic"
+    # Changing any of these changes what every stored vector means, silently.
+    # They are set only through a profile (EMBED_PROFILES below), never one
+    # at a time. Defaults: the qwen3 profile, chosen on slice 7's result (A30).
+    embed_model: str = "qwen3-embedding:0.6b"
+    embed_digest: str = "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+    embed_dims: int = 1024
+    embed_doc_prefix: str = ""
+    embed_query_prefix: str = (
+        "Instruct: Given a question about the rules of a trading card game, "
+        "retrieve the rule passages that answer it\nQuery:"
+    )
+    # Which embedder profile the fields above came from. Also names the
+    # Postgres schema holding that profile's vectors (see db_schema).
+    embed_profile: str = "qwen3"
 
     # --- Hardware --------------------------------------------------------
     # Keeps both models off the GPU (Ollama's num_gpu=0). The brief targets a
@@ -108,6 +108,10 @@ def _coerce(raw: str, target: type[Any]) -> Any:
 _TYPES: dict[str, type[Any]] = {"str": str, "int": int, "float": float, "bool": bool}
 
 
+# Slice 7 (A29, A30): qwen3 beat nomic on version-change questions (59% to 79%
+# recall@5, McNemar p = 0.0034) and was not measurably worse anywhere.
+DEFAULT_EMBED_PROFILE = "qwen3"
+
 # The five settings that decide what a stored vector means travel together
 # (A10): a model with another model's prefixes, dimension or digest pin is a
 # silent mismatch, not an error. Digests are committed here, pinned (A3).
@@ -119,7 +123,7 @@ EMBED_PROFILES: dict[str, dict[str, Any]] = {
         "embed_doc_prefix": "search_document: ",
         "embed_query_prefix": "search_query: ",
     },
-    # Slice 7 (A25). Qwen3-Embedding is trained with an instruction on the
+    # Slice 7 (A25), default since A30. Qwen3-Embedding is trained with an instruction on the
     # query side only; documents are embedded as they are. The format follows
     # the model card: "Instruct: <task>\nQuery:<query>".
     "qwen3": {
@@ -139,22 +143,21 @@ EMBED_PROFILES: dict[str, dict[str, Any]] = {
 def load(env: Mapping[str, str] | None = None) -> Settings:
     """Build Settings from RB_<FIELD> variables, falling back to defaults.
 
-    RB_EMBED_PROFILE picks an embedder profile. A non-default profile sets all
-    five embedding fields and ignores RB_EMBED_* overrides: a .env written for
-    nomic pins nomic's digest, and applying it to another model would fail
-    every pin check, or worse, pass one by accident.
+    RB_EMBED_PROFILE picks an embedder profile, which sets all five embedding
+    fields. RB_EMBED_MODEL, RB_EMBED_DIGEST and the other per-field variables
+    are ignored. Found when the default moved to qwen3 (A30): the user's .env,
+    written for nomic, names nomic's model and digest, and letting it through
+    would pair one model with another's digest, dimension or prefixes.
     """
     env = os.environ if env is None else env
-    profile = env.get("RB_EMBED_PROFILE", "nomic")
+    profile = env.get("RB_EMBED_PROFILE", DEFAULT_EMBED_PROFILE)
     if profile not in EMBED_PROFILES:
         raise ValueError(f"unknown embed profile {profile!r}; one of {sorted(EMBED_PROFILES)}")
-    overrides: dict[str, Any] = {"embed_profile": profile}
-    locked = set(EMBED_PROFILES[profile]) if profile != "nomic" else set()
+    locked = set(EMBED_PROFILES[profile]) | {"embed_profile"}
+    overrides: dict[str, Any] = {}
     for f in fields(Settings):
         key = f"RB_{f.name.upper()}"
-        if key in env and f.name not in locked and f.name != "embed_profile":
+        if key in env and f.name not in locked:
             # `from __future__ import annotations` makes f.type a string.
             overrides[f.name] = _coerce(env[key], _TYPES[str(f.type)])
-    if profile != "nomic":
-        overrides |= EMBED_PROFILES[profile]
-    return Settings(**overrides)
+    return Settings(**overrides, **EMBED_PROFILES[profile], embed_profile=profile)

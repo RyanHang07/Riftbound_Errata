@@ -2,8 +2,8 @@
 -include .env
 export
 
-# Embedder profile (rb_errata/config.py EMBED_PROFILES): `make ingest EMBED=qwen3`.
-# Unset means the default, nomic. Works with every target that embeds or reads
+# Embedder profile (rb_errata/config.py EMBED_PROFILES): `make recall EMBED=nomic`.
+# Unset means the default, qwen3 (A30). Works with every target that embeds or reads
 # vectors: doctor, ingest, search, recall.
 ifdef EMBED
 export RB_EMBED_PROFILE := $(EMBED)

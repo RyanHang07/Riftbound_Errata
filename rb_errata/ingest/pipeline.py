@@ -180,7 +180,9 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
     finally:
         client.close()
 
-    if settings.embed_profile != "nomic":
+    from rb_errata.config import DEFAULT_EMBED_PROFILE
+
+    if settings.embed_profile != DEFAULT_EMBED_PROFILE and CORPUS.exists():
         # Another embedder over the SAME chunks: data/corpus.json describes
         # them already and stays as it is. If the chunks differ, the two
         # embedders would be compared on different corpora, which is not a

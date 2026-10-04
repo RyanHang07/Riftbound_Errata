@@ -386,12 +386,9 @@ def run(settings: Settings, client_factory: Callable[[Settings], Ollama] = Ollam
                 settings.embed_digest,
                 embed_found,
                 # Found on the first qwen3 doctor run: the hint named
-                # RB_EMBED_DIGEST, which a non-default profile ignores by
-                # design (config.load), so following it changed nothing.
-                "RB_EMBED_DIGEST in .env"
-                if settings.embed_profile == "nomic"
-                else f'embed_digest in EMBED_PROFILES["{settings.embed_profile}"], '
-                "rb_errata/config.py",
+                # RB_EMBED_DIGEST, which profiles ignore by design
+                # (config.load), so following it changed nothing.
+                f'embed_digest in EMBED_PROFILES["{settings.embed_profile}"], rb_errata/config.py',
             )
         )
         checks.append(check_embed(client, settings, embed_found))
