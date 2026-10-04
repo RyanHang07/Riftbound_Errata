@@ -1482,3 +1482,13 @@ The qwen3 digest is not pinned yet: it is taken from the user's first
 report now also break expert rulings down by category; under the as_of
 filter card questions are at 52% [43, 61] recall@5 (naive: 35%), which
 replaces A25's figure as slice 10's baseline. Prediction: `docs/RECALL.md`.
+
+### A29. Slice 7 result: Qwen3-Embedding wins where it matters (2026-10-04)
+
+Paired with nomic on the same questions under the as_of filter, recall@5:
+version-change 59% to 79% (12 gained, 1 lost, McNemar p = 0.0034);
+expert-ruling 58% to 62% (p = 0.34, not significant); card questions 52% to
+55% (p = 0.73). Two of four predictions wrong: version-change was predicted
+flat, and cards were predicted to gain most. Full write-up:
+`docs/RECALL.md`. Card questions are not fixed by a bigger embedder, which
+strengthens the case for slice 10.

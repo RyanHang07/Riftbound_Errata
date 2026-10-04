@@ -180,3 +180,45 @@ difference detected; a gain under about 8 points on rulings could not have
 been." If Qwen3 is worse, nomic stays the default; if it is better but not
 significantly, nomic still stays (cheaper: 768 dims, 4x fewer parameters)
 and the difference is recorded.
+
+### Results: `evals/runs/recall-as-of-qwen3-2026-10-04T1415Z`, paired with nomic
+
+| Group | nomic recall@5 | qwen3 recall@5 | qwen3 only | nomic only | McNemar p |
+|---|---|---|---|---|---|
+| expert-ruling (160) | 58% [50, 65] | 62% [55, 70] | 23 | 16 | 0.34 |
+| expert-ruling-faq (8) | 5/8 | 3/8 | 0 | 2 | 0.5 |
+| version-change (56) | 59% [46, 71] | **79% [66, 87]** | 12 | 1 | **0.0034** |
+| ruling: cards (113) | 52% [43, 61] | 55% [46, 64] | 18 | 15 | 0.73 |
+| ruling: general rules (26) | 62% | 73% | 4 | 1 | 0.38 |
+| ruling: mechanics (21) | 86% | 90% | 1 | 0 | 1 |
+
+recall@20 under qwen3: expert-ruling 86% [79, 90], version-change 93% [83, 97].
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| expert-ruling about 62% (55 to 68) | 62% | Right. |
+| cards about 58%, the largest gain | 55% (+3); general rules gained most (+11) | **Wrong** on "largest". |
+| version-change about 60%, no real change | 79% (+20) | **Wrong, badly.** |
+| No stratum significant | version-change p = 0.0034 | **Wrong.** |
+
+**Why version-change was mispredicted.** The reasoning was "already written
+in rule language, so nomic handles it". The numbers say the opposite: these
+questions turn on small wording changes between versions ("countered",
+"finalized"), and the larger model separates near-identical rules better.
+The prediction treated vocabulary match as the whole problem; precision
+between near-duplicates was the bigger part.
+
+**Card questions did not move** (52% to 55%, 18 gained against 15 lost).
+The two embedders find *different* card questions, not more of them. A
+larger embedder does not fix the card gap, which supports slice 10 (a card
+database) over hoping a model knows card names. It also hints at slice 8:
+the union of the two models' hits on rulings is 116 of 160 (73%), against
+62% for the better one alone, so combining rankers has room to work.
+
+**The pre-written decision rule** said nomic stays unless Qwen3 is
+significantly better. It is, on version-change, the stratum the project
+exists for, and not worse anywhere it can be measured (FAQ lost 2 of 8; with
+n = 8 that is p = 0.5). Speed is the same on the user's machine (23 vs 21
+ms per chunk). The switch of default is the user's decision (A29).
