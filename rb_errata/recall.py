@@ -27,6 +27,7 @@ from __future__ import annotations
 import hashlib
 import json
 import statistics
+import sys
 import time
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -115,7 +116,20 @@ def run(settings: Settings, method: str = "naive") -> Path:
     results = []
     client = Ollama(settings)
     try:
-        for q in questions:
+        started = time.perf_counter()
+        for n, q in enumerate(questions, 1):
+            # Found on the first reranker run: 224 questions at seconds each
+            # printed nothing for many minutes, and a silent run looks hung.
+            # stderr, so the report on stdout stays clean.
+            if n == 1 or n % 20 == 0:
+                done = time.perf_counter() - started
+                eta = done / (n - 1) * (len(questions) - n + 1) if n > 1 else 0.0
+                print(
+                    f"  question {n}/{len(questions)}, {done:.0f}s elapsed"
+                    + (f", about {eta / 60:.0f} min left" if n > 1 else ""),
+                    file=sys.stderr,
+                    flush=True,
+                )
             row: dict[str, Any] = {"id": q["id"]}
             try:
                 as_of = date.fromisoformat(str(q["as_of"]))
