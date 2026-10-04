@@ -252,3 +252,56 @@ If hybrid beats the prediction by more than 5 points on rulings, keywords
 carry more signal than the card-name gap suggested; if it loses on
 version-change, fusion needs weighting, which slice 9 (reranking) replaces
 anyway.
+
+### Results: `recall-hybrid-qwen3-2026-10-04T1423Z` and `recall-lexical-qwen3-2026-10-04T1423Z`
+
+**Reproducibility check passed.** Full-text search does not use the embedder,
+so the user's lexical run and one made in the cloud session (different
+machine, different schema) must agree. All 224 ranked lists are identical,
+scores included.
+
+| Group | qwen3 as-of | lexical | hybrid | hybrid gained / lost | McNemar p |
+|---|---|---|---|---|---|
+| expert-ruling | 62% [55, 70] | 53% [45, 61] | 66% [59, 73] | 22 / 16 | 0.42 |
+| expert-ruling-faq | 3/8 | 3/8 | 5/8 | 3 / 1 | 0.63 |
+| version-change | **79% [66, 87]** | 34% [23, 47] | **66% [53, 77]** | 1 / 8 | **0.039** |
+| ruling: cards | 55% | 49% | 60% | 21 / 15 | 0.41 |
+| ruling: general rules | 73% | 62% | 77% | 1 / 0 | 1 |
+| ruling: mechanics | 90% | 67% | 86% | 0 / 1 | 1 |
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| lexical rulings about 40% | 53% | **Wrong, too low.** |
+| lexical cards about 30% | 49% | **Wrong, far too low.** |
+| lexical version-change about 55% | 34% | **Wrong, too high.** |
+| hybrid rulings about 65% (60 to 70) | 66% | Right. |
+| hybrid cards about 57% | 60% | Close. |
+| hybrid version-change about 78%, no gain | 66%, 8 lost against 1 gained | **Wrong: it got significantly worse.** |
+| questions lost: more than 0, 5 to 10 on rulings | 16 on rulings | Direction right, size wrong. |
+| nothing significant | version-change loss p = 0.039 | **Wrong.** |
+
+**What the misses mean.** Keywords are better on card questions than
+assumed: a card ruling still uses rule words ("countered", "attach",
+"chosen"), and those match. Keywords are much worse on version-change
+questions, which are phrased in plain language around a small wording
+change; the stemmed terms match many rules equally. Fusing a list that weak
+into the strongest one costs the version-change stratum 13 points, the one
+the project exists for.
+
+**Decision: hybrid is not adopted.** The pre-written rule was "if it loses
+on version-change, fusion needs weighting, which slice 9 replaces anyway".
+It lost, significantly. `as-of` with qwen3 stays the baseline.
+
+**What it leaves for slice 9.** The two lists find different things. The
+right rule is in the union of the vector top 20 and the lexical top 20 for
+91% [86, 95] of rulings (vector alone: 86%), 88% of card questions (81%) and
+96% [88, 99] of version-change questions (93%). So full-text search is a
+good *candidate source* and a bad *ranker*. Slice 9 uses it that way: both
+lists supply up to 40 candidates and a cross-encoder reranker picks the top
+5, instead of rank fusion.
+
+Prompt length at k = 5: median 1,362 cl100k tokens under hybrid and 1,789
+under lexical, against 825 under vector: full-text favours long chunks even
+with length normalisation.

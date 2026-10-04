@@ -1519,3 +1519,18 @@ reproduce its chunks exactly and leaves it unchanged.
 
 Rejected: keeping nomic as default and opting in to qwen3 per command (every
 later slice would be measured on the weaker baseline).
+
+### A31. Slice 8 result: hybrid search not adopted (2026-10-04)
+
+recall@5, hybrid (RRF of qwen3 vectors and Postgres full-text) against qwen3
+as-of on the same questions: expert-ruling 62% to 66% (p = 0.42),
+version-change 79% to 66% (1 gained, 8 lost, p = 0.039). Full-text alone is
+53% on rulings and 34% on version-change. Hybrid is not adopted; `as-of`
+with qwen3 stays the baseline. Five of eight predictions wrong; details and
+reasons in `docs/RECALL.md`. A cross-machine check passed: the user's
+full-text run and the cloud session's agree on all 224 ranked lists.
+
+**Slice 9 is redesigned on this result.** The right rule is in the union of
+the vector and full-text top 20 for 91% of rulings and 96% of version-change
+questions, so full-text becomes a candidate source for a cross-encoder
+reranker rather than a second ranker fused by rank.
