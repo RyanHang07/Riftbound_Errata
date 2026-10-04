@@ -38,19 +38,13 @@ from rb_errata.labels import counterparts as counterparts_mod
 from rb_errata.labels.power import wilson
 from rb_errata.labels.review import load_questions
 from rb_errata.ollama import Ollama, checked_digest
-from rb_errata.retrieve.vector import search
+from rb_errata.retrieve.methods import METHODS, retrieve
 
 RUNS = Path("evals/runs")
 CORPUS = Path("data/corpus.json")
 K_MAX = 20
 KS = (1, 3, 5, 10, 20)
 PROMPT_K = 5  # the k the answer prompt uses; its length feeds the A23 budget
-# Named retrieval configurations. Each run records which one produced it, and
-# `compare` pairs two runs question by question (brief: pair on the question).
-METHODS = {
-    "naive": "naive-vector, no date filter",
-    "as-of": "vector, as_of filter before ranking",
-}
 
 
 def _fingerprint(rows: list[tuple[str, str, str, str | None]]) -> str:
@@ -89,6 +83,9 @@ def run(settings: Settings, method: str = "naive") -> Path:
         embed_digest = checked_digest(client, settings.embed_model, settings.embed_digest)
     finally:
         client.close()
+    # Idempotent: adds what later slices need (the full-text column, slice 8)
+    # to a database ingested before they existed, without re-embedding.
+    db.init(settings)
     # The report cites data/corpus.json. A database ingested differently
     # (another chunker, a missing version) would make every number describe a
     # corpus nobody can inspect, so the run refuses rather than warns.
@@ -113,8 +110,8 @@ def run(settings: Settings, method: str = "naive") -> Path:
         for q in questions:
             row: dict[str, Any] = {"id": q["id"]}
             try:
-                as_of = date.fromisoformat(str(q["as_of"])) if method == "as-of" else None
-                ranked = search(settings, client, q["question"], K_MAX, as_of=as_of)
+                as_of = date.fromisoformat(str(q["as_of"]))
+                ranked = retrieve(method, settings, client, q["question"], K_MAX, as_of)
             except Exception as exc:
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]
                 results.append(row)

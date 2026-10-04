@@ -222,3 +222,33 @@ significantly better. It is, on version-change, the stratum the project
 exists for, and not worse anywhere it can be measured (FAQ lost 2 of 8; with
 n = 8 that is p = 0.5). Speed is the same on the user's machine (23 vs 21
 ms per chunk). The switch of default is the user's decision (A29).
+
+## Slice 8: hybrid search (vector + Postgres full-text, fused by RRF)
+
+Two new methods, both with the as_of filter on every list:
+- **lexical:** Postgres full-text search alone. The question's stemmed terms
+  are ORed (an AND of every word matches nothing), ranked by `ts_rank_cd`
+  with length normalisation.
+- **hybrid:** reciprocal rank fusion of the vector top 50 and the full-text
+  top 50, score = sum of 1 / (60 + rank) (Cormack, Clarke and Buettcher,
+  SIGIR 2009). The constant 60 is the paper's and is not tuned, because
+  tuning it on these questions would overfit them.
+
+Baseline: `evals/runs/recall-as-of-qwen3-2026-10-04T1415Z` (A30).
+
+### Prediction (written 2026-10-04, before any lexical or hybrid number exists)
+
+| Group | qwen3 as-of recall@5 | lexical alone | hybrid | Why |
+|---|---|---|---|---|
+| expert-ruling | 62% | about 40% | about 65% (60 to 70) | Card names are not in the corpus, so keywords miss what vectors miss; the gain comes from exact rule words. |
+| ruling: cards | 55% | about 30% | about 57% | Same: no card text to match. Slice 10's job. |
+| version-change | 79% | about 55% | about 78%, no gain | The vector list is already strong; fusing a weaker list can push hits down as easily as up. |
+| Questions lost (qwen3 only) | | | **more than 0**, about 5 to 10 on rulings | Unlike the date filter, fusion has no guarantee: a weak list can demote a hit. |
+| Any stratum significant | | | **No** | Same power limits as slice 7. |
+
+The slice 7 hint (the union of two embedders' hits is 73% on rulings) says
+combining rankers *can* help, but that union came from two strong rankers.
+If hybrid beats the prediction by more than 5 points on rulings, keywords
+carry more signal than the card-name gap suggested; if it loses on
+version-change, fusion needs weighting, which slice 9 (reranking) replaces
+anyway.

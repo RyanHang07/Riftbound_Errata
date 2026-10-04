@@ -77,17 +77,22 @@ def _search(args: argparse.Namespace) -> int:
     from datetime import date
 
     from rb_errata.ollama import Ollama
-    from rb_errata.retrieve.vector import search
+    from rb_errata.retrieve.methods import METHODS, retrieve
 
     settings = config.load()
+    as_of = date.fromisoformat(args.as_of) if args.as_of else None
+    method = args.method or ("as-of" if as_of else "naive")
+    if method != "naive" and as_of is None:
+        print(f"error: method {method} needs --as-of YYYY-MM-DD", file=sys.stderr)
+        return 1
+    db.init(settings)
     client = Ollama(settings)
     try:
-        as_of = date.fromisoformat(args.as_of) if args.as_of else None
-        passages = search(settings, client, args.query, args.k, as_of=as_of)
+        passages = retrieve(method, settings, client, args.query, args.k, as_of or date.today())
     finally:
         client.close()
     if as_of:
-        print(f"VERSION-AWARE SEARCH: only rules in effect on {as_of}.\n")
+        print(f"{METHODS[method].upper()}: only rules in effect on {as_of}.\n")
     else:
         print("NAIVE SEARCH: no date filter. Results may come from any rules version.\n")
     for i, p in enumerate(passages, 1):
@@ -283,7 +288,7 @@ def main(argv: list[str] | None = None) -> int:
         if name in ("regrade", "recall-report"):
             p.add_argument("dir")
         if name == "recall":
-            p.add_argument("--method", default="naive", help="naive | as-of")
+            p.add_argument("--method", default="naive", help="naive | as-of | lexical | hybrid")
         if name == "recall-compare":
             p.add_argument("a")
             p.add_argument("b")
@@ -291,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("query")
             p.add_argument("-k", type=int, default=5)
             p.add_argument("--as-of", help="YYYY-MM-DD; omit for the naive baseline")
+            p.add_argument("--method", help="as-of | lexical | hybrid (default: as-of with a date)")
     args = parser.parse_args(argv)
     from rb_errata.ollama import PinError
 

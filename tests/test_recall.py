@@ -120,3 +120,38 @@ def test_mcnemar_p_exact() -> None:
     # 6 of 6 discordant one way: 2 * 0.5**6 = 0.03125.
     assert mcnemar_p(6, 6) == pytest.approx(0.03125)
     assert mcnemar_p(0, 0) == 1.0
+
+
+def _p(ref: str) -> Any:
+    from datetime import date
+
+    from rb_errata.retrieve.vector import Passage
+
+    return Passage(ref, [ref], "", 0.0, date(2026, 7, 24), None, "h-" + ref)
+
+
+def test_rrf_rewards_agreement_between_lists() -> None:
+    # "b" is second in both lists; "a" is first in one and absent from the
+    # other. Agreement wins: 2/62 > 1/61.
+    from rb_errata.retrieve.methods import rrf
+
+    fused = rrf([[_p("a"), _p("b")], [_p("c"), _p("b")]], k=3)
+    assert [p.source_ref for p in fused] == ["b", "a", "c"]
+
+
+def test_rrf_with_an_empty_list_keeps_the_other_order() -> None:
+    # A question of only stopwords gives no full-text results; the hybrid
+    # must then be exactly the vector ranking, not a reshuffle.
+    from rb_errata.retrieve.methods import rrf
+
+    fused = rrf([[_p("a"), _p("b"), _p("c")], []], k=3)
+    assert [p.source_ref for p in fused] == ["a", "b", "c"]
+
+
+def test_every_method_is_dispatchable() -> None:
+    import inspect
+
+    from rb_errata.retrieve import methods
+
+    src = inspect.getsource(methods.retrieve)
+    assert all(f'"{m}"' in src for m in methods.METHODS)

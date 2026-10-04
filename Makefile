@@ -72,8 +72,8 @@ ingest: fetch dates  ## everything: fetch, dates, chunk, embed, store -> data/co
 	$(UV) python -m rb_errata.cli ingest
 
 # Usage: make search Q="can a unit with deflect be targeted"
-search:  ## vector search: make search Q="..." [AS_OF=2026-05-01] (no AS_OF = naive)
-	$(UV) python -m rb_errata.cli search "$(Q)" $(if $(AS_OF),--as-of $(AS_OF))
+search:  ## make search Q="..." [AS_OF=2026-05-01] [METHOD=hybrid] (no AS_OF = naive)
+	$(UV) python -m rb_errata.cli search "$(Q)" $(if $(AS_OF),--as-of $(AS_OF)) $(if $(filter-out naive,$(METHOD)),--method $(METHOD))
 
 # --- Temporal drift (slice 3) ---
 
@@ -107,7 +107,7 @@ counterparts:  ## align expected rules to their copies in other versions (needs 
 
 # Slice 5. Needs the database and the embedder, no generation: minutes, not hours.
 METHOD ?= naive
-recall:  ## recall@k for every question: make recall [METHOD=as-of]; writes evals/runs/
+recall:  ## recall@k for every question: make recall METHOD=as-of|lexical|hybrid; writes evals/runs/
 	$(UV) python -m rb_errata.cli recall --method $(METHOD)
 
 recall-compare:  ## pair two runs: make recall-compare A=evals/runs/... B=evals/runs/...

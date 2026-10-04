@@ -67,6 +67,12 @@ CREATE TABLE IF NOT EXISTS chunks (
 -- No vector index, on purpose (A2): an exact scan over a few thousand rows
 -- takes milliseconds and never drops rows that a date filter would keep.
 CREATE INDEX IF NOT EXISTS chunks_validity ON chunks (valid_from, valid_to);
+-- Full-text search (slice 8). Generated, so it can never disagree with
+-- `text`; ADD COLUMN IF NOT EXISTS, so `make db-init` adds it to a database
+-- ingested before it existed without re-embedding anything.
+ALTER TABLE chunks ADD COLUMN IF NOT EXISTS
+  tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', text)) STORED;
+CREATE INDEX IF NOT EXISTS chunks_tsv ON chunks USING gin (tsv);
 
 -- Embed an unchanged text once, ever, per model and prefix (brief section 7).
 -- Keyed by digest, not tag: a re-pushed tag must not reuse old vectors.
