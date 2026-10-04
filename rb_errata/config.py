@@ -65,9 +65,11 @@ class Settings:
     # PyTorch pulls several GB of GPU libraries for a no-GPU target machine.
     rerank_model: str = "BAAI/bge-reranker-base"
     # SHA-256 of the ONNX weights file, the reranker's equivalent of an Ollama
-    # digest (A3). Empty means not pinned yet: the first run prints the
-    # observed hash and refuses, exactly as doctor does for Ollama models.
-    rerank_sha256: str = ""
+    # digest (A3). Empty would mean unpinned: the run prints the observed
+    # hash and refuses, exactly as doctor does for Ollama models.
+    # Pinned from the user's first run, 2026-10-04 (Hugging Face snapshot
+    # 2cfc18c9415c912f9d8155881c133215df768a70).
+    rerank_sha256: str = "15b9a8c3da82eddf263df571281166e00e9308fe19d077084b642ebfcaf06d2b"
     rerank_cache_dir: str = "data/models"
     # Candidates taken from EACH list (vector, full-text) before reranking.
     # 20 + 20 is where A31 measured the union ceiling (91% / 96%).
