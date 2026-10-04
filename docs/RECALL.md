@@ -305,3 +305,31 @@ lists supply up to 40 candidates and a cross-encoder reranker picks the top
 Prompt length at k = 5: median 1,362 cl100k tokens under hybrid and 1,789
 under lexical, against 825 under vector: full-text favours long chunks even
 with length normalisation.
+
+## Slice 9: cross-encoder reranking (bge-reranker-base, ONNX Runtime, CPU)
+
+A31 redesigned this slice: full-text search supplies candidates, a
+cross-encoder orders them. Two methods, same candidate budget (40):
+- **rerank-vector:** the vector top 40, reranked. What the cross-encoder
+  does on its own.
+- **rerank:** the vector top 20 plus the full-text top 20 (deduplicated),
+  reranked. What full-text candidates add on top.
+
+Baseline: `evals/runs/recall-as-of-qwen3-2026-10-04T1415Z`. Ceilings (right
+rule anywhere in the candidates): rerank 91% rulings, 96% version-change.
+
+### Prediction (written 2026-10-04, before any reranked number exists)
+
+| Group | Baseline recall@5 | rerank-vector | rerank | Why |
+|---|---|---|---|---|
+| expert-ruling | 62% | about 68% | about 70% (63 to 77) | A cross-encoder reads question and rule together; the gap to the 91% ceiling is ordering, which is its job. |
+| ruling: cards | 55% | about 60% | about 62% | Full-text candidates found card questions the vector missed (88% union ceiling vs 81%). |
+| version-change | 79% | about 82% | about 82% (75 to 88) | Already strong; a general reranker trained on web search may not separate near-identical rule wordings better than qwen3 does. |
+| Questions lost | | more than 0 | more than 0 | No guarantee, as with fusion. |
+| Significant (McNemar p < 0.05) | | no | **yes on rulings**, no on version-change | An 8-point gain on 160 questions is detected with probability 0.56 to 0.91 (`power.py`). |
+| Latency per question, CPU | about 0.05 s | about 2 s | about 2 s | 40 question-passage pairs through a 278M-parameter model on an i5-10600K. |
+
+**When it earns its latency (written now, applied after):** adopt it if
+recall@5 gains at least 5 points on rulings or version-change with no
+significant loss on either, at under 5 s per question on CPU. A tool a judge
+uses at a table can wait 2 to 3 seconds; it cannot wait 30.

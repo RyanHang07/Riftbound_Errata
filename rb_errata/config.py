@@ -58,6 +58,21 @@ class Settings:
     gen_temperature: float = 0.0
     gen_seed: int = 42
 
+    # --- Reranking (slice 9) ---------------------------------------------
+    # A cross-encoder reads the question and one passage together and scores
+    # the pair, which a vector (one per side, compared afterwards) cannot.
+    # Run with ONNX Runtime via fastembed, not PyTorch (A32): PyPI's Linux
+    # PyTorch pulls several GB of GPU libraries for a no-GPU target machine.
+    rerank_model: str = "BAAI/bge-reranker-base"
+    # SHA-256 of the ONNX weights file, the reranker's equivalent of an Ollama
+    # digest (A3). Empty means not pinned yet: the first run prints the
+    # observed hash and refuses, exactly as doctor does for Ollama models.
+    rerank_sha256: str = ""
+    rerank_cache_dir: str = "data/models"
+    # Candidates taken from EACH list (vector, full-text) before reranking.
+    # 20 + 20 is where A31 measured the union ceiling (91% / 96%).
+    rerank_candidates: int = 20
+
     # --- Time budget -----------------------------------------------------
     # Assumptions, not measurements. doctor labels them as such and multiplies
     # them by the throughput it *does* measure.

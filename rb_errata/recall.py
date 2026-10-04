@@ -27,6 +27,7 @@ from __future__ import annotations
 import hashlib
 import json
 import statistics
+import time
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -83,6 +84,13 @@ def run(settings: Settings, method: str = "naive") -> Path:
         embed_digest = checked_digest(client, settings.embed_model, settings.embed_digest)
     finally:
         client.close()
+    reranker = None
+    if method.startswith("rerank"):
+        from rb_errata.retrieve import rerank
+
+        # Before any search or file write, as for Ollama pins: an unpinned or
+        # changed model refuses here, not halfway through the questions.
+        reranker = rerank.load(settings)
     # Idempotent: adds what later slices need (the full-text column, slice 8)
     # to a database ingested before they existed, without re-embedding.
     db.init(settings)
@@ -111,7 +119,9 @@ def run(settings: Settings, method: str = "naive") -> Path:
             row: dict[str, Any] = {"id": q["id"]}
             try:
                 as_of = date.fromisoformat(str(q["as_of"]))
+                t0 = time.perf_counter()
                 ranked = retrieve(method, settings, client, q["question"], K_MAX, as_of)
+                row["retrieve_s"] = round(time.perf_counter() - t0, 4)
             except Exception as exc:
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]
                 results.append(row)
@@ -138,6 +148,9 @@ def run(settings: Settings, method: str = "naive") -> Path:
         "retrieval": {
             "method": METHODS[method],
             "method_id": method,
+            "reranker": reranker,
+            "rerank_candidates": settings.rerank_candidates if reranker else None,
+            "cpu_only": settings.cpu_only,
             "k_max": K_MAX,
             "embed_model": settings.embed_model,
             "embed_digest": embed_digest,
@@ -275,6 +288,17 @@ def report(run_dir: Path) -> list[str]:
     for name, members in groups(questions):
         ranks = [by_id[i]["hit_rank"] for i in members if i in by_id]
         lines.append(f"| {name} | {_cell(_within(ranks, 5))} |")
+
+    secs = sorted(r["retrieve_s"] for r in snap["results"] if "retrieve_s" in r)
+    if secs:
+        lines += [
+            "",
+            "## Retrieval latency per question (embedding + SQL + rerank)",
+            "",
+            f"median {statistics.median(secs) * 1000:.0f} ms, "
+            f"p90 {secs[int(0.9 * (len(secs) - 1))] * 1000:.0f} ms, max {secs[-1] * 1000:.0f} ms "
+            f"over {len(secs)} questions. The first question includes model loading.",
+        ]
 
     tokens = sorted(x["prompt_tokens_cl100k"] for x in graded if x.get("prompt_tokens_cl100k"))
     if tokens:

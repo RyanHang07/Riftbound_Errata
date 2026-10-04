@@ -9,3 +9,6 @@ __pycache__/
 # Fetched corpus. Riot's text never enters the repository; data/corpus.json
 # (hashes and metadata only) is what gets committed.
 data/raw/
+# Reranker model files (slice 9), downloaded by fastembed. Pinned by SHA-256 in
+# config.py; the weights themselves are never committed.
+data/models/

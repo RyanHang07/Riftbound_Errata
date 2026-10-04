@@ -1534,3 +1534,32 @@ full-text run and the cloud session's agree on all 224 ranked lists.
 the vector and full-text top 20 for 91% of rulings and 96% of version-change
 questions, so full-text becomes a candidate source for a cross-encoder
 reranker rather than a second ranker fused by rank.
+
+### A32. Slice 9 built: the reranker runs on ONNX Runtime, not PyTorch (2026-10-04)
+
+*The user approved sentence-transformers + PyTorch, then chose ONNX Runtime
+when the problem below surfaced.*
+
+PyTorch's CPU-only package index is blocked from the cloud session, and the
+PyTorch on PyPI for Linux depends on several GB of NVIDIA CUDA libraries: a
+GPU build, on the user's PC and in CI, for a project whose target machine has
+no GPU. The reranker therefore runs through **fastembed 0.8.1 on ONNX
+Runtime**, from PyPI, CPU only (`CPUExecutionProvider`), with the same model
+family the brief names: `BAAI/bge-reranker-base` (MIT licence).
+
+**Pinning.** Hugging Face models have no Ollama-style digest here, so the
+pin is the SHA-256 of the ONNX weights file (`rerank_sha256` in
+`rb_errata/config.py`), with the snapshot commit recorded beside it. As with
+Ollama: empty means unpinned, and the first run prints the observed hash and
+refuses; a changed file refuses. The weights live in `data/models/`,
+gitignored.
+
+**Design (A31).** Two methods with the same 40-candidate budget:
+`rerank-vector` (vector top 40) and `rerank` (vector top 20 + full-text top
+20). Every recall run now records per-question retrieval latency, so
+"does it earn its latency" is measured for every method, not only this one.
+Prediction and the adoption rule: `docs/RECALL.md`.
+
+Rejected: PyTorch from PyPI (GPU build for a CPU target; GBs in CI);
+Ollama (does not serve cross-encoders); a hosted reranker API (the brief:
+offline, no API key).
