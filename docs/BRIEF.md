@@ -1563,3 +1563,71 @@ Prediction and the adoption rule: `docs/RECALL.md`.
 Rejected: PyTorch from PyPI (GPU build for a CPU target; GBs in CI);
 Ollama (does not serve cross-encoders); a hosted reranker API (the brief:
 offline, no API key).
+
+### A33. The product surface (2026-10-06)
+
+*Decided by the user while slice 9's runs were in progress. Design:
+`docs/SURFACE.md`.*
+
+- **MCP server (slice 15): local only, stdio.** Tools: `search_rules`,
+  `ask`, `what_changed`, `get_rule`, `list_versions`. Every output carries
+  version and validity dates. No network listener; no Riot text leaves the
+  machine.
+- **Local web app (slice 17):** Vite + React + TypeScript on localhost, over
+  the same functions as the MCP server.
+- **Public site: static, on Vercel** (the user's choice over GitHub Pages),
+  from a `site/` folder: what it is, measured results read from a committed
+  numbers-only export, and install and connect instructions. No Riot text,
+  no models, no server. Adds Vercel to the stack.
+
+Rejected: a hosted live demo (a paid server running the models, and
+redistribution of Riot's text before the legal pages are read); remote MCP
+over HTTP (same reasons); one app serving both public and local modes (the
+public build must never be able to show rule text, which is simplest to
+guarantee when it has none).
+
+The legal gate (A25) now also covers the public site: it is not published
+until the user has read Riot's three policy pages.
+
+### A34. The public site follows the shadcn/ui pattern (2026-10-06)
+
+*The user's direction, refining A33.* The Vercel site is modelled on
+ui.shadcn.com: a landing page, a docs section with a left sidebar and an
+"on this page" outline, ⌘K search, and a top nav bar whose right side holds
+a GitHub button with the star count and a theme toggle. Stack: Next.js
+static export, Tailwind CSS, shadcn/ui, MDX docs. The local app uses the
+same Tailwind and shadcn/ui components so both read as one product.
+
+GitHub stats are fetched at build time and refreshed by each deploy, not in
+visitors' browsers (GitHub's unauthenticated limit is 60 requests an hour
+per IP; a failed fetch shows no count rather than a wrong one). This needs
+the repository to be public, which falls under the same legal gate as the
+site. Full page plan: `docs/SURFACE.md`.
+
+### A35. Site visual direction: Riftbound-inspired accents with meaning (2026-10-06)
+
+*The user's choices from proposed ideas.* An always-dark hero with a
+drifting carousel of question cards and a version-flip card; foil sheen and
+cursor tilt; the six domain hues as docs section accents (Fury red reserved
+for "outdated"); bronze, silver and gold edges on the Results table meaning
+baseline, kept and best. Inspired by, never imitating: no Riot logo,
+portal symbol, card frames, domain symbols or art. Details and sources:
+`docs/SURFACE.md` section 4. Mockup: private artifact, not in the repo.
+
+### A36. Site type and colour: less generated, more specific (2026-10-06)
+
+*The user asked for a less AI-looking design.* Archivo (wide) for display,
+Source Serif 4 for reading, JetBrains Mono for rule references; tinted
+neutrals; a single gold accent that also means "current best"; the hero's
+glow replaced by a version timeline with effective dates. Details:
+`docs/SURFACE.md` section 5.
+
+### A37. The whole site in the League client's Hextech language (2026-10-06)
+
+*The user's direction: cards closer to the League UI, with blue energy
+wisps, then the whole site rebuilt to match.* Palette and the blue/gold
+rule from Riot's "The Visual Language of Hextech"; cut corners, gold
+hairline frames and diamond markers throughout; Marcellus and Source Sans 3;
+dark first with a matching light theme. Supersedes A36's type and colour
+and A35's card style; A35's carousel, flip card, section hues and metal
+tiers stay. Details: `docs/SURFACE.md` section 6.
