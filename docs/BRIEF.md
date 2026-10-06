@@ -1631,3 +1631,13 @@ hairline frames and diamond markers throughout; Marcellus and Source Sans 3;
 dark first with a matching light theme. Supersedes A36's type and colour
 and A35's card style; A35's carousel, flip card, section hues and metal
 tiers stay. Details: `docs/SURFACE.md` section 6.
+
+### A38. Slice 9 result: reranking helps a little, too slowly (2026-10-06)
+
+Cross-encoder reranking (bge-reranker-base, ONNX Runtime, CPU) over 40
+candidates, paired with qwen3 as-of: version-change recall@5 79% to 86-88%
+(p = 0.13 to 0.22), rulings 62% to 66-67% (p = 0.37 to 0.54), at 10.5 to
+12.5 s per question against a pre-written limit of 5 s. Not adopted; the
+baseline stays. Full-text candidates added nothing over vector-only
+candidates. Latency was predicted at about 2 s, wrong by 5 to 6 times.
+Details: `docs/RECALL.md`.

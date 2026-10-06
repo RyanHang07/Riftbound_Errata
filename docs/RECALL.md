@@ -333,3 +333,57 @@ rule anywhere in the candidates): rerank 91% rulings, 96% version-change.
 recall@5 gains at least 5 points on rulings or version-change with no
 significant loss on either, at under 5 s per question on CPU. A tool a judge
 uses at a table can wait 2 to 3 seconds; it cannot wait 30.
+
+### Results: `recall-rerank-qwen3-2026-10-04T1446Z` and `recall-rerank-vector-qwen3-2026-10-06T0459Z`
+
+Both recompute identically from their committed snapshots. Paired with the
+qwen3 as-of baseline on the same questions, recall@5:
+
+| Group | Baseline | rerank-vector | rerank (vector + full-text) | rerank gained / lost | McNemar p |
+|---|---|---|---|---|---|
+| expert-ruling | 62% [55, 70] | 67% [59, 74] | 66% [58, 73] | 24 / 19 | 0.54 |
+| expert-ruling-faq | 3/8 | 3/8 | 3/8 | 1 / 1 | 1 |
+| version-change | 79% [66, 87] | 86% [74, 93] | 88% [76, 94] | 6 / 1 | 0.13 |
+| ruling: cards | 55% | 59% | 58% | 22 / 18 | 0.64 |
+
+rerank-vector against the baseline: rulings 26 gained / 19 lost (p = 0.37),
+version-change 5 / 1 (p = 0.22). recall@20 under rerank-vector: version-change
+56 of 56.
+
+**Latency, CPU only (ONNX Runtime, i5-10600K):** rerank median 10.5 s per
+question (p90 11.9 s); rerank-vector median 12.5 s (p90 14.2 s). The baseline
+is about 0.05 s.
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| rerank-vector rulings about 68% | 67% | Right. |
+| rerank rulings about 70% (63 to 77) | 66% | Right, low in the range. |
+| cards about 60 / 62% | 59 / 58% | Right for rerank-vector, low for rerank. |
+| version-change about 82% (75 to 88) | 86 / 88% | Right, top of the range. |
+| questions lost: more than 0 | 19 on rulings | Right. |
+| rerank significant on rulings | p = 0.54 | **Wrong.** |
+| version-change not significant | p = 0.13 / 0.22 | Right. |
+| about 2 s per question | 10.5 / 12.5 s | **Wrong by 5 to 6 times.** |
+
+**Decision: not adopted.** The rule written before the run required a
+5-point gain on rulings or version-change, no significant loss, *and* under
+5 s per question on CPU. Version-change gained 7 to 9 points, but at 10.5 to
+12.5 s per question. `as-of` with qwen3 stays the baseline.
+
+**What the run says beyond the decision:**
+- **Full-text candidates added nothing.** rerank (vector + full-text) and
+  rerank-vector (vector only) are within a question of each other on every
+  group. A31's union ceiling (91% / 96%) did not turn into hits: the
+  cross-encoder did not pick the full-text finds.
+- **The gains are real-looking but unproven.** Version-change 6 gained
+  against 1 lost is the right shape, and the question set cannot confirm it
+  at this size (power: `docs/POWER.md`).
+- **Why it was slow:** 40 question-passage pairs per question through a
+  278M-parameter model in full precision, passages up to 512 tokens. Cost
+  scales with pairs and model size, so a smaller model or fewer candidates
+  are the two levers.
+- Card questions moved 3 to 4 points either way. Neither embedders (A29),
+  keywords (A31) nor reranking fix them; the corpus has no card text.
+  Slice 10 (card database) is the remaining lever.
