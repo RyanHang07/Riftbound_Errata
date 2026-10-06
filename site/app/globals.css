@@ -1,0 +1,386 @@
+/* Site styles. Ported from the reviewed mockup (docs/SURFACE.md sections 3
+   to 6; A33 to A39): Hextech palette, cut-corner frames, diamond markers,
+   dark only. Tailwind supplies the reset and layout utilities; the frames,
+   cards and animations live here as component classes. */
+@import "tailwindcss";
+
+@theme {
+  --color-hx-black: #010a13;
+  --color-hx-navy: #0a1428;
+  --color-hx-gold1: #f0e6d2;
+  --color-hx-gold2: #c8aa6e;
+  --color-hx-gold5: #785a28;
+  --color-hx-blue1: #cdfafa;
+  --color-hx-blue3: #0ac8b9;
+  --font-display: "Marcellus", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Layout: shadcn's docs structure (nav, landing, sidebar docs, results)
+   dressed in the League client's Hextech language: Hextech Black and navy
+   surfaces, structural gold hairlines, cut corners, diamond markers, and
+   blue Hextech magic kept for the actions that do something (Riot's rule:
+   blue for game actions, gold for secondary ones). Dark only: the look is the client's, and a toggle that turns it off
+   works against it (A39). */
+:root {
+  /* Hextech palette (Riot, "The Visual Language of Hextech") */
+  --hx-black: #010a13; --hx-navy: #0a1428; --hx-grey: #1e2328;
+  --hx-gold1: #f0e6d2; --hx-gold2: #c8aa6e; --hx-gold3: #c89b3c; --hx-gold5: #785a28;
+  --hx-blue1: #cdfafa; --hx-blue3: #0ac8b9; --hx-blue4: #0397ab; --hx-blue5: #005a82; --hx-blue6: #0a323c;
+  /* Riftbound domain hues, accents with a meaning only */
+  --d-fury: #e5484d; --d-calm: #30a46c; --d-mind: #3e8ef7; --d-body: #f76b15; --d-chaos: #9b5de5; --d-order: #e8b923;
+  --m-bronze: #b07a45; --m-silver: #aab3bf; --m-gold: #c8aa6e;
+
+  /* theme tokens: dark (Hextech) values first */
+  --bg: #010a13; --panel: #0a1428; --panel-2: #0e1a2e; --fg: #e9e2d0; --head: #f0e6d2;
+  --muted: #8d9aa3; --frame: #785a28; --frame-soft: rgba(120,90,40,.45); --line: #1b2836;
+  --accent: #c8aa6e; --magic: #0ac8b9; --magic-ink: #cdfafa; --link: #c8aa6e;
+  --good: #3fd08a; --bad: #f2777c; --code-bg: #07111f;
+  --font-display: "Marcellus", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --cut: 10px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased }
+a { color: inherit }
+code, pre, kbd { font-family: var(--font-mono) }
+:focus-visible { outline: 2px solid var(--magic); outline-offset: 2px }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; color: var(--head); text-wrap: balance; line-height: 1.15; letter-spacing: .01em }
+.cut { clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut)) }
+.caps { font-family: var(--font-sans); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; font-size: 12px }
+
+
+/* ---------- nav ---------- */
+header.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px) }
+header.nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--frame) 15%, var(--frame) 85%, transparent) }
+.nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 16px; height: 58px; display: flex; align-items: center; gap: 28px }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 19px; color: var(--head); text-decoration: none; white-space: nowrap; letter-spacing: .02em }
+.brand svg { flex: none; color: var(--accent) }
+.nav-links { display: flex; gap: 24px }
+.nav-links a { text-decoration: none; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; padding: 19px 0; position: relative }
+.nav-links a:hover { color: var(--head) }
+.nav-links a[aria-current="page"] { color: var(--head) }
+.nav-links a[aria-current="page"]::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 7px; height: 7px; transform: translateX(-50%) rotate(45deg); background: var(--accent); z-index: 1 }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px }
+.search-btn { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 8px 0 12px; border: 1px solid var(--frame-soft); background: var(--panel); color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; min-width: 230px }
+.search-btn:hover { border-color: var(--frame); color: var(--fg) }
+.search-btn kbd { margin-left: auto; font-size: 11px; border: 1px solid var(--line); padding: 1px 5px; background: var(--bg); color: var(--muted) }
+.icon-btn { height: 34px; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid transparent; background: none; color: var(--fg); font: inherit; font-size: 13px; cursor: pointer; text-decoration: none }
+.icon-btn:hover { border-color: var(--frame-soft); color: var(--head) }
+.stars { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600 }
+@media (max-width: 860px) { .gh { display: none } .search-btn { min-width: 0 } .search-btn .label, .search-btn kbd { display: none } .nav-inner { gap: 18px } }
+@media (max-width: 520px) { .nav-links { gap: 14px } .nav-links a { letter-spacing: .06em } .nav-inner { gap: 14px } .brand-name { display: none } .nav-right { gap: 2px } }
+@media (max-width: 380px) { .nav-links .opt { display: none } }
+
+/* ---------- buttons ---------- */
+.btn { --cut: 8px; display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 22px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; text-decoration: none; cursor: pointer; border: 0; position: relative; clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut)) }
+/* blue Hextech magic: the action that does something */
+.btn-primary { color: #cdfafa; background: linear-gradient(180deg, #0a5a6e, #05303d); box-shadow: inset 0 0 0 1px var(--hx-gold2), inset 0 0 0 2px #0a323c, inset 0 0 14px rgba(10,200,185,.35) }
+.btn-primary:hover { color: #fff; box-shadow: inset 0 0 0 1px var(--hx-gold1), inset 0 0 0 2px #0a323c, inset 0 0 22px rgba(10,200,185,.6) }
+/* gold: secondary */
+.btn-ghost { color: var(--head); background: transparent; box-shadow: inset 0 0 0 1px var(--frame) }
+.btn-ghost:hover { box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent) }
+
+/* ---------- shared panels ---------- */
+pre { background: var(--code-bg); border: 1px solid var(--frame-soft); box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 4px var(--line); padding: 16px 18px; overflow-x: auto; font-size: 13px; line-height: 1.6; margin: 0; color: var(--fg) }
+code.inline { font-size: 13px; background: var(--panel); border: 1px solid var(--line); padding: 1px 5px; color: var(--magic-ink) }
+code.inline { color: var(--hx-blue1) }
+.tok-k { color: var(--accent) } .tok-s { color: var(--magic) } .tok-c { color: var(--muted) }
+.table-wrap { overflow-x: auto; border: 1px solid var(--frame-soft); background: var(--panel) }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; font-variant-numeric: tabular-nums }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); white-space: nowrap }
+th { font-weight: 600; color: var(--accent); font-size: 11.5px; text-transform: uppercase; letter-spacing: .1em; background: var(--panel-2) }
+tr:last-child td { border-bottom: 0 }
+.ci { color: var(--muted); font-size: 12.5px }
+.pill { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; padding: 2px 8px; border: 1px solid currentColor }
+.pill.good { color: var(--good) } .pill.bad { color: var(--bad) } .pill.wait { color: var(--muted) }
+.callout { border: 1px solid var(--frame-soft); border-left: 2px solid var(--magic); background: var(--panel); padding: 14px 16px; font-size: 15px }
+mark { background: rgba(200,170,110,.22); color: inherit; padding: 0 3px }
+
+/* diamond: the one marker used everywhere (bullets, headings, nav, gems) */
+.dia { display: inline-block; width: 7px; height: 7px; transform: rotate(45deg); background: var(--accent); flex: none }
+
+/* ---------- hero band: always Hextech dark, by design ---------- */
+.hero-band { position: relative; overflow: hidden; isolation: isolate; background: var(--hx-black); color: #e9e2d0; border-bottom: 1px solid #1b2836 }
+.hero-band::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(45% 70% at 76% 45%, rgba(10,50,60,.9), transparent 70%) }
+.hero-band h1 { color: #f0e6d2 }
+.hero-band .btn-ghost { color: #f0e6d2; box-shadow: inset 0 0 0 1px #785a28 }
+.hero-band .btn-ghost:hover { color: #c8aa6e; box-shadow: inset 0 0 0 1px #c8aa6e }
+.hero-band code.inline { background: #0a1428; border-color: #1e2b3a; color: #cdfafa }
+#motes { position: absolute; inset: 0; z-index: 2; pointer-events: none; width: 100%; height: 100% }
+.hero-inner { max-width: 1100px; margin: 0 auto; padding: 72px 16px 64px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 40px; align-items: center; position: relative; z-index: 4 }
+/* scrim: the cards drift behind the featured card, never behind the words */
+.hero-band::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(90deg, #010a13 0%, #010a13 38%, rgba(1,10,19,.75) 52%, rgba(1,10,19,.15) 70%, rgba(1,10,19,.35) 100%) }
+@media (max-width: 860px) { .hero-band::after { background: linear-gradient(180deg, rgba(1,10,19,.92) 0%, rgba(1,10,19,.85) 55%, rgba(1,10,19,.35) 100%) } }
+@media (max-width: 860px) { .hero-inner { grid-template-columns: 1fr; padding-block: 48px 48px } }
+.hero { display: grid; gap: 20px; justify-items: start; max-width: 620px }
+.hero h1 { font-size: clamp(38px, 6vw, 64px); margin: 0; letter-spacing: .005em; line-height: 1.04 }
+.hero h1 em { font-style: normal; color: #c8aa6e }
+.hero p { font-size: 18px; color: #a9b4bb; margin: 0; max-width: 58ch }
+.hero .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px }
+.dateline { font: 500 12px/1 var(--font-mono); letter-spacing: .04em; color: #8d9aa3; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 0 }
+.dateline b { color: #c8aa6e; font-weight: 600 }
+.dateline a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #785a28 }
+
+/* drifting cards */
+.drift { position: absolute; inset: 0; z-index: 1; display: grid; align-content: center; gap: 26px; pointer-events: none; opacity: .6;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent) }
+.drift-row { display: flex; gap: 22px; width: max-content; animation: drift 80s linear infinite; pointer-events: auto }
+.drift-row.rev { animation-direction: reverse; animation-duration: 95s; margin-left: -120px }
+.drift-row:hover { animation-play-state: paused }
+@keyframes drift { to { transform: translateX(-50%) } }
+
+/* a card: unclipped host (ornaments, energy) + clipped gold frame + clipped panel */
+.qcard { --hue: var(--d-mind); --cut: 10px; position: relative; flex: none; width: 160px; aspect-ratio: 63 / 88; transform: rotate(var(--tilt, 0deg)); transition: transform .35s ease, filter .35s ease; filter: drop-shadow(0 12px 20px rgba(0,0,0,.55)) }
+.qcard:nth-child(3n) { --tilt: -2deg } .qcard:nth-child(3n+1) { --tilt: 1.5deg }
+.qcard::before, .qcard::after, .flip-face::before, .flip-face::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut)) }
+.qcard::before { background: linear-gradient(160deg, #c8aa6e, #785a28 35%, #3c2f17 60%, #785a28 85%, #c8aa6e) }
+.qcard-in, .flip-face .in { position: absolute; inset: 1.5px; z-index: 1;
+  clip-path: polygon(calc(var(--cut) - 1px) 0, calc(100% - var(--cut) + 1px) 0, 100% calc(var(--cut) - 1px), 100% calc(100% - var(--cut) + 1px), calc(100% - var(--cut) + 1px) 100%, calc(var(--cut) - 1px) 100%, 0 calc(100% - var(--cut) + 1px), 0 calc(var(--cut) - 1px));
+  background: linear-gradient(180deg, rgba(10,50,60,.6), transparent 42%), repeating-linear-gradient(135deg, rgba(200,170,110,.035) 0 1px, transparent 1px 7px), linear-gradient(180deg, #0a1428, #010a13);
+  box-shadow: inset 0 0 0 1px rgba(1,10,19,.9), inset 0 0 0 2px rgba(120,90,40,.35) }
+.qcard-in { padding: 13px 12px 12px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px }
+.qcard .top { display: flex; align-items: center; gap: 7px; font: 500 10px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: #8d9aa3 }
+.qcard .gem { width: 7px; height: 7px; transform: rotate(45deg); background: var(--hue); box-shadow: 0 0 6px var(--hue) }
+.qcard .q { font-family: var(--font-display); font-size: 13px; line-height: 1.35; color: #f0e6d2; align-self: center }
+.qcard .ref { font: 500 10.5px/1.3 var(--font-mono); color: #cdfafa; opacity: .8; border-top: 1px solid rgba(120,90,40,.5); padding-top: 7px; overflow-wrap: anywhere }
+.qcard::after, .flip-face::after { z-index: 3; background: linear-gradient(115deg, transparent 30%, rgba(205,250,250,.18) 45%, rgba(205,250,250,.04) 55%, transparent 70%); background-size: 250% 100%; background-position: 120% 0; transition: background-position .9s ease }
+.qcard:hover { transform: rotate(0deg) translateY(-6px); filter: drop-shadow(0 16px 26px rgba(0,0,0,.6)) drop-shadow(0 0 10px rgba(10,200,185,.35)) }
+.qcard:hover::after, .flip-tilt:hover .flip-face::after { background-position: -40% 0 }
+
+.orn { position: absolute; left: 50%; width: 9px; height: 9px; z-index: 4; transform: translateX(-50%) rotate(45deg); background: #010a13; border: 1.5px solid #c8aa6e }
+.orn.t { top: -4px } .orn.b { bottom: -4px }
+.orn::after { content: ""; position: absolute; inset: 2px; background: #0ac8b9; opacity: .8 }
+
+.wisp { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); z-index: 2; overflow: visible; pointer-events: none }
+.wisp path { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke }
+.wisp .w1 { stroke: #0ac8b9; stroke-width: 2; stroke-dasharray: 9 91; filter: drop-shadow(0 0 3px #0ac8b9) drop-shadow(0 0 7px #0397ab);
+  animation: travel var(--wd, 7s) linear infinite, breathe var(--wd, 7s) ease-in-out infinite; animation-delay: var(--wdl, 0s) }
+.wisp .w2 { stroke: #cdfafa; stroke-width: 1.2; stroke-dasharray: 3 97;
+  animation: travel calc(var(--wd, 7s) * .7) linear infinite reverse, breathe calc(var(--wd, 7s) * .7) ease-in-out infinite; animation-delay: calc(var(--wdl, 0s) - 1.3s) }
+@keyframes travel { from { stroke-dashoffset: 0 } to { stroke-dashoffset: -100 } }
+@keyframes breathe { 0%, 100% { opacity: 0 } 25%, 70% { opacity: 1 } }
+
+/* featured version-flip card */
+.flip-wrap { justify-self: center; perspective: 1100px; display: grid; gap: 16px; justify-items: center; filter: drop-shadow(0 24px 40px rgba(0,0,0,.6)) }
+.flip-tilt { transition: transform .15s ease-out; transform-style: preserve-3d }
+.flip { position: relative; width: 268px; aspect-ratio: 63 / 88; transform-style: preserve-3d; transition: transform 1s cubic-bezier(.65,0,.35,1) }
+.flip.flipped { transform: rotateY(180deg) }
+.flip-face { --cut: 16px; position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden }
+.flip-face.back { transform: rotateY(180deg) }
+.flip-face::before { background: linear-gradient(160deg, #f0e6d2, #c8aa6e 18%, #785a28 45%, #3c2f17 62%, #785a28 80%, #c8aa6e) }
+.flip-face .in { inset: 2px; padding: 20px 18px 18px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px }
+.flip-face.front .in { background: linear-gradient(180deg, rgba(229,72,77,.18), transparent 40%), repeating-linear-gradient(135deg, rgba(200,170,110,.035) 0 1px, transparent 1px 8px), linear-gradient(180deg, #0a1428, #010a13) }
+.flip-face.back .in { background: linear-gradient(180deg, rgba(10,200,185,.18), transparent 40%), repeating-linear-gradient(135deg, rgba(200,170,110,.035) 0 1px, transparent 1px 8px), linear-gradient(180deg, #0a1428, #010a13) }
+.status { justify-self: start; font: 700 10.5px/1 var(--font-sans); letter-spacing: .12em; text-transform: uppercase; padding: 5px 9px }
+.front .status { color: #ffb4b6; background: rgba(229,72,77,.15); box-shadow: inset 0 0 0 1px rgba(229,72,77,.55) }
+.back .status { color: #cdfafa; background: rgba(10,200,185,.14); box-shadow: inset 0 0 0 1px rgba(10,200,185,.55) }
+.flip-face .ver { font-family: var(--font-display); font-size: 17px; color: #f0e6d2 }
+.flip-face .ver span { display: block; font: 400 11.5px/1.4 var(--font-mono); color: #8d9aa3; margin-top: 4px }
+.flip-face .claim { font-size: 15px; line-height: 1.5; color: #c9d4d6; align-self: center }
+.flip-face .claim b { font-family: var(--font-display); font-weight: 400; font-size: 30px; display: block; margin-bottom: 6px; color: #f0e6d2 }
+.flip-face mark { background: rgba(200,170,110,.25); color: #f0e6d2 }
+.flip-face .ref { font: 500 12px var(--font-mono); color: #cdfafa; border-top: 1px solid rgba(120,90,40,.5); padding-top: 10px }
+.flip-face .orn { width: 13px; height: 13px } .flip-face .orn.t { top: -6px } .flip-face .orn.b { bottom: -6px }
+.flip-face .wisp .w1 { stroke-width: 2.5; stroke-dasharray: 14 86 }
+.flip-caption { font-size: 14px; color: #8d9aa3; text-align: center; max-width: 290px }
+.flip-caption button { background: none; border: 0; box-shadow: inset 0 0 0 1px #785a28; color: #f0e6d2; padding: 5px 14px; font: 700 11px/1 var(--font-sans); text-transform: uppercase; letter-spacing: .12em; cursor: pointer; margin-top: 8px }
+.flip-caption button:hover { box-shadow: inset 0 0 0 1px #c8aa6e; color: #c8aa6e }
+
+/* version timeline along the hero's bottom edge */
+.timeline { position: relative; z-index: 4; max-width: 1100px; margin: 0 auto; padding: 0 16px 28px }
+.timeline ol { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid #1e2b3a; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 12px; font: 500 11.5px/1.4 var(--font-mono); color: #74828c }
+.timeline li { position: relative; padding-top: 6px }
+.timeline li::before { content: ""; position: absolute; top: -19px; left: 0; width: 8px; height: 8px; transform: rotate(45deg); background: #010a13; border: 1.5px solid #4a5560 }
+.timeline li b { display: block; color: #c9d4d6; font-weight: 600 }
+.timeline li.now::before { background: #c8aa6e; border-color: #c8aa6e; box-shadow: 0 0 10px rgba(200,170,110,.6) }
+.timeline li.now b { color: #c8aa6e }
+.timeline li.today { text-align: right; color: #8d9aa3 }
+@media (max-width: 640px) { .timeline ol { grid-template-columns: repeat(2, minmax(0, 1fr)) } .timeline li.today { text-align: left } }
+
+/* ---------- landing below the hero ---------- */
+.landing { max-width: 1100px; margin: 0 auto; padding: 64px 16px 96px; display: grid; gap: 72px }
+.proof { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); border: 1px solid var(--frame-soft); background: var(--panel); box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px var(--line) }
+.proof > div { padding: 26px; display: grid; gap: 6px; align-content: start }
+.proof > div + div { border-left: 1px solid var(--line) }
+@media (max-width: 760px) { .proof > div + div { border-left: 0; border-top: 1px solid var(--line) } }
+.proof .k { font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent) }
+.proof .v { font-family: var(--font-display); font-size: 40px; font-variant-numeric: tabular-nums; color: var(--head) }
+.proof .v s { color: var(--muted); font-size: 24px; text-decoration-color: var(--bad); text-decoration-thickness: 2px; margin-right: 6px }
+.proof .n { font-size: 14px; color: var(--muted) }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px 40px; padding-top: 32px; position: relative }
+.features::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--frame), transparent) }
+.feature { display: grid; gap: 8px; align-content: start }
+.feature .label { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--magic) }
+.feature .label::before { content: ""; width: 7px; height: 7px; transform: rotate(45deg); background: var(--magic) }
+.feature h3 { margin: 0; font-size: 22px }
+.feature p { margin: 0; color: var(--muted); font-size: 15.5px }
+.how { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 32px; align-items: center }
+@media (max-width: 860px) { .how { grid-template-columns: 1fr } }
+.how h2 { font-size: 30px; margin: 0 0 14px }
+.how ol { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 12px; color: var(--muted) }
+.how ol li { counter-increment: step; display: grid; grid-template-columns: 28px 1fr; gap: 10px }
+.how ol li::before { content: counter(step); font-family: var(--font-display); color: var(--accent); font-size: 20px; line-height: 1.2 }
+.how ol b { color: var(--head); font-weight: 600 }
+
+/* ---------- docs ---------- */
+.docs { max-width: 1400px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: 240px minmax(0, 1fr) 200px; gap: 40px }
+@media (max-width: 1100px) { .docs { grid-template-columns: 220px minmax(0, 1fr) } .toc { display: none } }
+@media (max-width: 760px) { .docs { grid-template-columns: minmax(0, 1fr) } .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 16px } }
+.sidebar { position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto; padding: 28px 16px 28px 0; border-right: 1px solid var(--line); font-size: 15px }
+.sidebar h4 { display: flex; align-items: center; gap: 9px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--head); margin: 22px 0 6px }
+.sidebar h4:first-child { margin-top: 0 }
+.sidebar h4::before { content: ""; width: 7px; height: 7px; transform: rotate(45deg); background: var(--sec, var(--muted)) }
+.sidebar a { display: block; padding: 4px 10px; margin-left: -10px; color: var(--muted); text-decoration: none; border-left: 2px solid transparent }
+.sidebar a:hover { color: var(--head) }
+.sidebar a[aria-current="page"] { color: var(--head); font-weight: 600; border-left-color: var(--accent); background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent) }
+.sidebar code { font-size: 13px }
+.sidebar .soon { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border: 1px solid var(--line); padding: 0 5px; margin-left: 6px }
+article.doc { --sec: var(--muted); padding: 32px 0 80px; min-width: 0; max-width: 760px }
+.crumbs { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 10px }
+.crumbs b { color: var(--sec) }
+article.doc h1 { font-size: 38px; margin: 0 0 10px }
+article.doc .lede { font-size: 18px; color: var(--muted); margin: 0 0 28px }
+article.doc h2 { font-size: 24px; margin: 40px 0 14px; padding-bottom: 10px; position: relative; scroll-margin-top: 74px }
+article.doc h2::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--sec) 0 40px, var(--line) 40px) }
+article.doc p, article.doc li { max-width: 68ch }
+article.doc ul { padding-left: 0; list-style: none; display: grid; gap: 6px }
+article.doc ul li { display: grid; grid-template-columns: 16px 1fr; gap: 6px }
+article.doc ul li::before { content: ""; width: 6px; height: 6px; transform: rotate(45deg); background: var(--accent); margin-top: .62em }
+article.doc a, .callout a { color: var(--link); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px }
+article.doc a:hover { color: var(--head) }
+.params { display: grid; border: 1px solid var(--frame-soft); background: var(--panel) }
+.param { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 15px }
+.param:last-child { border-bottom: 0 }
+.param code { font-size: 13px; color: var(--accent) }
+.param .t { color: var(--muted); font-size: 12px; font-family: var(--font-mono) }
+@media (max-width: 560px) { .param { grid-template-columns: 1fr; gap: 2px } }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin-top: 52px; flex-wrap: wrap }
+.pager a { --cut: 8px; display: grid; padding: 11px 16px; text-decoration: none; font-family: var(--font-display); font-size: 16px; color: var(--head); background: var(--panel); box-shadow: inset 0 0 0 1px var(--frame-soft);
+  clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut)) }
+.pager a span { font: 700 10.5px/1.6 var(--font-sans); text-transform: uppercase; letter-spacing: .12em; color: var(--muted) }
+.pager a:hover { box-shadow: inset 0 0 0 1px var(--accent) }
+.toc { position: sticky; top: 58px; align-self: start; padding: 32px 0; font-size: 14px }
+.toc h4 { margin: 0 0 10px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--head) }
+.toc a { display: block; padding: 3px 0 3px 12px; color: var(--muted); text-decoration: none; border-left: 1px solid var(--line) }
+.toc a:hover { color: var(--head); border-left-color: var(--accent) }
+
+/* ---------- results ---------- */
+.results { max-width: 1100px; margin: 0 auto; padding: 48px 16px 96px; display: grid; gap: 28px }
+.results h1 { font-size: 38px; margin: 0 }
+.results .lede { color: var(--muted); margin: 0; max-width: 70ch; font-size: 16.5px }
+.results h2 { font-size: 24px; margin: 16px 0 0 }
+.best td { background: color-mix(in srgb, var(--accent) 9%, transparent) }
+tr[data-tier] td:first-child { box-shadow: inset 3px 0 0 var(--tier) }
+tr[data-tier="bronze"] { --tier: var(--m-bronze) } tr[data-tier="silver"] { --tier: var(--m-silver) } tr[data-tier="gold"] { --tier: var(--m-gold) }
+.legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 13px; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 7px }
+.legend i { width: 16px; height: 3px; background: var(--c) }
+
+footer { position: relative; color: var(--muted); font-size: 13.5px }
+footer::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--frame) 15%, var(--frame) 85%, transparent) }
+footer div { max-width: 1400px; margin: 0 auto; padding: 26px 16px }
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-row { animation: none } .flip, .qcard, .flip-tilt { transition: none }
+  .qcard::after, .flip-face::after, .wisp, #motes { display: none }
+}
+
+/* ---- fixes from the user's review (2026-10-06) ---- */
+/* 1. list markers: absolute, so the text flows as one paragraph. A grid
+      put every child (the bold phrase, then the text) in its own cell. */
+.how ol li { display: block; position: relative; padding-left: 32px }
+.how ol li::before { position: absolute; left: 0; top: 0 }
+article.doc ul li { display: block; position: relative; padding-left: 20px }
+article.doc ul li::before { content: ""; position: absolute; left: 2px; top: .62em; margin: 0 }
+
+/* 2. cut-corner borders that survive the cut: the frame is the element's
+      own fill, the face is an inset layer clipped slightly tighter, so the
+      gold line runs along the diagonals too. 0.6px keeps the diagonal
+      the same 1px thickness as the straight edges. */
+.btn, .pager a { isolation: isolate; box-shadow: none !important }
+.btn::before, .pager a::before { content: ""; position: absolute; inset: 1px; z-index: -1;
+  clip-path: polygon(calc(var(--cut) - .6px) 0, calc(100% - var(--cut) + .6px) 0, 100% calc(var(--cut) - .6px), 100% calc(100% - var(--cut) + .6px), calc(100% - var(--cut) + .6px) 100%, calc(var(--cut) - .6px) 100%, 0 calc(100% - var(--cut) + .6px), 0 calc(var(--cut) - .6px)) }
+.btn-primary { background: var(--hx-gold2) }
+.btn-primary::before { background: linear-gradient(180deg, #0a5a6e, #05303d); box-shadow: inset 0 0 14px rgba(10,200,185,.35) }
+.btn-primary:hover { background: var(--hx-gold1) }
+.btn-primary:hover::before { box-shadow: inset 0 0 22px rgba(10,200,185,.6) }
+.btn-ghost { background: var(--frame) }
+.btn-ghost::before { background: var(--bg) }
+.btn-ghost:hover { background: var(--accent) }
+.hero-band .btn-ghost { background: #785a28 }
+.hero-band .btn-ghost::before { background: #010a13 }
+.hero-band .btn-ghost:hover { background: #c8aa6e }
+.pager a { position: relative; background: var(--frame-soft) }
+.pager a::before { background: var(--panel) }
+.pager a:hover { background: var(--accent) }
+
+/* 3. dateline as a quiet label, not a wrapped line of code */
+.dateline { font: 700 11.5px/1.4 var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: #8d9aa3; gap: 8px }
+.dateline b { color: #c8aa6e; font-weight: 700 }
+.dateline .dia { background: #c8aa6e; width: 6px; height: 6px }
+article.doc .pager a { text-decoration: none; color: var(--head) }
+article.doc .pager a:hover { color: var(--head) }
+
+/* one diamond slides between the active section links (replaces the
+   per-link marker); hidden on the landing page, pops in on first use */
+.nav-links { position: relative }
+.nav-links a[aria-current="page"]::after { display: none }
+.nav-dia { position: absolute; left: 0; bottom: -4px; width: 8px; height: 8px; z-index: 1; pointer-events: none;
+  background: var(--accent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 70%, transparent);
+  opacity: 0; transform: translateX(calc(var(--x, 0px) - 4px)) translateY(-8px) rotate(45deg) scale(0);
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .25s ease }
+.nav-dia.on { opacity: 1; transform: translateX(calc(var(--x, 0px) - 4px)) translateY(0) rotate(45deg) scale(1) }
+.nav-dia.jump { transition: none }
+@media (prefers-reduced-motion: reduce) { .nav-dia { transition: opacity .2s ease } }
+
+/* stat tiles: every number says what it measures and which search made it */
+.proof .pair { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px }
+.proof .pair > div { display: grid; gap: 1px }
+.proof .num { font-family: var(--font-display); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--head) }
+.proof .was .num { font-size: 26px; color: var(--muted); text-decoration: line-through; text-decoration-color: var(--bad); text-decoration-thickness: 2px }
+.proof .unit { font-size: 13px; font-weight: 600; color: var(--fg) }
+.proof .was .unit { color: var(--muted); font-weight: 400 }
+.proof .who { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted) }
+.proof .now .who { color: var(--magic) }
+.proof .arrow { color: var(--accent); font-size: 20px; padding-bottom: 22px }
+
+/* stat tiles stay one row at every width: before | arrow | after.
+   Labels under the numbers wrap instead of the numbers, and headings
+   reserve two lines so the numbers align across tiles. */
+.proof > div { container-type: inline-size; padding: 24px 22px }
+.proof .k { min-height: 2.8em }
+.proof .pair { display: grid; grid-template-columns: minmax(0, max-content) auto minmax(0, max-content); justify-content: start; align-items: end; column-gap: 12px; flex-wrap: nowrap }
+.proof .pair > div { min-width: 0 }
+.proof .who { white-space: normal; line-height: 1.3; min-height: 2.6em }
+.proof .arrow { padding-bottom: 50px; font-size: 20px }
+.proof .num { font-size: clamp(30px, 17cqi, 42px) }
+.proof .was .num { font-size: clamp(20px, 10cqi, 26px) }
+@media (max-width: 760px) { .proof .k { min-height: 0 } .proof .who { min-height: 0 } }
+
+/* ---------- command menu (cmdk, shadcn's Command) ---------- */
+[cmdk-overlay] { position: fixed; inset: 0; z-index: 50; background: rgba(1,10,19,.7) }
+[cmdk-dialog] { position: fixed; z-index: 51; top: 14vh; left: 50%; transform: translateX(-50%); width: min(560px, calc(100vw - 32px));
+  background: var(--panel); color: var(--fg); border: 1px solid var(--frame); box-shadow: inset 0 0 0 4px var(--panel), inset 0 0 0 5px var(--line), 0 24px 70px rgba(0,0,0,.5) }
+[cmdk-input] { width: 100%; border: 0; border-bottom: 1px solid var(--line); padding: 16px 18px; font: inherit; background: transparent; color: var(--head); outline: none }
+[cmdk-list] { max-height: 340px; overflow-y: auto; padding: 6px }
+[cmdk-group-heading] { padding: 8px 12px 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--accent) }
+[cmdk-item] { padding: 9px 12px; font-size: 15px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; border-left: 2px solid transparent }
+[cmdk-item][data-selected="true"] { background: color-mix(in srgb, var(--magic) 10%, transparent); border-left-color: var(--magic) }
+[cmdk-empty] { padding: 12px; color: var(--muted); font-size: 14px }
+
+/* ---------- spacing Tailwind's reset removes (found in the first build) ---------- */
+article.doc p { margin: 0 0 14px }
+article.doc ul, article.doc ol { margin: 0 0 16px }
+article.doc ol { padding-left: 22px; list-style: decimal; display: grid; gap: 6px }
+article.doc pre { margin: 0 0 18px }
+article.doc .callout { margin: 0 0 18px }
+article.doc .params, article.doc .table-wrap { margin: 0 0 18px }
+.sidebar > div + div > h4:first-child { margin-top: 22px }
+.sidebar > h4 { margin-top: 22px }

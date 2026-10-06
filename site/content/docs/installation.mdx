@@ -1,0 +1,20 @@
+## You need
+
+- Windows with WSL (Ubuntu), macOS or Linux, and 16 GB of RAM. No GPU needed.
+- Docker Desktop, Git, uv and Ollama.
+
+## Steps
+
+```
+git clone https://github.com/RyanHang07/Riftbound_Errata
+cd Riftbound_Errata
+make install       # Python packages, exact versions
+make db-up         # Postgres + pgvector on localhost:5433
+ollama pull qwen3-embedding:0.6b
+make ingest        # downloads the rules, dates them, embeds them
+make doctor        # every line should say pass
+```
+
+## Pinned models
+
+Every model is pinned by digest. If a download doesn't match, `make doctor` fails and says why, instead of quietly using a different model.

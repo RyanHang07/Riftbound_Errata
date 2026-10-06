@@ -27,3 +27,22 @@ jobs:
       # versions here would test code nobody runs locally.
       - run: uv sync --frozen
       - run: make verify
+
+  # The public site must always build (A40): TypeScript, MDX and the static
+  # export, from the committed data. The Python job's test_site_data already
+  # fails if site/data/results.json is stale.
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - run: npm run build

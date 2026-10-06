@@ -1,0 +1,11 @@
+## Crowded results
+
+With every version searched together, most of the top-5 slots go to versions that weren't in force on the question's date. Most are the same rule with slightly different wording or a new number.
+
+## Worse than missing
+
+On version-change questions, naive search ranked an outdated rule above the right one <OutdatedFirst /> of the time. An answer built on it states an old rule as current, with a citation.
+
+## The fix
+
+Remove every rule not in force on the question's date before ranking. Outdated rules can then never come out on top.

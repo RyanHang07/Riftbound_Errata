@@ -1,0 +1,22 @@
+# Every prediction written before a run, and how it came out. The source of
+# truth is docs/RECALL.md, where each was committed before its run; this file
+# is the same record in a form the public site reads (make site-data).
+# verdict: right | wrong | close
+- {slice: "Naive baseline (5)", prediction: "Expert rulings recall@5 about 25%", result: "44%", verdict: wrong}
+- {slice: "Naive baseline (5)", prediction: "Version changes recall@5 about 55%", result: "39%", verdict: wrong}
+- {slice: "Naive baseline (5)", prediction: "Outdated copy in top 5 on version changes, at least 30%", result: "45%", verdict: right}
+- {slice: "Naive baseline (5)", prediction: "Version-blind recall at least 5 points above recall@5", result: "13 points", verdict: right}
+- {slice: "Date filter (6)", prediction: "No question loses its hit", result: "0 lost", verdict: right}
+- {slice: "Date filter (6)", prediction: "Wrong-version copies in top k drop to 0", result: "0", verdict: right}
+- {slice: "Date filter (6)", prediction: "Version changes about 52%", result: "59%", verdict: right}
+- {slice: "Date filter (6)", prediction: "Expert rulings about 47%", result: "58%", verdict: wrong}
+- {slice: "Qwen3 embedder (7)", prediction: "Expert rulings about 62%", result: "62%", verdict: right}
+- {slice: "Qwen3 embedder (7)", prediction: "Card questions gain the most", result: "+3 points, the least", verdict: wrong}
+- {slice: "Qwen3 embedder (7)", prediction: "Version changes flat, about 60%", result: "79%", verdict: wrong}
+- {slice: "Qwen3 embedder (7)", prediction: "No group significant", result: "version changes p = 0.0034", verdict: wrong}
+- {slice: "Hybrid search (8)", prediction: "Expert rulings about 65%", result: "66%", verdict: right}
+- {slice: "Hybrid search (8)", prediction: "Version changes about 78%, no gain", result: "66%, 8 lost", verdict: wrong}
+- {slice: "Hybrid search (8)", prediction: "Keyword-only card questions about 30%", result: "49%", verdict: wrong}
+- {slice: "Reranker (9)", prediction: "Version changes about 82%", result: "88%", verdict: right}
+- {slice: "Reranker (9)", prediction: "Significant gain on expert rulings", result: "p = 0.54", verdict: wrong}
+- {slice: "Reranker (9)", prediction: "About 2 s per question on CPU", result: "10.5 s", verdict: wrong}

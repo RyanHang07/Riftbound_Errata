@@ -1,0 +1,28 @@
+<Callout>An MCP tool, planned with the server (slice 15). The search behind it works today: `make search`.</Callout>
+
+## Input
+
+<Params>
+  <Param name="question" type="string, required">The rules question, in plain language.</Param>
+  <Param name="as_of" type="date, default today">Only rules in force on this date are searched. Dates before 24 Oct 2025 are refused: v1.0 has no known effective date.</Param>
+  <Param name="k" type="integer, default 5">How many passages to return.</Param>
+</Params>
+
+## Output
+
+A list of passages. Each has `ref`, `version`, `valid_from`, `valid_to` (empty if still current), `newer_version_exists` and the rule text.
+
+## Example
+
+```
+{ "question": "Can an effect play a gear directly to a battlefield?", "as_of": "2026-10-01" }
+```
+
+## Errors
+
+- **Date too early:** the date is before the first datable version.
+- **Database unreachable:** run `make db-up`.
+
+## How good is it?
+
+The right rule is in the top 5 for <Recall group="version-change" withInterval /> of version-change questions and <Recall group="expert-ruling" /> of expert rulings. See [Results](/results/).

@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -118,3 +118,17 @@ recall-report:  ## recompute a report offline: make recall-report RUN=evals/runs
 
 power:  ## how many questions are needed (exact calculation, no model)
 	$(UV) python -m rb_errata.cli power
+
+# --- Public site (A33 to A40). Static Next.js in site/; no Riot text. ---
+
+site-data:  ## export numbers-only site/data/results.json from the committed runs
+	$(UV) python -m rb_errata.cli site-data
+
+site-install:  ## install the site's exact npm versions (package-lock.json)
+	cd site && npm ci
+
+site-dev:  ## run the site locally at http://localhost:3000
+	cd site && npm run dev
+
+site-build:  ## build the static site into site/out (what Vercel serves)
+	cd site && npm run build

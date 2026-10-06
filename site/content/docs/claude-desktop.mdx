@@ -1,0 +1,25 @@
+<Callout>The MCP server is planned (slice 15) and not built yet. This page shows how it will connect.</Callout>
+
+## Add the server
+
+In Claude Desktop, open Settings, Developer, Edit Config, and add this to `claude_desktop_config.json`, with the folder where you cloned the project.
+
+```
+{
+  "mcpServers": {
+    "rb-errata": {
+      "command": "uv",
+      "args": ["--directory", "/home/you/Riftbound_Errata",
+               "run", "python", "-m", "rb_errata.mcp"]
+    }
+  }
+}
+```
+
+## Check it works
+
+Restart Claude Desktop. The tools list should show the rb-errata tools. Ask: "As of March 2026, does a countered spell count as played? Use rb-errata."
+
+## Local only
+
+Claude Desktop starts the server on your machine over stdio. It opens no network port, and no rule text leaves your computer.

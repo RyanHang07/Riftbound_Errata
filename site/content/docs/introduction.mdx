@@ -1,0 +1,17 @@
+## What it does
+
+Riot updates the Riftbound Core Rules several times a year. Rules are reworded, renumbered and sometimes reversed. A normal search tool mixes every version together, so a question about today can be answered with a rule that stopped applying months ago.
+
+rb_errata stores every version with the dates it was in force, searches only the version that applied on your date, and cites rules as `core@1.4:419.4.a`: document, version, rule number.
+
+## The pieces
+
+- **Search:** finds the rules that answer a question, as of a date. Works today.
+- **MCP server:** lets Claude Desktop and other AI apps use the search as a tool. Planned.
+- **Local web app:** ask questions in your browser, on your own machine. Planned.
+
+## Why it runs locally
+
+Riot's rule text stays on your computer. This site shows only the project's own content and measurements. No API key, no account, no server.
+
+<Callout>New here? Go to [Installation](/docs/installation/), then [Quick start](/docs/quick-start/).</Callout>

@@ -1,0 +1,11 @@
+## How rules are matched
+
+Riot renumbers hundreds of rules at every update, so the same rule can carry a different number in each version. Rules are matched by their wording, never by number.
+
+## Example
+
+```
+{ "rule": "core@1.4:419.4.a", "from_version": "1.3", "to_version": "1.4" }
+```
+
+Works today as `make diff`; the MCP tool is planned with the server.

@@ -1648,3 +1648,32 @@ Details: `docs/RECALL.md`.
 client's, and the client is dark; a theme toggle that switches it off works
 against the identity. No light theme and no toggle, in the mockup and the
 real site. Supersedes the light-theme lines of A34, A36 and A37.
+
+### A40. The public site is built, not yet deployed (2026-10-06)
+
+*The user chose to build the real site next (over the MCP server, the card
+database and generation), keeping the legal gate for later.*
+
+`site/`: Next.js 16 static export, Tailwind CSS 4, shadcn-style components
+(cva, cmdk for ⌘K), MDX docs. It ports the reviewed mockup (A33 to A39):
+Hextech theme, dark only, the sliding nav diamond, drifting question cards
+with energy wisps, the version-flip card, motes, labelled stat tiles, docs
+with section hues, and the Results table with metal tiers. 21 static pages.
+
+**Every number is generated.** `make site-data` (`rb_errata/site_data.py`)
+computes `site/data/results.json` from the committed runs, questions,
+review and effective dates; a test fails if the committed file is stale or
+if any figure drifts from the recorded comparisons. Docs pages quote
+figures through components that read the same file. The predictions record
+is `evals/predictions.yaml`, copied from `docs/RECALL.md`, where each was
+committed before its run.
+
+**No Riot text.** The export holds refs, numbers, dates and this project's
+own version-change questions; the CC BY-SA rulings are not in the carousel.
+
+**Honesty fixes made while porting:** the MCP server and the local app are
+labelled planned, not working; the landing tiles label the 79% and 62% as
+"current search" (date filter plus Qwen3), not the date filter alone.
+
+**CI** builds the site on every push. **Deployment** to Vercel (project
+root `site`, static output) waits for the legal gate (A25, A33).

@@ -242,6 +242,13 @@ def _counterparts(_: argparse.Namespace) -> int:
     return 0
 
 
+def _site_data(_: argparse.Namespace) -> int:
+    from rb_errata.site_data import write
+
+    print(f"wrote {write()}")
+    return 0
+
+
 def _power(_: argparse.Namespace) -> int:
     from rb_errata.labels.power import report
 
@@ -270,6 +277,7 @@ def main(argv: list[str] | None = None) -> int:
         "recall": (_recall, "slice 5: retrieve top 20 for every question, snapshot, report"),
         "recall-report": (_recall_report, "recompute a recall report from a committed snapshot"),
         "recall-compare": (_recall_compare, "pair two recall runs: discordant counts, McNemar"),
+        "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
     for name, (fn, help_text) in commands.items():

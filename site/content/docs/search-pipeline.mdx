@@ -1,0 +1,12 @@
+## Steps
+
+1. Remove every rule not in force on your date (SQL, before ranking).
+2. Embed the question with Qwen3-Embedding and rank by meaning.
+3. Return the top 5.
+
+## Tested and dropped
+
+- **Keyword search with rank fusion:** helped expert rulings slightly but cost version-change questions 13 points.
+- **Cross-encoder reranking:** gained 7 to 9 points on version changes, but took over 10 seconds per question on a CPU.
+
+Every row, with its prediction, is on [Results](/results/).
