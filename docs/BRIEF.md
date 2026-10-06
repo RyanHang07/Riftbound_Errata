@@ -1621,3 +1621,13 @@ Source Serif 4 for reading, JetBrains Mono for rule references; tinted
 neutrals; a single gold accent that also means "current best"; the hero's
 glow replaced by a version timeline with effective dates. Details:
 `docs/SURFACE.md` section 5.
+
+### A37. The whole site in the League client's Hextech language (2026-10-06)
+
+*The user's direction: cards closer to the League UI, with blue energy
+wisps, then the whole site rebuilt to match.* Palette and the blue/gold
+rule from Riot's "The Visual Language of Hextech"; cut corners, gold
+hairline frames and diamond markers throughout; Marcellus and Source Sans 3;
+dark first with a matching light theme. Supersedes A36's type and colour
+and A35's card style; A35's carousel, flip card, section hues and metal
+tiers stay. Details: `docs/SURFACE.md` section 6.

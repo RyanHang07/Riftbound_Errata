@@ -194,3 +194,34 @@ Replaced with choices tied to the subject:
 - **Features:** an unboxed list with small-caps labels instead of cards.
 - **Details:** real link underlines in the accent, smaller radii, strike-
   through old numbers in the "outdated" red.
+
+## 6. Hextech: one visual language for the whole site (A37, supersedes 4 and 5 where they differ)
+
+The cards still read as generated, and the user asked for the League of
+Legends client's look, then for the whole site to match it. The language
+comes from Riot's own description of the client, "The Visual Language of
+Hextech" (source below):
+
+- **Palette:** Hextech Black `#010A13` and navy `#0A1428` for surfaces;
+  structural gold `#785A28` for frames and borders, `#C8AA6E` for
+  highlights, `#F0E6D2` for headings; blue Hextech magic (`#0AC8B9`,
+  `#CDFAFA`, background `#0A323C`) used sparingly.
+- **Riot's rule, kept:** blue is for actions that do something (Get started,
+  search focus, the active command), gold for everything secondary.
+- **Shapes:** cut corners on buttons, cards and pager links; gold hairline
+  frames with an inner second line on panels; one marker everywhere, a
+  diamond (nav state, sidebar groups, list bullets, gems, timeline).
+- **Type:** Marcellus, a flared display serif close in spirit to the
+  client's headline face, for headings; Source Sans 3 for text; uppercase
+  tracked labels for nav, buttons and table headers; JetBrains Mono for
+  rule references.
+- **Cards:** gold cut-corner frames over navy panels, diamond ornaments top
+  and bottom, and blue energy wisps travelling along each frame edge on its
+  own clock; Hextech motes with wispy tails drift up through the hero.
+- **Dark first;** a light theme in the same language (cool paper, navy ink,
+  darker gold frames). The hero band stays dark in both.
+- **Kept from A35:** carousel, version-flip card, domain hues as docs
+  section markers, metal tiers on Results. Still never Riot's logo, portal
+  symbol, card frames or art.
+
+Source: [The Visual Language of Hextech (Riot, Nexus)](https://nexus.leagueoflegends.com/en-us/2016/12/the-visual-language-of-hextech/)
