@@ -231,6 +231,11 @@ Source: [The Visual Language of Hextech (Riot, Nexus)](https://nexus.leagueofleg
   it off on the diagonals. Draw the frame as the element's own fill and the
   face as an inset layer clipped `0.6px` tighter, which keeps the diagonal
   the same 1px as the straight edges.
+- The nav's active marker is one diamond that slides between Docs,
+  Changelog and Results (a slight overshoot), hidden on the landing page
+  and dropping in the first time a section is active, by click or by
+  loading straight into it. Docs always opens the Introduction, never the
+  page last shown (the mockup's Docs link was dead from the Changelog).
 - List markers (diamonds, step numbers) are positioned absolutely. A grid
   on the list item puts each child in its own cell and squeezes the text
   into the marker column.
