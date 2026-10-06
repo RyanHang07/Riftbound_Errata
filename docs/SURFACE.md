@@ -78,6 +78,10 @@ product. Light and dark themes, with a toggle.
 - Left: project name and mark, then Docs, Results, Changelog.
 - Right: docs search (⌘K command palette, shadcn's pattern), the **GitHub
   button with the star count**, and the theme toggle.
+- **On small screens the doc shortcuts win.** Below about 860px the GitHub
+  button is hidden and search shrinks to an icon, so Docs and Changelog
+  stay visible; below about 520px the name collapses to the logo; Results
+  is the last link to go (below about 380px), since the landing links to it.
 - **GitHub stats are fetched at build time** from the public GitHub API and
   baked into the page, refreshed on every deploy (and by a scheduled
   rebuild). Not fetched in the visitor's browser: GitHub's unauthenticated
