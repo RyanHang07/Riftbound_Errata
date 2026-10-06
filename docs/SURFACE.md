@@ -225,3 +225,12 @@ Hextech" (source below):
   symbol, card frames or art.
 
 Source: [The Visual Language of Hextech (Riot, Nexus)](https://nexus.leagueoflegends.com/en-us/2016/12/the-visual-language-of-hextech/)
+
+**Build notes from the mockup review (2026-10-06).**
+- A cut-corner border cannot be an outline or inset shadow: the clip cuts
+  it off on the diagonals. Draw the frame as the element's own fill and the
+  face as an inset layer clipped `0.6px` tighter, which keeps the diagonal
+  the same 1px as the straight edges.
+- List markers (diamonds, step numbers) are positioned absolutely. A grid
+  on the list item puts each child in its own cell and squeezes the text
+  into the marker column.
