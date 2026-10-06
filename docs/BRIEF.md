@@ -1677,3 +1677,27 @@ labelled planned, not working; the landing tiles label the 79% and 62% as
 
 **CI** builds the site on every push. **Deployment** to Vercel (project
 root `site`, static output) waits for the legal gate (A25, A33).
+
+### A41. Plan for the remaining slices (2026-10-06)
+
+*The user's choices: failure types first; generation on the GPU for speed,
+timing on the CPU.* Replaces A25's order from here on. Each slice still
+gets a written prediction before its numbers exist, `make verify` after
+every change, and a stop at the end.
+
+| Order | Slice | Done when |
+|---|---|---|
+| 1 | **12 Failure taxonomy** (retrieval) | Every miss in the current best run (`recall-as-of-qwen3-2026-10-04T1415Z`) has exactly one deterministic category: right rule ranked 6 to 20 (below cutoff); not in the top 20 with a card named (no card text in the corpus); not in the top 20, rule-only question; and a visible `unclassified` bucket that is never folded into another. Counts per stratum on the Results page. No model. |
+| 2 | **15 MCP server** | `search_rules`, `get_rule`, `list_versions`, `what_changed` callable from Claude Desktop on the user's Windows machine, launched into WSL over stdio; contract tests for each tool's errors; the docs pages lose "planned". |
+| 3 | **11 Generation + judge validation** | Answers generated for the question set with the qwen3 generator, prompt and settings recorded per answer; an LLM judge's labels compared with the user's hand labels on a stratified sample, Cohen's kappa with an interval. If kappa is poor, the judge is the finding. |
+| 4 | **13 Confidence score** | Computed from measurable signals only (A21); calibration curve against slice 11's judged accuracy; reported as uncalibrated if it fails. |
+| 5 | **14 The agent** | LangGraph graph (route, retrieve, check dates and confidence, re-search, answer), OpenTelemetry traces viewed in Arize Phoenix; accuracy and calibration with and without the re-search loop, prediction first; a null result is reported as one. |
+| 6 | **16 Prompt injection** | Adversarial test set; injection success rate before and after defences. |
+| 7 | **17 Local web app** | The React app on localhost over the same functions as the MCP server. |
+| Gated | **10 Card database**, **site deployment** | After the user reads Riot's Legal Jibber Jabber, developer policy and Digital Tools Policy. |
+
+**Where generation runs (slice 11 on).** Full generation runs use the
+user's GPU (RTX 2060 SUPER): about 1 to 2 hours instead of about 8 on CPU.
+Every latency and budget figure still comes from CPU-only runs (A8), and
+every run records its placement, because GPU and CPU can produce slightly
+different text at temperature 0 and a comparison must not mix them.
