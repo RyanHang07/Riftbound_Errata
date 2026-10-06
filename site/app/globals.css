@@ -133,7 +133,7 @@ mark { background: rgba(200,170,110,.22); color: inherit; padding: 0 3px }
 .drift-row { display: flex; gap: 22px; width: max-content; animation: drift 80s linear infinite; pointer-events: auto }
 .drift-row.rev { animation-direction: reverse; animation-duration: 95s; margin-left: -120px }
 .drift-row:hover { animation-play-state: paused }
-@keyframes drift { to { transform: translateX(-50%) } }
+@keyframes drift { to { transform: translateX(-25%) } } /* one set of four (drift.tsx COPIES) */
 
 /* a card: unclipped host (ornaments, energy) + clipped gold frame + clipped panel */
 .qcard { --hue: var(--d-mind); --cut: 10px; position: relative; flex: none; width: 160px; aspect-ratio: 63 / 88; transform: rotate(var(--tilt, 0deg)); transition: transform .35s ease, filter .35s ease; filter: drop-shadow(0 12px 20px rgba(0,0,0,.55)) }

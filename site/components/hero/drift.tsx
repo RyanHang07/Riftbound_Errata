@@ -1,16 +1,20 @@
 // Two rows of question cards drifting in opposite directions behind the
 // hero (A35). Content is this project's own version-change questions, from
-// the data export; each row is duplicated so the loop is seamless.
+// the data export. Each row repeats its set COPIES times and scrolls by one
+// set (globals.css: translateX(-25%)), so it covers the screen edge to edge
+// from the first frame on screens up to three sets wide (about 4,300 px).
+// Found on the user's 1,640 px screen: with two copies a row ran out.
 import { cards, fmtDate } from "@/lib/results";
 import { CardDressing, clock } from "./wisp";
 
 const HUES = ["mind", "calm", "body", "chaos", "order", "fury"];
+const COPIES = 4; // must match the -25% in globals.css (one set = 1 / COPIES)
 
 function Row({ items, offset, rev }: { items: typeof cards; offset: number; rev?: boolean }) {
   const once = items.map((c, i) => ({ c, i: i + offset }));
   return (
     <div className={`drift-row${rev ? " rev" : ""}`}>
-      {[...once, ...once].map(({ c, i }, n) => (
+      {Array.from({ length: COPIES }, () => once).flat().map(({ c, i }, n) => (
         <div key={`${c.id}-${n}`} className="qcard" aria-hidden={n >= once.length || undefined}
           style={{ "--hue": `var(--d-${HUES[i % HUES.length]})`, ...clock(i + n) } as React.CSSProperties}>
           <div className="qcard-in">
