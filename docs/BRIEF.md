@@ -1588,3 +1588,18 @@ guarantee when it has none).
 
 The legal gate (A25) now also covers the public site: it is not published
 until the user has read Riot's three policy pages.
+
+### A34. The public site follows the shadcn/ui pattern (2026-10-06)
+
+*The user's direction, refining A33.* The Vercel site is modelled on
+ui.shadcn.com: a landing page, a docs section with a left sidebar and an
+"on this page" outline, ⌘K search, and a top nav bar whose right side holds
+a GitHub button with the star count and a theme toggle. Stack: Next.js
+static export, Tailwind CSS, shadcn/ui, MDX docs. The local app uses the
+same Tailwind and shadcn/ui components so both read as one product.
+
+GitHub stats are fetched at build time and refreshed by each deploy, not in
+visitors' browsers (GitHub's unauthenticated limit is 60 requests an hour
+per IP; a failed fetch shows no count rather than a wrong one). This needs
+the repository to be public, which falls under the same legal gate as the
+site. Full page plan: `docs/SURFACE.md`.

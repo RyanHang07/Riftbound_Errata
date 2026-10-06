@@ -57,24 +57,69 @@ HTTP API over the same functions the MCP server calls. Screens:
 
 ## 3. Public site on Vercel (with slice 17)
 
-Static, built from a `site/` folder with the same TypeScript tooling, and
-deployed by Vercel from this repository. No server code, no models, no Riot
-text. Pages:
+Modelled on **ui.shadcn.com**: a landing page, a docs section with a left
+sidebar, and a top nav bar with GitHub stats at the right. Static, built
+from a `site/` folder and deployed by Vercel from this repository. No server
+code, no models, no Riot text.
 
-- **What it is:** the problem (rules change; naive search answers with
-  outdated rules), with the slice 3 capture described by rule references.
-- **Results:** recall@k with Wilson intervals per stratum, the ablation table
-  (naive, as-of, embedders, hybrid, rerank), and every prediction against
-  its result, misses included. Read from a committed numbers-only summary
-  exported from `evals/runs/`, never typed in by hand (brief: split write
-  from read).
-- **Install and connect:** prerequisites, setup commands, and the Claude
-  Desktop configuration snippet for the local MCP server.
-- **Credits and licences:** CC BY-SA 4.0 attribution for the rulings
-  (Christian "Near" Ivicevic), and Riot's position on fan tools once the
-  legal pages are read.
+**Stack.** Next.js (static export) + Tailwind CSS + shadcn/ui components,
+with docs pages written in MDX, the same pattern shadcn's own site uses. The
+local app (section 2) uses Tailwind and shadcn/ui too, so both look like one
+product. Light and dark themes, with a toggle.
 
-**Gate:** before the site goes public, the user reads Riot's Legal Jibber
+**Nav bar (every page).**
+
+```
+┌───────────────────────────────────────────────────────────────────────────┐
+│ ◆ rb_errata   Docs  Results  Changelog         [Search ⌘K]  ★ 123  ◐      │
+└───────────────────────────────────────────────────────────────────────────┘
+```
+
+- Left: project name and mark, then Docs, Results, Changelog.
+- Right: docs search (⌘K command palette, shadcn's pattern), the **GitHub
+  button with the star count**, and the theme toggle.
+- **GitHub stats are fetched at build time** from the public GitHub API and
+  baked into the page, refreshed on every deploy (and by a scheduled
+  rebuild). Not fetched in the visitor's browser: GitHub's unauthenticated
+  limit is 60 requests an hour per visitor IP, and a failed fetch would show
+  a broken number. If the build-time fetch fails, the button shows without a
+  count rather than a wrong one. Requires the repository to be public.
+
+**Landing page (`/`).**
+
+- Hero: one line on the problem ("Rules change. Search engines don't
+  notice."), one on the answer (rules answered as of a date, with versioned
+  citations), and two buttons: **Get started** (to the docs) and **GitHub**.
+- The headline result, as numbers with intervals: the naive search versus
+  the date-aware one, from the committed runs.
+- Three feature cards: version-aware search, the MCP tools, everything runs
+  locally and offline.
+- A short "how it works" strip: question and date in, the rules in force on
+  that date, an answer citing `core@1.4:419.4.a` style references.
+
+**Docs (`/docs/...`), left sidebar, "On this page" outline on the right.**
+
+| Section | Pages |
+|---|---|
+| Getting started | Introduction · Installation · Quick start |
+| Connect | Claude Desktop (MCP config snippet) · Local web app |
+| Tools reference | `search_rules` · `ask` · `what_changed` · `get_rule` · `list_versions`: each with inputs, outputs, an example and its errors |
+| How it works | Rules versions and effective dates · Why naive search fails · Retrieval pipeline (date filter, embedder, reranker) · Confidence score |
+| Evaluation | The question set and its review · recall@k and Wilson intervals · Predictions vs results, misses included |
+| Reference | Configuration and pins · Make targets · FAQ · Credits and licences |
+
+Each page ends with previous/next links, as shadcn's do. Examples in the
+docs use rule references and paraphrase, never Riot's rule text.
+
+**Results (`/results`).** The ablation table (naive, as-of, embedders,
+hybrid, rerank) with recall@k, Wilson intervals and paired McNemar results,
+and each prediction next to its outcome. Read from a committed numbers-only
+summary exported from `evals/runs/`, never typed in by hand (brief: split
+write from read).
+
+**Gate.** Before the site goes public, the user reads Riot's Legal Jibber
 Jabber, developer policy and Digital Tools Policy (deferred since slice 1),
-and the site follows them. Vercel's free Hobby plan is for personal,
+and the site follows them; the credits page then states Riot's position on
+fan tools alongside the CC BY-SA 4.0 attribution for the rulings
+(Christian "Near" Ivicevic). Vercel's free Hobby plan is for personal,
 non-commercial projects; this one is both.
