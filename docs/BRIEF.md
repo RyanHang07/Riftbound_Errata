@@ -1603,3 +1603,13 @@ visitors' browsers (GitHub's unauthenticated limit is 60 requests an hour
 per IP; a failed fetch shows no count rather than a wrong one). This needs
 the repository to be public, which falls under the same legal gate as the
 site. Full page plan: `docs/SURFACE.md`.
+
+### A35. Site visual direction: Riftbound-inspired accents with meaning (2026-10-06)
+
+*The user's choices from proposed ideas.* An always-dark hero with a
+drifting carousel of question cards and a version-flip card; foil sheen and
+cursor tilt; the six domain hues as docs section accents (Fury red reserved
+for "outdated"); bronze, silver and gold edges on the Results table meaning
+baseline, kept and best. Inspired by, never imitating: no Riot logo,
+portal symbol, card frames, domain symbols or art. Details and sources:
+`docs/SURFACE.md` section 4. Mockup: private artifact, not in the repo.

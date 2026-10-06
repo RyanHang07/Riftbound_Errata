@@ -127,3 +127,50 @@ and the site follows them; the credits page then states Riot's position on
 fan tools alongside the CC BY-SA 4.0 attribution for the rulings
 (Christian "Near" Ivicevic). Vercel's free Hobby plan is for personal,
 non-commercial projects; this one is both.
+
+## 4. Visual direction: inspired by Riftbound, never imitating it (A35)
+
+**What Riftbound's look is built from** (sources below; the official site and
+wiki were unreachable from the cloud session, so this rests on search
+summaries of them and on secondary guides):
+- Six domain colours in opposing pairs: Fury red / Calm green, Mind blue /
+  Body orange, Chaos purple / Order yellow.
+- Frame metal and gem shape mark rarity: bronze and round (common), silver
+  and triangular (uncommon), gold and square (rare), minimalist gold, foil
+  and pentagonal (epic).
+- Premium finishes: cold foil and spot UV on overnumbered cards, gold-foil
+  artist signatures on the rarest.
+- A portal symbol at the heart of the logo, the "O" of the wordmark (Studio
+  Moross with Marianna Oršho).
+
+**What the site borrows, each with a meaning:**
+- **Hero, always dark:** two rows of tilted cards drift in opposite
+  directions behind the text. Each card is one of *our* version-change
+  questions with its "as of" date and the rule reference it resolves to; a
+  domain-hue edge glow and a bronze, silver or gold frame. Pauses on hover.
+- **Version-flip card:** one gold-framed card flips between "v1.3: no" and
+  "v1.4: yes" for the Legion question, the changed term highlighted. The
+  project's thesis in five seconds. Paraphrase only. Pausable.
+- **Foil:** a light sweep on hover; cursor tilt and a holo shimmer only on
+  the featured card, as foil is reserved for rare cards.
+- **Section hues in docs:** Getting started Calm green, Connect Body orange,
+  Tools Mind blue, How it works Chaos purple, Evaluation Order yellow,
+  Reference silver. Fury red is reserved for "outdated rule".
+- **Metal tiers on Results:** bronze edge for the baseline, silver for
+  configurations kept, gold for the current best. Rank, as in the game.
+- **Reduced motion:** carousel still, card flips only on a button, no
+  sheen or tilt.
+
+**Never used:** Riot's logo or portal symbol, real card frames, domain
+symbols, card art, or anything that could pass for an official Riot page.
+The footer states the site is an unofficial fan project.
+
+Sources:
+- [Riftbound domains (League of Legends wiki)](https://wiki.leagueoflegends.com/en-us/Riftbound:Domain)
+- [Domain 101: the six domains (riftbound.gg)](https://riftbound.gg/domain-101-understanding-the-five-domains-of-riftbound/)
+- [Riftbound rarity guide (Eneba)](https://www.eneba.com/hub/collectibles/riftbound-rarity-guide/)
+- [Riftbound rarities explained (Card Gamer)](https://cardgamer.com/guides/riftbound-card-rarities/)
+- [Collectability in Riftbound: Origins (official)](https://playriftbound.com/en-us/news/announcements/collectability-in-riftbound-origins/)
+- [Riftbound logo design (Studio Moross)](https://www.studiomoross.com/work/riftbound-logo-design)
+- [Riftbound branding (Marianna Oršho)](https://www.marianna-orsho.com/branding/riotgames-riftbound)
+- [Riftbound TCG is a visual masterpiece (Artiholics)](https://artiholics.com/riftbound-tcg-visual-masterpiece/)
