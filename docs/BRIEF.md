@@ -1613,3 +1613,11 @@ for "outdated"); bronze, silver and gold edges on the Results table meaning
 baseline, kept and best. Inspired by, never imitating: no Riot logo,
 portal symbol, card frames, domain symbols or art. Details and sources:
 `docs/SURFACE.md` section 4. Mockup: private artifact, not in the repo.
+
+### A36. Site type and colour: less generated, more specific (2026-10-06)
+
+*The user asked for a less AI-looking design.* Archivo (wide) for display,
+Source Serif 4 for reading, JetBrains Mono for rule references; tinted
+neutrals; a single gold accent that also means "current best"; the hero's
+glow replaced by a version timeline with effective dates. Details:
+`docs/SURFACE.md` section 5.

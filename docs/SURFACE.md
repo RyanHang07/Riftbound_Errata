@@ -174,3 +174,23 @@ Sources:
 - [Riftbound logo design (Studio Moross)](https://www.studiomoross.com/work/riftbound-logo-design)
 - [Riftbound branding (Marianna Oršho)](https://www.marianna-orsho.com/branding/riotgames-riftbound)
 - [Riftbound TCG is a visual masterpiece (Artiholics)](https://artiholics.com/riftbound-tcg-visual-masterpiece/)
+
+## 5. Type and colour: the human pass (A36)
+
+The first mockup read as generated: shadcn's stock look (Geist, zinc greys,
+a stock blue), a purple-to-blue glow, a "New" pill, three identical boxes.
+Replaced with choices tied to the subject:
+
+- **Type:** Archivo in its wide cut for display and UI; Source Serif 4 for
+  reading text, so docs read like a rulebook; JetBrains Mono for rule
+  references, table headers and labels.
+- **Colour:** neutrals tinted toward the hero's violet-black ink; one
+  accent, **gold**, the same gold that marks "current best", used for the
+  primary button, link underlines and labels.
+- **Hero:** no glow. A version timeline runs along its bottom edge (v1.1 to
+  v1.4 with effective dates, the version in force marked in gold, today at
+  the end; computed at build time on the real site). A plain dateline
+  ("Core Rules v1.4, in force since 24 Jul 2026") replaces the pill.
+- **Features:** an unboxed list with small-caps labels instead of cards.
+- **Details:** real link underlines in the accent, smaller radii, strike-
+  through old numbers in the "outdated" red.
