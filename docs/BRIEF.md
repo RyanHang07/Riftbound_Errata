@@ -1563,3 +1563,28 @@ Prediction and the adoption rule: `docs/RECALL.md`.
 Rejected: PyTorch from PyPI (GPU build for a CPU target; GBs in CI);
 Ollama (does not serve cross-encoders); a hosted reranker API (the brief:
 offline, no API key).
+
+### A33. The product surface (2026-10-06)
+
+*Decided by the user while slice 9's runs were in progress. Design:
+`docs/SURFACE.md`.*
+
+- **MCP server (slice 15): local only, stdio.** Tools: `search_rules`,
+  `ask`, `what_changed`, `get_rule`, `list_versions`. Every output carries
+  version and validity dates. No network listener; no Riot text leaves the
+  machine.
+- **Local web app (slice 17):** Vite + React + TypeScript on localhost, over
+  the same functions as the MCP server.
+- **Public site: static, on Vercel** (the user's choice over GitHub Pages),
+  from a `site/` folder: what it is, measured results read from a committed
+  numbers-only export, and install and connect instructions. No Riot text,
+  no models, no server. Adds Vercel to the stack.
+
+Rejected: a hosted live demo (a paid server running the models, and
+redistribution of Riot's text before the legal pages are read); remote MCP
+over HTTP (same reasons); one app serving both public and local modes (the
+public build must never be able to show rule text, which is simplest to
+guarantee when it has none).
+
+The legal gate (A25) now also covers the public site: it is not published
+until the user has read Riot's three policy pages.
