@@ -71,13 +71,13 @@ product. Light and dark themes, with a toggle.
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────┐
-│ ◆ rb_errata   Docs  Results  Changelog         [Search ⌘K]  ★ 123  ◐      │
+│ ◆ rb_errata   Docs  Results  Changelog         [Search ⌘K]  ★ 123      │
 └───────────────────────────────────────────────────────────────────────────┘
 ```
 
 - Left: project name and mark, then Docs, Results, Changelog.
-- Right: docs search (⌘K command palette, shadcn's pattern), the **GitHub
-  button with the star count**, and the theme toggle.
+- Right: docs search (⌘K command palette, shadcn's pattern) and the
+  **GitHub button with the star count**. No theme toggle (A39).
 - **On small screens the doc shortcuts win.** Below about 860px the GitHub
   button is hidden and search shrinks to an icon, so Docs and Changelog
   stay visible; below about 520px the name collapses to the logo; Results
@@ -218,8 +218,8 @@ Hextech" (source below):
 - **Cards:** gold cut-corner frames over navy panels, diamond ornaments top
   and bottom, and blue energy wisps travelling along each frame edge on its
   own clock; Hextech motes with wispy tails drift up through the hero.
-- **Dark first;** a light theme in the same language (cool paper, navy ink,
-  darker gold frames). The hero band stays dark in both.
+- **Dark only** (A39): no light theme and no toggle; the look is the
+  client's, and the client is dark.
 - **Kept from A35:** carousel, version-flip card, domain hues as docs
   section markers, metal tiers on Results. Still never Riot's logo, portal
   symbol, card frames or art.

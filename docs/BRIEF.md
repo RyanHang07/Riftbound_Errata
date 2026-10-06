@@ -1641,3 +1641,10 @@ candidates, paired with qwen3 as-of: version-change recall@5 79% to 86-88%
 baseline stays. Full-text candidates added nothing over vector-only
 candidates. Latency was predicted at about 2 s, wrong by 5 to 6 times.
 Details: `docs/RECALL.md`.
+
+### A39. The site is dark only (2026-10-06)
+
+*The user's call, for consistency with A37.* The Hextech look is the
+client's, and the client is dark; a theme toggle that switches it off works
+against the identity. No light theme and no toggle, in the mockup and the
+real site. Supersedes the light-theme lines of A34, A36 and A37.
