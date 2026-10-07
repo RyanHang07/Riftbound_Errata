@@ -1,16 +1,36 @@
-<Callout>The MCP server is planned (slice 15) and not built yet. This page shows how it will connect.</Callout>
+## Before you start
+
+Finish [Installation](/docs/installation/) first. `make doctor` should pass. The server uses the same database and embedder as `make search`, so Docker Desktop and Ollama must be running whenever Claude Desktop is.
 
 ## Add the server
 
-In Claude Desktop, open Settings, Developer, Edit Config, and add this to `claude_desktop_config.json`, with the folder where you cloned the project.
+In Claude Desktop, open Settings, Developer, Edit Config. Add this to `claude_desktop_config.json`, then save.
+
+**Windows, with the project inside WSL (Ubuntu):**
 
 ```
 {
   "mcpServers": {
     "rb-errata": {
-      "command": "uv",
-      "args": ["--directory", "/home/you/Riftbound_Errata",
-               "run", "python", "-m", "rb_errata.mcp"]
+      "command": "wsl.exe",
+      "args": ["-e", "bash", "-lc",
+               "cd ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"]
+    }
+  }
+}
+```
+
+`bash -lc` starts a login shell, so `uv` is on the path just as it is in your terminal. If you cloned the project somewhere other than your WSL home folder, change `~/Riftbound_Errata`. If Ubuntu is not your default WSL distribution, put `"-d", "Ubuntu",` before `"-e"`.
+
+**macOS or Linux:**
+
+```
+{
+  "mcpServers": {
+    "rb-errata": {
+      "command": "bash",
+      "args": ["-lc",
+               "cd ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"]
     }
   }
 }
@@ -18,8 +38,26 @@ In Claude Desktop, open Settings, Developer, Edit Config, and add this to `claud
 
 ## Check it works
 
-Restart Claude Desktop. The tools list should show the rb-errata tools. Ask: "As of March 2026, does a countered spell count as played? Use rb-errata."
+Quit Claude Desktop fully (from the tray icon on Windows) and open it again. The tools menu should list rb-errata with four tools: `search_rules`, `get_rule`, `list_versions` and `what_changed`.
+
+Ask: "As of 1 May 2026, does a spell that gets countered count as played for Legion? Use rb-errata." Claude should search with `as_of` 2026-05-01 and cite v1.3 rules.
+
+## If a tool fails
+
+Every error says what to do:
+
+- **database unreachable:** start Docker Desktop, then `make db-up`.
+- **Ollama unreachable:** start Ollama.
+- **embedder check failed:** the embedding model changed; run `make doctor`.
+- **the database differs from data/corpus.json:** run `make ingest`.
+- **data/raw/... is missing:** run `make fetch`. `get_rule` and `what_changed` read the rules PDFs.
+
+To see the server on its own, run `make mcp` in the project folder. It waits silently for a client; Ctrl+C stops it.
 
 ## Local only
 
-Claude Desktop starts the server on your machine over stdio. It opens no network port, and no rule text leaves your computer.
+Claude Desktop starts the server on your machine over stdio. It opens no network port. Rule text goes from your machine to Claude Desktop only, the same as pasting it yourself.
+
+## How good is it?
+
+`make mcp-check` starts the server the way Claude Desktop does and asks it every question in the [question set](/docs/question-set/). It checks the answers match the measured run on the [Results](/results/) page.

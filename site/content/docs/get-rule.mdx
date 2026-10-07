@@ -6,4 +6,13 @@
 
 ## Output
 
-The rule's text, its version, and the dates that version was in force. Shown on your machine only.
+`ref`, `version`, `valid_from`, `valid_to`, `newer_version_exists` and the rule's `text`. Shown on your machine only.
+
+The text is read from the rules PDF in `data/raw/`, after checking the file matches its pinned SHA-1. The first call for a version reads the whole PDF and takes several seconds; later calls are instant.
+
+## Errors
+
+- **not a rule reference:** use the form `core@1.4:419.4.a`.
+- **no known effective date:** v1.0 is not searchable.
+- **has no rule:** the number does not exist in that version. Numbers change between versions, so `search_rules` is the way to find a rule by meaning.
+- **missing** or **does not match its pinned SHA-1:** run `make fetch`.

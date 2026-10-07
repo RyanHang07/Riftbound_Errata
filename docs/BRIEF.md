@@ -1717,3 +1717,32 @@ slice 14's re-search loop should be judged partly on the `below-cutoff`
 questions, where a second search or a wider k can reach the rule; and slice
 10, once the legal gate clears, is measured on `card-not-in-corpus` against
 the rest, which tests the card label as well as the database.
+
+### A43. Slice 15: the MCP server (2026-10-07)
+
+Built on the official Python SDK (`mcp==2.3.0`, its `MCPServer`), stdio
+only, four read-only tools. `rb_errata/tools.py` holds the logic and
+`rb_errata/server.py` is a thin wrapper, so the 33 contract tests in
+`tests/test_tools.py` cover every refusal without a database, plus one test
+that spawns the real server over a pipe (a stray stdout print would break
+Claude Desktop before any tool loads).
+
+Decisions:
+- **`search_rules` offers one configuration**, the measured best (A29). A
+  `method` argument would let a client use a configuration the Results page
+  shows as worse.
+- **Every user-fixable failure is a `ToolError` naming the fix** (`make
+  db-up`, start Ollama, `make doctor`, `make ingest`, `make fetch`). The SDK
+  shows the model only "Error executing tool" for any other exception.
+- **The database and embedder open lazily** and are checked once (pin,
+  corpus fingerprint, as `make recall` does), so the server starts and lists
+  its tools when Postgres or Ollama is down, and the search says which.
+- **`get_rule` and `what_changed` read the pinned PDFs** (SHA-1 checked),
+  parsed by the corpus's own parser and cached per process. Measured in the
+  cloud session: about 6 s for the first v1.4 call, 3 s for v1.3, instant
+  after. Not the prediction's machine; `make mcp-check` records the user's.
+- **Windows:** Claude Desktop starts `wsl.exe -e bash -lc "cd
+  ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"`.
+
+The prediction in `docs/RECALL.md` is judged by `make mcp-check` on the
+user's machine (it needs Postgres and Ollama, which the cloud session lacks).

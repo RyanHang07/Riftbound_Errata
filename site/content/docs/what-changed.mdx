@@ -2,10 +2,31 @@
 
 Riot renumbers hundreds of rules at every update, so the same rule can carry a different number in each version. Rules are matched by their wording, never by number.
 
+## Input
+
+<Params>
+  <Param name="from_version" type="string, required">The older version, like `1.3`.</Param>
+  <Param name="to_version" type="string, required">The newer version, like `1.4`.</Param>
+  <Param name="ref" type="string, optional">One rule, in either version. Without it, you get every changed rule.</Param>
+  <Param name="limit" type="integer, default 20">Without `ref`: how many changed rules to return, 1 to 100.</Param>
+</Params>
+
+## Output
+
+**With `ref`:** a `status` (`unchanged`, `renumbered`, `changed`, `added` or `removed`) and the rule's `old` and `new` sides, each with its ref and text.
+
+**Without `ref`:** `counts` of changed, added and removed rules; the changed rules, wording that flips meaning (may and must, not) first; and the refs of added and removed rules.
+
 ## Example
 
 ```
-{ "rule": "core@1.4:419.4.a", "from_version": "1.3", "to_version": "1.4" }
+{ "from_version": "1.3", "to_version": "1.4", "ref": "core@1.4:419.4.a" }
 ```
 
-Works today as `make diff`; the MCP tool is planned with the server.
+The first call reads both PDFs and takes several seconds. `make diff` shows the same comparison in the terminal.
+
+## Errors
+
+- **from_version must be older than to_version.**
+- **ref is from another version** than the two compared.
+- **has no rule**, **no known effective date**, **missing PDF:** as in [get_rule](/docs/get-rule/).

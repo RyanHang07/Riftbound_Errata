@@ -179,6 +179,15 @@ def _taxonomy(args: argparse.Namespace) -> int:
     return 0
 
 
+def _mcp_check(_: argparse.Namespace) -> int:
+    from rb_errata.mcp_check import run
+
+    out = run()
+    print((out / "report.md").read_text())
+    print(f"written to {out}/")
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -289,6 +298,7 @@ def main(argv: list[str] | None = None) -> int:
         "recall-report": (_recall_report, "recompute a recall report from a committed snapshot"),
         "recall-compare": (_recall_compare, "pair two recall runs: discordant counts, McNemar"),
         "taxonomy": (_taxonomy, "slice 12: one category for every miss in a recall run"),
+        "mcp-check": (_mcp_check, "slice 15: the MCP server over stdio against the snapshot"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }

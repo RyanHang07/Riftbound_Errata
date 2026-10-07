@@ -25,6 +25,7 @@ dependencies = [
     # The labelled question sets are hand-written YAML (brief section 4).
     "pyyaml>=6,<7",
     "fastembed==0.8.1",
+    "mcp==2.3.0",
 ]
 
 [dependency-groups]
