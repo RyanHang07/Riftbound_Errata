@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -115,6 +115,9 @@ recall-compare:  ## pair two runs: make recall-compare A=evals/runs/... B=evals/
 
 recall-report:  ## recompute a report offline: make recall-report RUN=evals/runs/recall-...
 	$(UV) python -m rb_errata.cli recall-report $(RUN)
+
+taxonomy:  ## categorise every miss in a run (no model): make taxonomy RUN=evals/runs/recall-...
+	$(UV) python -m rb_errata.cli taxonomy $(RUN)
 
 power:  ## how many questions are needed (exact calculation, no model)
 	$(UV) python -m rb_errata.cli power

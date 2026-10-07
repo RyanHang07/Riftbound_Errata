@@ -1919,6 +1919,30 @@
    "prediction": "About 2 s per question on CPU",
    "result": "10.5 s",
    "verdict": "wrong"
+  },
+  {
+   "slice": "Failure taxonomy (12)",
+   "prediction": "About 80% of misses outside the top 20 name a card",
+   "result": "92% (23 of 25)",
+   "verdict": "close"
+  },
+  {
+   "slice": "Failure taxonomy (12)",
+   "prediction": "About 5 rules-only misses outside the top 20",
+   "result": "2",
+   "verdict": "close"
+  },
+  {
+   "slice": "Failure taxonomy (12)",
+   "prediction": "Exactly 4 unclassified",
+   "result": "4",
+   "verdict": "right"
+  },
+  {
+   "slice": "Failure taxonomy (12)",
+   "prediction": "Card share higher outside the top 20 than below the cutoff",
+   "result": "92% against 80%",
+   "verdict": "right"
   }
  ],
  "cards": [
@@ -2301,5 +2325,35 @@
   "n": 40,
   "lo": 0.835,
   "hi": 0.9862
+ },
+ "taxonomy": {
+  "run": "recall-as-of-qwen3-2026-10-04T1415Z",
+  "cutoff": 5,
+  "categories": [
+   "below-cutoff",
+   "card-not-in-corpus",
+   "rule-only",
+   "unclassified"
+  ],
+  "counts": {
+   "expert-ruling": {
+    "below-cutoff": 37,
+    "card-not-in-corpus": 21,
+    "rule-only": 2,
+    "unclassified": 0
+   },
+   "expert-ruling-faq": {
+    "below-cutoff": 3,
+    "card-not-in-corpus": 2,
+    "rule-only": 0,
+    "unclassified": 0
+   },
+   "version-change": {
+    "below-cutoff": 8,
+    "card-not-in-corpus": 0,
+    "rule-only": 0,
+    "unclassified": 4
+   }
+  }
  }
 }

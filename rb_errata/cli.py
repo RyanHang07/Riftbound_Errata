@@ -168,6 +168,17 @@ def _recall_compare(args: argparse.Namespace) -> int:
     return 0
 
 
+def _taxonomy(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.taxonomy import write
+
+    out = write(Path(args.dir))
+    print(out.read_text())
+    print(f"written to {out}")
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -277,6 +288,7 @@ def main(argv: list[str] | None = None) -> int:
         "recall": (_recall, "slice 5: retrieve top 20 for every question, snapshot, report"),
         "recall-report": (_recall_report, "recompute a recall report from a committed snapshot"),
         "recall-compare": (_recall_compare, "pair two recall runs: discordant counts, McNemar"),
+        "taxonomy": (_taxonomy, "slice 12: one category for every miss in a recall run"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -293,7 +305,7 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("fixture")
         if name == "questions":
             p.add_argument("rulings", help="path to a clone of ChristianIvicevic/riftboundfaq")
-        if name in ("regrade", "recall-report"):
+        if name in ("regrade", "recall-report", "taxonomy"):
             p.add_argument("dir")
         if name == "recall":
             p.add_argument("--method", default="naive", help="naive | as-of | lexical | hybrid")

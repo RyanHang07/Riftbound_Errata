@@ -16,7 +16,7 @@ from typing import Any
 
 import yaml
 
-from rb_errata import recall
+from rb_errata import recall, taxonomy
 from rb_errata.labels import counterparts as counterparts_mod
 from rb_errata.labels.power import mcnemar_p, wilson
 from rb_errata.labels.review import load_questions
@@ -152,6 +152,13 @@ def build() -> dict[str, Any]:
         "versions": versions,
         "question_counts": {name.strip(): len(ids) for name, ids in groups},
         "review": _review(),
+        # A41 slice 12: why the current best run misses, one category each.
+        "taxonomy": {
+            "run": QWEN3,
+            "cutoff": taxonomy.CUTOFF,
+            "categories": list(taxonomy.CATEGORIES),
+            "counts": taxonomy.counts(taxonomy.classify_run(RUNS / QWEN3)),
+        },
     }
 
 

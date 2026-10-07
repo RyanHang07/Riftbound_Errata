@@ -20,3 +20,7 @@
 - {slice: "Reranker (9)", prediction: "Version changes about 82%", result: "88%", verdict: right}
 - {slice: "Reranker (9)", prediction: "Significant gain on expert rulings", result: "p = 0.54", verdict: wrong}
 - {slice: "Reranker (9)", prediction: "About 2 s per question on CPU", result: "10.5 s", verdict: wrong}
+- {slice: "Failure taxonomy (12)", prediction: "About 80% of misses outside the top 20 name a card", result: "92% (23 of 25)", verdict: close}
+- {slice: "Failure taxonomy (12)", prediction: "About 5 rules-only misses outside the top 20", result: "2", verdict: close}
+- {slice: "Failure taxonomy (12)", prediction: "Exactly 4 unclassified", result: "4", verdict: right}
+- {slice: "Failure taxonomy (12)", prediction: "Card share higher outside the top 20 than below the cutoff", result: "92% against 80%", verdict: right}

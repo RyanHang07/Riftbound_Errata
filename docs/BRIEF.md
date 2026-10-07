@@ -1701,3 +1701,19 @@ user's GPU (RTX 2060 SUPER): about 1 to 2 hours instead of about 8 on CPU.
 Every latency and budget figure still comes from CPU-only runs (A8), and
 every run records its placement, because GPU and CPU can produce slightly
 different text at temperature 0 and a comparison must not mix them.
+
+### A42. Slice 12 result: most misses are ranking, not absence (2026-10-07)
+
+`rb_errata/taxonomy.py` gives every top-5 miss of the current best run one
+category by a fixed rule (`make taxonomy RUN=...`; detail and the prediction
+in `docs/RECALL.md`). Of 77 misses: 48 below the cutoff (the right rule at
+rank 6 to 20, 27 of them at 6 to 10), 23 outside the top 20 on card
+questions, 2 outside the top 20 on rules-only questions, 4 unclassified
+(version-change questions, which have no source category). The counts are on
+the Results page through `make site-data`.
+
+Consequences for the plan, no reordering: slice 13's confidence score and
+slice 14's re-search loop should be judged partly on the `below-cutoff`
+questions, where a second search or a wider k can reach the rule; and slice
+10, once the legal gate clears, is measured on `card-not-in-corpus` against
+the rest, which tests the card label as well as the database.

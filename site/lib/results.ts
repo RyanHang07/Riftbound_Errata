@@ -24,6 +24,9 @@ export const versions = data.versions as { version: string; effective: string | 
 export const counts = data.question_counts as Record<string, number>;
 export const review = data.review as { agree: number; disagree: number; unsure: number; n: number; lo: number; hi: number };
 
+export type Taxonomy = { run: string; cutoff: number; categories: string[]; counts: Record<string, Record<string, number>> };
+export const taxonomy = data.taxonomy as Taxonomy;
+
 export const naive = runs.find((r) => r.decision === "baseline")!;
 export const dateFilter = runs.find((r) => r.decision === "kept")!;
 export const best = runs.find((r) => r.decision === "best")!;

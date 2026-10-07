@@ -418,3 +418,48 @@ Already known from the committed report, so not predictions: 77 misses
 - Card questions are a larger share of the outside-top-20 misses than of the
   `below-cutoff` misses: the card text is absent, so the right rule should
   more often never surface at all rather than surface low.
+
+### Results: `evals/runs/recall-as-of-qwen3-2026-10-04T1415Z/taxonomy.md`
+
+`make taxonomy RUN=evals/runs/recall-as-of-qwen3-2026-10-04T1415Z`
+
+| stratum | below-cutoff | card-not-in-corpus | rule-only | unclassified | misses |
+|---|---|---|---|---|---|
+| expert-ruling | 37 | 21 | 2 | 0 | 60 |
+| expert-ruling-faq | 3 | 2 | 0 | 0 | 5 |
+| version-change | 8 | 0 | 0 | 4 | 12 |
+| **all** | 48 | 23 | 2 | 4 | 77 |
+
+27 of the 48 `below-cutoff` misses sit at rank 6 to 10.
+
+Card share by kind of miss (rulings and FAQ only; cards are 119 of 168 = 71%
+of those questions):
+
+| | card questions | share |
+|---|---|---|
+| outside the top 20 | 23 of 25 | 92% |
+| below cutoff (rank 6 to 20) | 32 of 40 | 80% |
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| about 80% of the outside-top-20 ruling misses name a card (20 of 25) | 92% (23 of 25) | Close: the direction and size held, 3 questions over. |
+| `rule-only` about 5 | 2 | Close: low, the count is small. |
+| `unclassified` exactly 4 | 4 | Right. |
+| card share higher outside the top 20 than below the cutoff | 92% against 80% | Right in direction. Not tested for significance: 25 and 40 questions. |
+
+**What it says:**
+- **Most misses are ranking, not absence.** 48 of 77 misses (62%) have the
+  right rule in the top 20 already. Anything that reorders the top 20 can
+  reach them; the reranker (slice 9) did, too slowly. 27 sit at rank 6 to
+  10, so a prompt with more passages would also reach them, at the cost of
+  prompt length (A23).
+- **Only 2 misses are rules questions the search cannot find at all.** On
+  rules-only questions the search works; what fails there is order.
+- **Card questions dominate both kinds of miss.** 55 of 65 ruling misses
+  name a card. Slice 10 (card database) is still the lever, and the test of
+  the proxy: if card text in the corpus moves `card-not-in-corpus` questions
+  into the top 5 more than it moves the others, the label was right.
+- **4 version-change misses cannot be classified** by this rule. That is
+  what the bucket is for: it shows the rule's limit instead of hiding it.

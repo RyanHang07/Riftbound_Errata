@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { counts, interval, pct, predictions, pValue, runs, type Run } from "@/lib/results";
+import { counts, interval, pct, predictions, pValue, runs, taxonomy, type Run } from "@/lib/results";
 
 export const metadata: Metadata = { title: "Results · rb_errata" };
 
@@ -9,6 +9,13 @@ const KEPT: Record<Run["decision"], [string, string]> = {
   reference: ["wait", "reference"], dropped: ["bad", "dropped"],
 };
 const GROUPS = ["expert-ruling", "ruling: cards", "version-change"] as const;
+const STRATUM: Record<string, string> = { "expert-ruling": "Expert rulings", "expert-ruling-faq": "FAQ rulings", "version-change": "Version changes" };
+const CATEGORY: Record<string, string> = {
+  "below-cutoff": "Found, ranked 6 to 20",
+  "card-not-in-corpus": "Not found, names a card",
+  "rule-only": "Not found, rules only",
+  unclassified: "Unclassified",
+};
 
 function vsCell(r: Run) {
   const v = r.groups["version-change"].vs_paired;
@@ -46,15 +53,29 @@ export default function Results() {
           <span><i style={{ "--c": "var(--m-gold)" } as React.CSSProperties} />Current best</span>
           <span>No edge: tested and dropped</span>
         </div>
+        <h2>Why the current best misses</h2>
+        <p className="lede">Every question the current best misses at top {taxonomy.cutoff}, in exactly one category, by a fixed rule with no model. &ldquo;Names a card&rdquo; means the source files the ruling under cards; it marks the questions whose card text the corpus lacks, and does not prove that caused the miss. Version-change questions have no source category, so the ones not found stay unclassified rather than guessed.</p>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Questions</th>{taxonomy.categories.map((c) => <th key={c}>{CATEGORY[c] ?? c}</th>)}<th>Misses</th></tr></thead>
+            <tbody>
+              {Object.entries(taxonomy.counts).map(([s, row]) => (
+                <tr key={s}><td>{STRATUM[s] ?? s}</td>
+                  {taxonomy.categories.map((c) => <td key={c}>{row[c]}</td>)}
+                  <td>{Object.values(row).reduce((a, b) => a + b, 0)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <h2>Predictions against results</h2>
-        <p className="lede">Written before each run. {predictions.filter((p) => p.verdict === "right").length} right, {predictions.filter((p) => p.verdict === "wrong").length} wrong.</p>
+        <p className="lede">Written before each run. {(["right", "close", "wrong"] as const).map((v) => [predictions.filter((p) => p.verdict === v).length, v] as const).filter(([n]) => n > 0).map(([n, v]) => `${n} ${v}`).join(", ")}.</p>
         <div className="table-wrap">
           <table>
             <thead><tr><th>Slice</th><th>Prediction</th><th>Result</th><th>Verdict</th></tr></thead>
             <tbody>
               {predictions.map((p, i) => (
                 <tr key={i}><td>{p.slice}</td><td>{p.prediction}</td><td>{p.result}</td>
-                  <td><span className={`pill ${p.verdict === "wrong" ? "bad" : "good"}`}>{p.verdict}</span></td></tr>
+                  <td><span className={`pill ${p.verdict === "wrong" ? "bad" : p.verdict === "close" ? "wait" : "good"}`}>{p.verdict}</span></td></tr>
               ))}
             </tbody>
           </table>

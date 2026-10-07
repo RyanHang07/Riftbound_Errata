@@ -40,3 +40,13 @@ def test_committed_export_is_current() -> None:
     import json
 
     assert json.loads(site_data.OUT.read_text()) == json.loads(json.dumps(site_data.build()))
+
+
+def test_taxonomy_counts_every_miss_once() -> None:
+    # Every question outside the top 5 in the best run is in exactly one
+    # category: the per-stratum totals equal the misses recall@5 implies.
+    data = site_data.build()
+    best = {r["run"]: r for r in data["runs"]}[data["taxonomy"]["run"]]["groups"]
+    for stratum, row in data["taxonomy"]["counts"].items():
+        at5 = best[stratum]["at5"]
+        assert sum(row.values()) == at5["n"] - at5["k"]
