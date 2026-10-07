@@ -387,3 +387,34 @@ is about 0.05 s.
 - Card questions moved 3 to 4 points either way. Neither embedders (A29),
   keywords (A31) nor reranking fix them; the corpus has no card text.
   Slice 10 (card database) is the remaining lever.
+
+## Slice 12: failure taxonomy (retrieval)
+
+Every miss at k=5 in `recall-as-of-qwen3-2026-10-04T1415Z` gets exactly one
+category, by a fixed rule in `rb_errata/taxonomy.py`. No model reads anything.
+
+| Category | Rule |
+|---|---|
+| `below-cutoff` | the right rule is in the top 20, at rank 6 to 20 |
+| `card-not-in-corpus` | not in the top 20, and the question's source files it under cards (`category: cards`, from the FAQ's `(rulings)/cards/` folder) |
+| `rule-only` | not in the top 20, and the source files it under general rules or mechanics |
+| `unclassified` | anything else: a failed row, or a question with no source category (all version-change questions, which are written, not mined). Shown, never folded into another |
+
+The card label is a proxy. It says which questions *name* a card; it does not
+prove that missing card text caused the miss. Slice 10 tests that.
+
+### Prediction (written 2026-10-07, before the taxonomy is run)
+
+Already known from the committed report, so not predictions: 77 misses
+(60 rulings, 5 FAQ, 12 version-change), of which 48 are `below-cutoff` and
+29 are outside the top 20.
+
+- Of the 25 ruling and FAQ questions outside the top 20, about **80% are
+  `card-not-in-corpus`** (20 of 25). Cards are 71% of those questions and
+  retrieve worse.
+- `rule-only` about **5**.
+- `unclassified` exactly **4**: the version-change questions outside the top
+  20, since none has a source category.
+- Card questions are a larger share of the outside-top-20 misses than of the
+  `below-cutoff` misses: the card text is absent, so the right rule should
+  more often never surface at all rather than surface low.
