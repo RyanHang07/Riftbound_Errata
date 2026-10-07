@@ -463,3 +463,32 @@ of those questions):
   into the top 5 more than it moves the others, the label was right.
 - **4 version-change misses cannot be classified** by this rule. That is
   what the bucket is for: it shows the rule's limit instead of hiding it.
+
+## Slice 15: the MCP server
+
+Four tools over stdio, the transport Claude Desktop uses: `search_rules`,
+`get_rule`, `list_versions`, `what_changed`. `search_rules` runs the
+measured best configuration (`as-of`, qwen3), nothing else. `get_rule` and
+`what_changed` read rule text from the local PDFs in `data/raw/`, parsed by
+the same code that built the corpus. No rule text enters the repository.
+
+`make mcp-check` starts the server as a subprocess over stdio, exactly as
+Claude Desktop does, asks `search_rules` every question at its `as_of`, and
+compares the top 5 refs with the committed snapshot
+`recall-as-of-qwen3-2026-10-04T1415Z`.
+
+### Prediction (written 2026-10-07, before the server exists)
+
+- **Parity: at least 222 of 224 questions return the same top-5 refs in the
+  same order** as the snapshot. Same corpus, same pinned embedder, exact scan;
+  any difference should be a near-tie swap from floating-point noise
+  (GPU and CPU embeddings can differ in the last digits), not a different
+  rule set.
+- **Recall@5 through the server equals the snapshot's** on every stratum
+  (62% / 38% / 79%), within one question.
+- **Warm `search_rules` over stdio: median under 0.3 s on CPU.** The search
+  alone took about 0.05 s in slice 9; the protocol adds JSON and a pipe.
+- **First `get_rule` or `what_changed` call for a version: about 9 s per
+  PDF parsed** (the pypdfium2 figure in `pyproject.toml`), then under 0.1 s
+  from the in-process cache. So a first `what_changed` across two versions
+  takes about 18 s: slow, and under Claude Desktop's tool timeout.
