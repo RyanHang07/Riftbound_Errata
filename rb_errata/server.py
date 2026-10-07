@@ -12,6 +12,7 @@ The tools are thin: rb_errata/tools.py holds every rule and its tests.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from mcp.server import MCPServer
@@ -25,6 +26,9 @@ INSTRUCTIONS = (
     "it is about now). Cite rules by the ref each passage carries, like core@1.4:419.4.a. "
     "A passage with newer_version_exists true is from an older version: say so."
 )
+# httpx logs every Ollama request at INFO, one line per search on stderr:
+# 224 lines in the first `make mcp-check`. Warnings and errors still show.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
 
 server = MCPServer("rb-errata", instructions=INSTRUCTIONS)

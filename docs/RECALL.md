@@ -492,3 +492,30 @@ compares the top 5 refs with the committed snapshot
   PDF parsed** (the pypdfium2 figure in `pyproject.toml`), then under 0.1 s
   from the in-process cache. So a first `what_changed` across two versions
   takes about 18 s: slow, and under Claude Desktop's tool timeout.
+
+### Results: `evals/runs/mcp-check-2026-10-07T0200Z` (the user's machine)
+
+224 of 224 questions returned the same top-5 refs in the same order as the
+snapshot; recall@5 through the server is identical on every stratum (62% /
+38% / 79%). `search_rules` warm: median 0.036 s, p90 0.046 s. First call
+8.35 s. First `get_rule` (parses v1.4) 3.05 s, then 0.00 s; first
+`what_changed` (parses v1.3) 2.36 s.
+
+### Against the prediction
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| at least 222 of 224 identical | 224 of 224 | Right. |
+| recall@5 equal within one question | identical | Right. |
+| warm search median under 0.3 s | 0.036 s | Right, 8 times under. |
+| about 9 s per PDF on first use | 3.05 s and 2.36 s | **Wrong by 3 times.** The 9 s in `pyproject.toml` timed the whole first extraction when pypdfium2 was chosen; nothing re-timed it since. |
+
+**What it says:**
+- **The server adds nothing to the measured numbers and nothing to the
+  ranking.** Zero near-tie swaps: the embeddings are deterministic on this
+  machine, so the A29 figures are what a Claude Desktop user gets.
+- **The protocol costs about nothing.** 0.036 s per search through the pipe
+  is under the 0.05 s the search took in slice 9.
+- **The first search is the slow one (8.35 s):** Ollama loading the embedder
+  plus the once-per-process pin and corpus checks. Not predicted, and not
+  split between the two; a user feels it once per Claude Desktop session.

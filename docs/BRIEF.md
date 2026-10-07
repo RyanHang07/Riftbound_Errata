@@ -1744,5 +1744,7 @@ Decisions:
 - **Windows:** Claude Desktop starts `wsl.exe -e bash -lc "cd
   ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"`.
 
-The prediction in `docs/RECALL.md` is judged by `make mcp-check` on the
-user's machine (it needs Postgres and Ollama, which the cloud session lacks).
+**Result (`evals/runs/mcp-check-2026-10-07T0200Z`, the user's machine):**
+224 of 224 searches identical to the snapshot, recall@5 identical on every
+stratum, warm search 0.036 s median. First PDF parse 2.4 to 3.1 s, three
+times faster than predicted. Slice 15 is done; next is slice 11 (A41).

@@ -24,3 +24,7 @@
 - {slice: "Failure taxonomy (12)", prediction: "About 5 rules-only misses outside the top 20", result: "2", verdict: close}
 - {slice: "Failure taxonomy (12)", prediction: "Exactly 4 unclassified", result: "4", verdict: right}
 - {slice: "Failure taxonomy (12)", prediction: "Card share higher outside the top 20 than below the cutoff", result: "92% against 80%", verdict: right}
+- {slice: "MCP server (15)", prediction: "At least 222 of 224 searches identical to the snapshot", result: "224 of 224", verdict: right}
+- {slice: "MCP server (15)", prediction: "Recall@5 through the server equal to the snapshot", result: "identical", verdict: right}
+- {slice: "MCP server (15)", prediction: "Warm search under 0.3 s over stdio", result: "0.036 s", verdict: right}
+- {slice: "MCP server (15)", prediction: "About 9 s to parse a rules PDF on first use", result: "2.4 to 3.1 s", verdict: wrong}
