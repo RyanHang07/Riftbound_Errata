@@ -97,6 +97,20 @@
    "same_text": false
   }
  ],
+ "core@1.2:406.4.b": [
+  {
+   "ref": "core@1.1:406.4.b",
+   "same_text": true
+  },
+  {
+   "ref": "core@1.3:419.4.b",
+   "same_text": true
+  },
+  {
+   "ref": "core@1.4:419.4.a.1",
+   "same_text": false
+  }
+ ],
  "core@1.2:412.1": [
   {
    "ref": "core@1.1:412.1",
@@ -108,6 +122,20 @@
   },
   {
    "ref": "core@1.4:425.1",
+   "same_text": false
+  }
+ ],
+ "core@1.2:412.1.b": [
+  {
+   "ref": "core@1.1:412.1.b",
+   "same_text": true
+  },
+  {
+   "ref": "core@1.3:425.1.b",
+   "same_text": true
+  },
+  {
+   "ref": "core@1.4:425.1.b",
    "same_text": false
   }
  ],
@@ -136,6 +164,20 @@
   },
   {
    "ref": "core@1.4:809.1.c",
+   "same_text": false
+  }
+ ],
+ "core@1.2:738.2": [
+  {
+   "ref": "core@1.1:728.2",
+   "same_text": true
+  },
+  {
+   "ref": "core@1.3:812.2",
+   "same_text": false
+  },
+  {
+   "ref": "core@1.4:812.2",
    "same_text": false
   }
  ],
@@ -290,34 +332,6 @@
   },
   {
    "ref": "core@1.4:415.3.a",
-   "same_text": false
-  }
- ],
- "core@1.3:419.4.b": [
-  {
-   "ref": "core@1.1:406.4.b",
-   "same_text": true
-  },
-  {
-   "ref": "core@1.2:406.4.b",
-   "same_text": true
-  },
-  {
-   "ref": "core@1.4:419.4.a.1",
-   "same_text": false
-  }
- ],
- "core@1.3:425.1.b": [
-  {
-   "ref": "core@1.1:412.1.b",
-   "same_text": true
-  },
-  {
-   "ref": "core@1.2:412.1.b",
-   "same_text": true
-  },
-  {
-   "ref": "core@1.4:425.1.b",
    "same_text": false
   }
  ],

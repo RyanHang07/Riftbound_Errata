@@ -8261,23 +8261,28 @@
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'Up to v1.3 the rules said a countered card was not played at all. v1.4 keeps that play-triggers
-    do not fire, but adds that checks of whether a card was played look at whether it was Finalized, with
-    the example that a spell countered by Defy still turns on Legion. Old answer: no. Current: yes.'
+  change: 'Up to v1.2 Legion was satisfied by its controller playing another card (728.2 / 738.2), and
+    a countered card was not played, including for abilities that check whether cards were played (406.4,
+    406.4.b). v1.3 rewrote Legion to check whether another card was Finalized, Riot''s Unleashed FAQ confirmed
+    that a countered spell still turns Legion on, and v1.4 wrote that into 419.4.b with the Defy example.
+    Old answer (v1.1-1.2): no. Answer since v1.3: yes.'
   source: &id001
     from: evals/drift_candidates.yaml
     id: legion-countered-spell
-- id: v-legion-countered-spell-v1.3
+- id: v-legion-countered-spell-v1.2
   question: If my spell gets countered, does it still count as having played a card this turn for Legion?
-  as_of: '2026-05-27'
+  as_of: '2026-02-04'
   expect_sources:
-  - core@1.3:419.4.b
+  - core@1.2:406.4.b
+  - core@1.2:738.2
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'Up to v1.3 the rules said a countered card was not played at all. v1.4 keeps that play-triggers
-    do not fire, but adds that checks of whether a card was played look at whether it was Finalized, with
-    the example that a spell countered by Defy still turns on Legion. Old answer: no. Current: yes.'
+  change: 'Up to v1.2 Legion was satisfied by its controller playing another card (728.2 / 738.2), and
+    a countered card was not played, including for abilities that check whether cards were played (406.4,
+    406.4.b). v1.3 rewrote Legion to check whether another card was Finalized, Riot''s Unleashed FAQ confirmed
+    that a countered spell still turns Legion on, and v1.4 wrote that into 419.4.b with the Defy example.
+    Old answer (v1.1-1.2): no. Answer since v1.3: yes.'
   source: *id001
 - id: v-deflect-chosen-twice-current
   question: If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?
@@ -8470,21 +8475,25 @@
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'Until v1.4 a countered card was not considered played at all. v1.4 limits that to abilities
-    that trigger on cards being played. Old answer: no. Current: it is not played for play-triggers only.'
+  change: 'Up to v1.2 a countered card was not considered played at all. Since v1.3 (Unleashed FAQ, then
+    v1.4''s 425.1.b and 419.4.b) it is not played for abilities that trigger on cards being played, but
+    still counts for checks of whether a card was played. Old answer (v1.1-1.2): no. Answer since v1.3:
+    not for play-triggers; yes for checks like Legion.'
   source: &id009
     from: evals/drift_candidates.yaml
     id: countered-spell-played
-- id: v-countered-spell-played-v1.3
+- id: v-countered-spell-played-v1.2
   question: Does a countered spell still count as a card I played?
-  as_of: '2026-05-27'
+  as_of: '2026-02-04'
   expect_sources:
-  - core@1.3:425.1.b
+  - core@1.2:412.1.b
   provenance: written
   stratum: version-change
   version_dependent: true
-  change: 'Until v1.4 a countered card was not considered played at all. v1.4 limits that to abilities
-    that trigger on cards being played. Old answer: no. Current: it is not played for play-triggers only.'
+  change: 'Up to v1.2 a countered card was not considered played at all. Since v1.3 (Unleashed FAQ, then
+    v1.4''s 425.1.b and 419.4.b) it is not played for abilities that trigger on cards being played, but
+    still counts for checks of whether a card was played. Old answer (v1.1-1.2): no. Answer since v1.3:
+    not for play-triggers; yes for checks like Legion.'
   source: *id009
 - id: v-c-cost-two-domains-current
   question: On a card with two domains, how is a [C] in its cost paid?

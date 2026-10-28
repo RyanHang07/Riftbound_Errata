@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { counts, interval, pct, predictions, pValue, runs, taxonomy, type Run } from "@/lib/results";
+import { best, counts, interval, pct, predictions, pValue, runs, taxonomy, type Run } from "@/lib/results";
 
 export const metadata: Metadata = { title: "Results · rb_errata" };
 
@@ -9,6 +9,9 @@ const KEPT: Record<Run["decision"], [string, string]> = {
   reference: ["wait", "reference"], dropped: ["bad", "dropped"],
 };
 const GROUPS = ["expert-ruling", "ruling: cards", "version-change"] as const;
+// Graded counts, not question-set counts: after a label fix (A44) older runs
+// are graded only on the questions they asked, so the two can differ.
+const graded = (g: string) => best.groups[g].at5.n;
 const STRATUM: Record<string, string> = { "expert-ruling": "Expert rulings", "expert-ruling-faq": "FAQ rulings", "version-change": "Version changes" };
 const CATEGORY: Record<string, string> = {
   "below-cutoff": "Found, ranked 6 to 20",
@@ -30,11 +33,11 @@ export default function Results() {
       <div className="results">
         <div>
           <h1>Results</h1>
-          <p className="lede">Each row is one search configuration, run on the same {counts["expert-ruling"] + counts["expert-ruling-faq"] + counts["version-change"]} questions. A hit means the right rule, in the version in force on the question&apos;s date, is in the top 5. Brackets are 95% Wilson intervals; comparisons are exact McNemar tests on the same questions. Every row had a written prediction before it ran.</p>
+          <p className="lede">Each row is one search configuration, graded on the same {graded("expert-ruling") + graded("expert-ruling-faq") + graded("version-change")} questions{graded("version-change") < counts["version-change"] ? ` (${counts["version-change"] - graded("version-change")} version-change questions were relabelled after these runs and are left out until a rerun)` : ""}. A hit means the right rule, in the version in force on the question&apos;s date, is in the top 5. Brackets are 95% Wilson intervals; comparisons are exact McNemar tests on the same questions. Every row had a written prediction before it ran.</p>
         </div>
         <div className="table-wrap">
           <table>
-            <thead><tr><th>Configuration</th><th>Expert rulings ({counts["expert-ruling"]})</th><th>Card rulings ({counts["ruling: cards"]})</th><th>Version changes ({counts["version-change"]})</th><th>Against the row it was tested on</th><th>Kept?</th></tr></thead>
+            <thead><tr><th>Configuration</th><th>Expert rulings ({graded("expert-ruling")})</th><th>Card rulings ({graded("ruling: cards")})</th><th>Version changes ({graded("version-change")})</th><th>Against the row it was tested on</th><th>Kept?</th></tr></thead>
             <tbody>
               {runs.map((r) => (
                 <tr key={r.run} data-tier={TIER[r.decision]} className={r.decision === "best" ? "best" : undefined}>

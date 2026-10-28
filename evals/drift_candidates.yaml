@@ -27,12 +27,30 @@
   question: "If my spell gets countered, does it still count as having played a card this turn for Legion?"
   as_of: 2026-10-01
   current: ["core@1.4:419.4.a.1", "core@1.4:419.4.b"]
-  stale: ["core@1.1:406.4.b", "core@1.2:406.4.b", "core@1.3:419.4.b"]
+  stale: ["core@1.1:406.4.b", "core@1.1:728.2", "core@1.2:406.4.b", "core@1.2:738.2"]
+  # core@1.3 is neither: it already gives today's answer (A44).
+  #
+  # WRONG, as first written (left visible; brief section 10):
+  #   stale: [..., "core@1.3:419.4.b"]
+  #   change: "Up to v1.3 the rules said a countered card was not played at all ..."
+  # Found 2026-10-07 when Claude Desktop, through the MCP server, answered yes
+  # for v1.3 and the label said no. v1.3 contradicts itself: 419.4.b and
+  # 425.1.b say a countered card was not played, but v1.3 rewrote Legion
+  # (812.1.c) to check whether the other card was Finalized. Riot's Unleashed
+  # Rules FAQ (29 Apr 2026, inside the v1.3 window; FAQs take precedence over
+  # the Core Rules until the next update) ruled that a Legion stays active when
+  # the spell is countered, and Near's ruling tagged crdVersion 1.3 (riftboundfaq
+  # commit 5b8de7a, 15 Jul 2026) says the same. v1.4's 419.4.b wrote it down.
+  # Cause: the label was written from the stale rule's own text, without
+  # checking the rest of that version or the FAQs published during it.
   change: >-
-    Up to v1.3 the rules said a countered card was not played at all. v1.4
-    keeps that play-triggers do not fire, but adds that checks of whether a
-    card was played look at whether it was Finalized, with the example that a
-    spell countered by Defy still turns on Legion. Old answer: no. Current: yes.
+    Up to v1.2 Legion was satisfied by its controller playing another card
+    (728.2 / 738.2), and a countered card was not played, including for
+    abilities that check whether cards were played (406.4, 406.4.b). v1.3
+    rewrote Legion to check whether another card was Finalized, Riot's
+    Unleashed FAQ confirmed that a countered spell still turns Legion on, and
+    v1.4 wrote that into 419.4.b with the Defy example. Old answer (v1.1-1.2):
+    no. Answer since v1.3: yes.
 
 - id: deflect-chosen-twice
   question: "If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?"
@@ -152,11 +170,24 @@
   question: "Does a countered spell still count as a card I played?"
   as_of: 2026-10-01
   current: ["core@1.4:425.1.b"]
-  stale: ["core@1.1:412.1.b", "core@1.2:412.1.b", "core@1.3:425.1.b"]
+  stale: ["core@1.1:412.1.b", "core@1.2:412.1.b"]
+  # core@1.3:425.1.b is neither, for the reason given under
+  # legion-countered-spell (A44).
+  #
+  # WRONG, as first written (left visible; brief section 10):
+  #   stale: [..., "core@1.3:425.1.b"]
+  #   change: "Until v1.4 a countered card was not considered played at all ..."
+  # v1.3's 425.1.b still read "not considered to have been played", but the
+  # Unleashed FAQ (29 Apr 2026) already applied the finalize meaning to checks
+  # such as Legion, so on the v1.3 question's date the official answer was
+  # today's. Same cause as legion-countered-spell; found by auditing every
+  # candidate after it.
   change: >-
-    Until v1.4 a countered card was not considered played at all. v1.4 limits
-    that to abilities that trigger on cards being played. Old answer: no.
-    Current: it is not played for play-triggers only.
+    Up to v1.2 a countered card was not considered played at all. Since v1.3
+    (Unleashed FAQ, then v1.4's 425.1.b and 419.4.b) it is not played for
+    abilities that trigger on cards being played, but still counts for checks
+    of whether a card was played. Old answer (v1.1-1.2): no. Answer since
+    v1.3: not for play-triggers; yes for checks like Legion.
 
 - id: c-cost-two-domains
   question: "On a card with two domains, how is a [C] in its cost paid?"

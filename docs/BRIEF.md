@@ -1748,3 +1748,53 @@ Decisions:
 224 of 224 searches identical to the snapshot, recall@5 identical on every
 stratum, warm search 0.036 s median. First PDF parse 2.4 to 3.1 s, three
 times faster than predicted. Slice 15 is done; next is slice 11 (A41).
+
+### A44. Two version-change labels were wrong by one version (2026-10-28)
+
+*The user approved the relabel and the audit.* Found through the MCP server:
+asked the Legion question as of 1 May 2026, Claude Desktop answered yes; the
+label said no. Research (sources in `evals/drift_candidates.yaml`):
+
+- v1.3 contradicts itself. 419.4.b and 425.1.b say a countered card was not
+  played; 812.1.c, new in v1.3, makes Legion check whether another card was
+  Finalized.
+- Riot's Unleashed Rules FAQ (29 Apr 2026, inside the v1.3 window) ruled
+  that a Legion stays active when the spell is countered. Riot's FAQs take
+  precedence over the Core Rules until the next update.
+- Near's ruling tagged `crdVersion: "1.3"` (riftboundfaq commit `5b8de7a`,
+  15 Jul 2026) says the same.
+- v1.1 and v1.2 say no without contradiction: Legion is satisfied by
+  "playing" a card (728.2 / 738.2), and 406.4 / 406.4.b apply "wasn't
+  played" to checks as well as triggers.
+
+So the answer changed at v1.3, not v1.4. **Fix:** v1.3 dropped from the
+stale lists of `legion-countered-spell` and of `countered-spell-played`
+(same rule, found by auditing every candidate), so the past-dated question
+moves to the v1.2 window (as_of 2026-02-04). Same fix as
+`deflect-chosen-twice`; the wrong labels stay visible in comments.
+
+**The audit.** All 28 candidates' stale and current texts were reread
+together with each current rule's counterpart in the stale version. The
+other 26 hold on the text. The Unleashed FAQ, as far as the blocked network
+allowed reading it (search snippets only), confirms v1.3's answer for the
+Accelerate and [C] candidates and contradicts none other. Not verifiable
+from the cloud session: FAQ passages that snippets did not show.
+
+**Rule added:** a version-change label is checked against the whole stale
+version and the FAQs published inside its window, not only the stale
+rule's own text.
+
+**Effect on the committed runs** (graded offline; snapshots keep top 20):
+the snapshots asked the two retired `-v1.3` questions and not their `-v1.2`
+replacements, so version-change is graded on 54 shared questions, named in
+every report (`recall.paired_rows`). Best run 44/56 = 79% becomes 43/54 =
+80% (both retired questions were hits). Naive outdated-above-hit 16/56
+becomes 15/54. Hybrid against the best: 1 gained / 8 lost (p = 0.039)
+becomes 0 / 8 (p = 0.0078); its only gain was a retired question. No
+decision changes. A rerun of a configuration restores 56.
+
+**Also found while researching:** Riot published a new Core Rules version,
+Radiance, effective 16 October 2026. The corpus ends at v1.4 and marks it
+current, so `search_rules` dated after 15 October answers from superseded
+rules. Ingesting it is its own slice (fetch, dates, ingest, a new
+`questions_sha256`), not part of this fix.

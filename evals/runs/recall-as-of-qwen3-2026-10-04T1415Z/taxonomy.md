@@ -7,10 +7,10 @@ by the rule in rb_errata/taxonomy.py; no model.
 |---|---|---|---|---|---|
 | expert-ruling | 37 | 21 | 2 | 0 | 60 |
 | expert-ruling-faq | 3 | 2 | 0 | 0 | 5 |
-| version-change | 8 | 0 | 0 | 4 | 12 |
-| **all** | 48 | 23 | 2 | 4 | 77 |
+| version-change | 7 | 0 | 0 | 4 | 11 |
+| **all** | 47 | 23 | 2 | 4 | 76 |
 
-below-cutoff ranks: 27 of 48 at rank 6 to 10.
+below-cutoff ranks: 26 of 47 at rank 6 to 10.
 
 ## Every miss
 
@@ -62,7 +62,6 @@ below-cutoff ranks: 27 of 48 at rank 6 to 10.
 | v-draw-phase-v1.3 | version-change | below-cutoff | 17 |
 | v-gear-to-battlefield-v1.2 | version-change | below-cutoff | 8 |
 | v-legend-leave-zone-v1.3 | version-change | below-cutoff | 8 |
-| v-legion-countered-spell-v1.3 | version-change | below-cutoff | 8 |
 | v-replacement-from-triggered-current | version-change | below-cutoff | 11 |
 | r-akshan-mischievous-dual-akshan-control | expert-ruling | card-not-in-corpus | >20 |
 | r-aphelios-exalted-equipment-copy-effects | expert-ruling-faq | card-not-in-corpus | >20 |

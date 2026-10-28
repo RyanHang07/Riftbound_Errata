@@ -155,3 +155,14 @@ def test_every_method_is_dispatchable() -> None:
 
     src = inspect.getsource(methods.retrieve)
     assert all(f'"{m}"' in src for m in methods.METHODS)
+
+
+def test_relabelled_questions_are_reported_not_dropped() -> None:
+    # A44: a snapshot taken before a label fix has a row for a retired id and
+    # no row for its replacement. Both are named; only shared ids are graded.
+    snap = {"results": [{"id": "a"}, {"id": "old"}]}
+    pairs, retired, not_run = recall.paired_rows(snap, {"a": {"id": "a"}, "new": {"id": "new"}})
+    assert [q["id"] for q, _ in pairs] == ["a"]
+    assert (retired, not_run) == (["old"], ["new"])
+    assert "rerun" in recall.drift_note(retired, not_run)[0]
+    assert recall.drift_note([], []) == []

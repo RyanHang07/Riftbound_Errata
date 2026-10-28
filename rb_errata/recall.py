@@ -234,6 +234,39 @@ def grade(
     }
 
 
+def paired_rows(
+    snap: dict[str, Any], questions: dict[str, dict[str, Any]]
+) -> tuple[list[tuple[dict[str, Any], dict[str, Any]]], list[str], list[str]]:
+    """A snapshot's rows matched to the current questions, and what did not match.
+
+    Labels get corrected after runs exist (A44: two version-change questions
+    moved from the v1.3 window to v1.2, so their ids changed). Re-grading a
+    committed snapshot against corrected labels is the point of keeping
+    snapshots, but a row for a question that no longer exists cannot be graded,
+    and a question the run never asked has no row. Both are returned and
+    reported, never silently dropped. (A question whose text or as_of changed
+    would keep its id and need a rerun; ids carry the version window for this.)
+    """
+    pairs = [(questions[r["id"]], r) for r in snap["results"] if r["id"] in questions]
+    in_snap = {r["id"] for r in snap["results"]}
+    retired = sorted(in_snap - set(questions))
+    not_run = sorted(set(questions) - in_snap)
+    return pairs, retired, not_run
+
+
+def drift_note(retired: list[str], not_run: list[str]) -> list[str]:
+    """One report line naming the questions a snapshot and the set disagree on."""
+    if not retired and not not_run:
+        return []
+    return [
+        f"Labels changed since this run: {len(retired)} of its questions are no longer in the "
+        f"set ({', '.join(retired) or 'none'}) and {len(not_run)} questions in the set were "
+        f"not run ({', '.join(not_run) or 'none'}). Graded on the questions both share; "
+        "rerun to include the rest.",
+        "",
+    ]
+
+
 def _within(ranks: list[int | None], k: int) -> list[bool]:
     return [r is not None and r <= k for r in ranks]
 
@@ -251,7 +284,8 @@ def report(run_dir: Path) -> list[str]:
     snap = json.loads((run_dir / "retrieval.json").read_text())
     questions = {q["id"]: q for q in load_questions()}
     cp = counterparts_mod.load()
-    graded = [grade(questions[r["id"]], r, cp) for r in snap["results"]]
+    pairs, retired, not_run = paired_rows(snap, questions)
+    graded = [grade(q, r, cp) for q, r in pairs]
     strata = list(dict.fromkeys(q["stratum"] for q in questions.values()))
 
     meta = snap["retrieval"]
@@ -262,6 +296,7 @@ def report(run_dir: Path) -> list[str]:
         f"corpus {snap['corpus_chunks_sha256'][:12]}; questions {snap['questions_sha256'][:12]}.",
         "Hit = expected version-qualified ref, in effect on as_of (A1). Wilson 95% in brackets.",
         "",
+        *drift_note(retired, not_run),
         "## recall@k (headline)",
         "",
         "| stratum | " + " | ".join(f"@{k}" for k in KS) + " | unknown |",
@@ -362,7 +397,7 @@ def compare(a_dir: Path, b_dir: Path, k: int = 5) -> list[str]:
             raise SystemExit(f"runs differ in {key}; they cannot be paired")
     questions = {q["id"]: q for q in load_questions()}
     cp = counterparts_mod.load()
-    graded = [{r["id"]: grade(questions[r["id"]], r, cp) for r in s["results"]} for s in snaps]
+    graded = [{q["id"]: grade(q, r, cp) for q, r in paired_rows(s, questions)[0]} for s in snaps]
     names = [f"{x['retrieval']['method']}; {x['retrieval']['embed_model']}" for x in snaps]
     lines = [
         f"# {b_dir.name} vs {a_dir.name}, recall@{k}",

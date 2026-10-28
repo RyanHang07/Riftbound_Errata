@@ -41,7 +41,8 @@ async def _check() -> list[str]:
     from mcp.client.stdio import StdioServerParameters
 
     snap = {r["id"]: r for r in json.loads((SNAPSHOT / "retrieval.json").read_text())["results"]}
-    questions = load_questions()
+    # Only questions the snapshot asked can be compared with it (A44).
+    questions = [q for q in load_questions() if q["id"] in snap]
     cp = counterparts_mod.load()
     params = StdioServerParameters(
         command=sys.executable, args=["-m", "rb_errata.server"], cwd=str(Path.cwd())

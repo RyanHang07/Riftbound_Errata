@@ -61,7 +61,8 @@ def _graded(run: str) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
     snap = json.loads((RUNS / run / "retrieval.json").read_text())
     questions = {q["id"]: q for q in load_questions()}
     cp = counterparts_mod.load()
-    return snap, {r["id"]: recall.grade(questions[r["id"]], r, cp) for r in snap["results"]}
+    pairs = recall.paired_rows(snap, questions)[0]
+    return snap, {q["id"]: recall.grade(q, r, cp) for q, r in pairs}
 
 
 def _rate(flags: list[bool]) -> dict[str, Any]:

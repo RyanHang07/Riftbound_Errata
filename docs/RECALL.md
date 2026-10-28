@@ -519,3 +519,24 @@ snapshot; recall@5 through the server is identical on every stratum (62% /
 - **The first search is the slow one (8.35 s):** Ollama loading the embedder
   plus the once-per-process pin and corpus checks. Not predicted, and not
   split between the two; a user feels it once per Claude Desktop session.
+
+## Correction (A44, 2026-10-28): two labels moved from v1.3 to v1.2
+
+`v-legion-countered-spell-v1.3` and `v-countered-spell-played-v1.3` were
+labelled with v1.3 giving the old answer; Riot's Unleashed FAQ (29 Apr 2026)
+had already given today's. Both questions now sit in the v1.2 window
+(`-v1.2`, as_of 2026-02-04). The results above were written with the old
+labels and are left as written. Regraded on the 54 version-change questions
+every committed snapshot shares:
+
+| run | version-change recall@5, as written | regraded (A44) |
+|---|---|---|
+| naive, nomic | 22/56 = 39% | 21/54 = 39% |
+| as-of, nomic | 33/56 = 59% | 32/54 = 59% |
+| as-of, qwen3 (best) | 44/56 = 79% | 43/54 = 80% |
+| lexical | 19/56 = 34% | 19/54 = 35% |
+| hybrid | 37/56 = 66% | 35/54 = 65% |
+| rerank | 49/56 = 88% | 48/54 = 89% |
+
+Slice 12's taxonomy for the best run: 77 misses become 76 (version-change
+`below-cutoff` 8 becomes 7; the retired Legion question was a rank-8 miss).

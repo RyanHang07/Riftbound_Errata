@@ -54,8 +54,7 @@ def classify_run(run_dir: Path) -> dict[str, dict[str, Any]]:
     questions = {q["id"]: q for q in load_questions()}
     cp = counterparts_mod.load()
     out = {}
-    for row in snap["results"]:
-        q = questions[row["id"]]
+    for q, row in recall.paired_rows(snap, questions)[0]:
         g = recall.grade(q, row, cp)
         c = classify(q, g)
         if c is not None:
