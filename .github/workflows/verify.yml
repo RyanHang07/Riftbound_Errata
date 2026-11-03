@@ -2,9 +2,9 @@
 # No database, no model, no Riot text: the same `make verify` a contributor
 # runs locally, so a change that only passes on one machine is caught here.
 #
-# Actions are pinned to major-version tags, not commit SHAs: the session that
-# wrote this could not reach the GitHub API to read the SHAs, and an invented
-# SHA is worse than a tag. Pinning to SHAs is a known follow-up.
+# Actions are pinned to commit SHAs (a tag can be moved; a SHA cannot), with
+# the release each SHA was resolved from beside it. Resolved 2026-11-03 with
+# `git ls-remote`, which reaches GitHub where its API did not.
 name: verify
 
 on:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
         with:
           python-version: "3.12"
       # --frozen: install exactly uv.lock. A resolver that picked newer
@@ -38,8 +38,8 @@ jobs:
       run:
         working-directory: site
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
           cache: npm
@@ -55,8 +55,8 @@ jobs:
       run:
         working-directory: app
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
           cache: npm

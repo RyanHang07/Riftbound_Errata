@@ -1,3 +1,15 @@
+## November 2026
+
+- Local web app: ask, search, compare versions and browse rules in your browser, on your own machine.
+- Prompt-injection test: five planted-passage attacks against four prompt designs, ready to run.
+- The agent: routes card questions, checks its confidence, searches wider once when unsure. Traced in Arize Phoenix. Available as the `ask` tool.
+- Confidence score from measurable signals, with a calibration check that labels it uncalibrated if it fails.
+- Answer generation and an LLM judge, checked against hand labels before its numbers are used.
+- New rules versions are detected weekly, registered with one command, and warned about until they are searchable.
+- Two version-change labels corrected after Riot's Unleashed FAQ was found to have answered them earlier.
+- MCP server for Claude Desktop, matching the measured search exactly (224 of 224 questions).
+- Failure types: most search misses are the right rule ranked just below the cutoff.
+
 ## October 2026
 
 - Reranker tested: version changes improved but each question took over 10 seconds, so it was not adopted.
