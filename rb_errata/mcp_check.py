@@ -86,7 +86,12 @@ async def _check() -> list[str]:
         # Cold, then warm: the first call for a version parses its PDF.
         ref = questions[0]["expect_sources"][0]
         version = ref.split("@", 1)[1].split(":", 1)[0]
-        older = {"1.4": "1.3", "1.3": "1.2", "1.2": "1.1"}.get(version, "1.1")
+        # The version before it in the registry, never a hard-coded map: a new
+        # rules version must not need a code change here (slice 18).
+        from rb_errata.ingest.sources import CORE_RULES
+
+        registered = [d.version for d in CORE_RULES]
+        older = registered[registered.index(version) - 1]
         cold = []
         for name, a in (
             []

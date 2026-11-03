@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -124,6 +124,15 @@ mcp:  ## run the MCP server on stdio (what Claude Desktop starts; Ctrl+C to stop
 
 mcp-check:  ## the MCP server over stdio vs the committed snapshot (needs db-up and Ollama)
 	$(UV) python -m rb_errata.cli mcp-check
+
+check-updates:  ## is a newer Core Rules version out? (mirror manifest + Riot Rules Hub; exit 1 if so)
+	$(UV) python -m rb_errata.cli check-updates
+
+add-version:  ## register a new version: make add-version V=1.5 NOTES=https://playriftbound.com/...
+	$(UV) python -m rb_errata.cli add-version $(V) --notes "$(NOTES)"
+
+version-impact:  ## what a version changes and which labels cite it: make version-impact V=1.5
+	$(UV) python -m rb_errata.cli version-impact $(V)
 
 power:  ## how many questions are needed (exact calculation, no model)
 	$(UV) python -m rb_errata.cli power

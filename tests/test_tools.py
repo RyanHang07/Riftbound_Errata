@@ -110,7 +110,10 @@ def test_search_boundary_day_is_the_new_version() -> None:
 def test_get_rule_returns_text_and_window() -> None:
     out = tools.get_rule("core@1.4:100", load)
     assert out["text"].startswith("Players must")
-    assert (out["valid_from"], out["valid_to"]) == ("2026-07-24", None)
+    # Read from the corpus, not hard-coded: v1.4's end date arrives with v1.5.
+    w = tools.windows()["1.4"]
+    end = w.valid_to.isoformat() if w.valid_to else None
+    assert (out["valid_from"], out["valid_to"]) == ("2026-07-24", end)
 
 
 def test_get_rule_unknown_number() -> None:
@@ -132,7 +135,8 @@ def test_missing_or_altered_pdf_is_refused(tmp_path: Path) -> None:
 def test_list_versions_marks_refused_and_basis() -> None:
     rows = {r["version"]: r for r in tools.list_versions()["versions"]}
     assert rows["1.0"]["searchable"] is False and rows["1.0"]["reason"]
-    assert rows["1.4"]["searchable"] is True and rows["1.4"]["valid_to"] is None
+    newest = list(tools.windows())[-1]
+    assert rows[newest]["searchable"] is True and rows[newest]["valid_to"] is None
     assert rows["1.1"]["date_basis"] == "announcement-date"
 
 
@@ -250,4 +254,66 @@ def test_server_speaks_clean_stdio() -> None:
             res = await c.call_tool("list_versions", {})
             return res.structured_content or {}
 
-    assert [v["version"] for v in anyio.run(go)["versions"]][-1] == "1.4"
+    from rb_errata.ingest.sources import CORE_RULES
+
+    assert [v["version"] for v in anyio.run(go)["versions"]][-1] == CORE_RULES[-1].version
+
+
+# --- a version registered but not ingested (slice 18) --------------------------
+
+
+def _with_pending(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, effective: str | None) -> Path:
+    """The real registry plus a made-up v9.0 that the corpus does not hold."""
+    import json
+
+    from rb_errata.ingest.sources import CORE_RULES, RulesDoc
+
+    extra = RulesDoc("core", "9.0", "0" * 40, ("https://x",), "https://x", "cdn-verified", "Test")
+    monkeypatch.setattr(tools, "CORE_RULES", (*CORE_RULES, extra))
+    rows = json.loads(tools.EFFECTIVE.read_text())
+    rows.append({"version": "9.0", "status": "known" if effective else "unknown",
+                 "effective": effective, "reason": "", "basis": "stated"})  # fmt: skip
+    path = tmp_path / "effective.json"
+    path.write_text(json.dumps(rows))
+    monkeypatch.setattr(tools, "EFFECTIVE", path)
+    return path
+
+
+def test_no_warning_when_registry_matches_corpus() -> None:
+    from rb_errata.ingest.sources import CORE_RULES
+
+    if CORE_RULES[-1].version != list(tools.windows())[-1]:
+        pytest.skip("a registered version is waiting for `make ingest`")
+    assert tools.freshness(date(2030, 1, 1)) == []
+
+
+def test_dated_pending_version_warns_from_its_effective_date(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    path = _with_pending(monkeypatch, tmp_path, "2030-01-01")
+    assert tools.freshness(date(2029, 12, 31), path) == []
+    [warning] = tools.freshness(date(2030, 1, 1), path)
+    assert "v9.0 (Test) took effect on 2030-01-01" in warning and "make ingest" in warning
+
+
+def test_undated_pending_version_warns_for_current_window(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    path = _with_pending(monkeypatch, tmp_path, None)
+    newest = list(tools.windows().values())[-1]
+    [warning] = tools.freshness(newest.valid_from, path)
+    assert "not dated or ingested" in warning and "make dates" in warning
+    # A date inside an older, closed window cannot be affected by a newer version.
+    assert tools.freshness(date(2025, 11, 1), path) == []
+
+
+def test_pending_version_is_listed_and_marks_older_rules_replaced(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    path = _with_pending(monkeypatch, tmp_path, "2030-01-01")
+    rows = {r["version"]: r for r in tools.list_versions(path)["versions"]}
+    assert rows["9.0"]["searchable"] is False and "make ingest" in rows["9.0"]["reason"]
+    newest = list(tools.windows())[-1]
+    assert tools._window_fields(newest)["newer_version_exists"] is True
+    with raises("registered but not ingested"):
+        tools.parse_ref("core@9.0:100")

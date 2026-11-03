@@ -32,19 +32,19 @@ export function FlipCard() {
         <div className={`flip${flipped ? " flipped" : ""}`} aria-live="polite">
           <div className="flip-face front" style={clock(3)}>
             <div className="in">
-              <span className="status">Outdated after 24 Jul 2026</span>
-              <div className="ver">Core Rules v1.3<span>in force 30 Mar to 24 Jul 2026</span></div>
-              <div className="claim"><b>No.</b>A countered spell was not played at all, so it could not turn on Legion.</div>
-              <div className="ref">core@1.3:419.4.b</div>
+              <span className="status">Outdated after 30 Mar 2026</span>
+              <div className="ver">Core Rules v1.2<span>in force 12 Dec 2025 to 30 Mar 2026</span></div>
+              <div className="claim"><b>No.</b>Legion needed you to have played another card, and a countered card was not played.</div>
+              <div className="ref">core@1.2:406.4.b</div>
             </div>
             <CardDressing i={3} />
           </div>
           <div className="flip-face back" style={clock(7)}>
             <div className="in">
               <span className="status">In force today</span>
-              <div className="ver">Core Rules v1.4<span>in force since 24 Jul 2026</span></div>
-              <div className="claim"><b>Yes.</b>Play triggers still don&apos;t fire, but a check for &ldquo;played&rdquo; now looks at whether the card was <mark>Finalized</mark>. Legion turns on.</div>
-              <div className="ref">core@1.4:419.4.a.1</div>
+              <div className="ver">Core Rules v1.3 on<span>since 30 Mar 2026, unchanged through v1.5</span></div>
+              <div className="claim"><b>Yes.</b>Play triggers still don&apos;t fire, but Legion checks whether another card was <mark>Finalized</mark>. A countered spell was, so Legion turns on.</div>
+              <div className="ref">core@1.3:812.1.c</div>
             </div>
             <CardDressing i={7} />
           </div>

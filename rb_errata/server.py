@@ -24,7 +24,9 @@ INSTRUCTIONS = (
     "Riftbound Core Rules, by version and date. Rules change between versions and "
     "numbers shift, so always pass the date the question is about as as_of (today if "
     "it is about now). Cite rules by the ref each passage carries, like core@1.4:419.4.a. "
-    "A passage with newer_version_exists true is from an older version: say so."
+    "A passage with newer_version_exists true is from an older version: say so. "
+    "If search_rules returns warnings, a newer rules version may be in force but not "
+    "searchable yet: tell the user before answering."
 )
 # httpx logs every Ollama request at INFO, one line per search on stderr:
 # 224 lines in the first `make mcp-check`. Warnings and errors still show.

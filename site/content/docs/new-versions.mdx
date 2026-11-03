@@ -1,0 +1,45 @@
+Riot updates the Core Rules with each expansion. Until a new version is added, any search dated after it took effect would answer from the rules it replaced, so every step below exists to make that gap short and visible.
+
+## 1. Notice it
+
+```
+make check-updates
+```
+
+Compares the version list in `data/sources.yaml` with the list kept by the Riftbound FAQ project and, when reachable, Riot's Rules Hub. It names any version that is missing and exits with an error, so a scheduled job can alert on it.
+
+## 2. Register it
+
+```
+make add-version V=1.5 NOTES=https://playriftbound.com/en-us/news/announcements/core-rules-radiance-patch-notes-effective-october-16-2026/
+```
+
+Downloads the PDF, pins its SHA-1, records whether Riot's own CDN serves the same bytes, and appends a checked entry to `data/sources.yaml`. `NOTES` must be Riot's patch notes page: the effective date is read from it, never guessed.
+
+## 3. See what it touches
+
+```
+make fetch dates
+```
+
+```
+make version-impact V=1.5
+```
+
+Counts the changed, added and removed rules (matched by wording, never by number), lists the labelled questions that cite a changed rule, and ranks the changes that flip meaning. It writes references and counts only.
+
+## 4. Make it searchable
+
+```
+make ingest
+```
+
+```
+make recall METHOD=as-of
+```
+
+Only new text is embedded; unchanged rules come from the cache. The recall run checks that older questions still find the same rules.
+
+## Until then
+
+<Callout>While a registered version is not ingested, `search_rules` returns a warning for any date it may affect, and `list_versions` shows it as not searchable yet. Claude Desktop is told to pass the warning on.</Callout>

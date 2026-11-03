@@ -26,6 +26,7 @@ export const NAV: DocGroup[] = [
     { slug: "versions-and-dates", title: "Versions and dates", lede: "The printed date on a rules document is not the day it took effect." },
     { slug: "why-naive-search-fails", title: "Why naive search fails", lede: "Several versions of nearly the same rule crowd the results." },
     { slug: "search-pipeline", title: "Search pipeline", lede: "What runs between your question and the passages." },
+    { slug: "new-versions", title: "New rules versions", lede: "How a new expansion's rules are noticed, checked and added." },
   ] },
   { group: "Evaluation", hue: "var(--d-order)", pages: [
     { slug: "question-set", title: "The question set", lede: "224 labelled questions, three groups, reported separately." },

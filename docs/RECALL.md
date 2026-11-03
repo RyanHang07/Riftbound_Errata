@@ -579,3 +579,29 @@ is Legacy (set 6, listed for 29 January 2027).
 - **Freshness warning:** before ingestion, `search_rules` dated after 15 Oct
   warns that v1.5 is not ingested; after, it warns nothing and reports v1.5
   in effect.
+
+### Results so far: the diff and the impact (cloud session, PDFs only)
+
+`make version-impact V=1.5`, run against a scratch registry so the real v1.5
+entry is written on the user's machine (which can confirm Riot's CDN):
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| about 80 changed (40 to 160) | 81 | Right. |
+| about 60 added (25 to 150) | 159 | **Wrong**, just above the range. |
+| about 15 removed (0 to 40) | 44 | **Wrong**, just above the range. |
+| about 10% of the 168 ruling questions touched (5 to 20%) | 82 of 168 = 49% | **Wrong by 5 times.** |
+
+**What it says:** Radiance was a bigger edit than three keywords: v1.4's
+chain and turn-structure rules (the 323 and 359.3 families, which many
+rulings cite) were reworded, and some were removed. And the impact count is
+textual: "changed" means any wording change beyond renumbering, so it marks
+rules to recheck, not labels that are wrong. A44's lesson in reverse: text
+that changed does not mean an answer changed, as text that stayed does not
+mean it stayed. Recall, embedding work and the freshness warning are judged
+after the user ingests v1.5.
+
+`make check-updates` against the live mirror found v1.5 (Radiance) and
+exited 1. `make add-version` registered it in a scratch copy: SHA-1
+`5c7946f7...`, `mirror-only-unverified` from the cloud session, where Riot's
+CDN is blocked.

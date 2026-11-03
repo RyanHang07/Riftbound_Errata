@@ -1,24 +1,29 @@
-"""Every document slice 2 ingests: where it comes from and which bytes it must be.
+"""Every Core Rules version: where it comes from and which bytes it must be.
 
-Each PDF is pinned by SHA-1. Riot's CDN names files by the SHA-1 of their
-bytes, so for an official URL the pin and the filename are the same fact, and
-a mirror copy is accepted only if it hashes to the same value. A download that
-does not match is refused, never ingested "close enough".
+The list itself is data/sources.yaml (slice 18), so a new version is an
+appended entry written by `make add-version`, never a code change. This
+module loads it once and refuses a registry that could ingest the wrong
+thing: an unpinned or malformed hash, a duplicate, or versions out of order
+(validity windows are derived from the order, A16).
 
 Scope: Core Rules only. Tournament Rules, cards, errata and FAQs come later.
 """
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
+import yaml
+
+REGISTRY = Path("data/sources.yaml")
 CDN = "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live"
-# Pinned to a commit, so the mirror cannot change underneath us either.
-MIRROR = (
-    "https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/"
-    "816d3b32d32a9966fc73367efb690fcbb4c195ca/sources"
-)
-NEWS = "https://playriftbound.com/en-us/news"
+MIRROR_REPO = "https://github.com/ChristianIvicevic/riftboundfaq"
+MIRROR_RAW = "https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq"
+PROVENANCE = ("cdn-verified", "mirror-only-unverified")
+_SHA1 = re.compile(r"^[0-9a-f]{40}$")
 
 
 @dataclass(frozen=True)
@@ -31,8 +36,9 @@ class RulesDoc:
     # means no announcement exists, so the effective date is unknown and the
     # version is refused at ingestion rather than dated by guesswork.
     patch_notes: str | None
-    # How the bytes were verified in slice 1, recorded in the manifest.
+    # How the bytes were verified, recorded in the manifest.
     provenance: str
+    name: str = ""  # the set it shipped with: "Vendetta"
 
     @property
     def id(self) -> str:
@@ -43,48 +49,37 @@ class RulesDoc:
         return f"{self.doc}-rules-v{self.version}.pdf"
 
 
-CORE_RULES: tuple[RulesDoc, ...] = (
-    RulesDoc(
-        "core",
-        "1.0",
-        "c780858c1621672aea0dc6b454e9233f5a43d000",
-        (f"{CDN}/c780858c1621672aea0dc6b454e9233f5a43d000.pdf", f"{MIRROR}/CR-v1.0.pdf"),
-        # The pre-release edition (June 2025) had no patch notes. With no
-        # stated effective date it is refused; that is the A16 guard working.
-        None,
-        "cdn-verified",
-    ),
-    RulesDoc(
-        "core",
-        "1.1",
-        "dbc96e31db9d0257b0791aafb6dbb0cd219d3efb",
-        (f"{CDN}/dbc96e31db9d0257b0791aafb6dbb0cd219d3efb.pdf", f"{MIRROR}/CR-v1.1.pdf"),
-        f"{NEWS}/rules-and-releases/riftbound-core-rules-patch-notes/",
-        "cdn-verified",
-    ),
-    RulesDoc(
-        "core",
-        "1.2",
-        "572377fcaa704a05f72eb42c104079d3b3bcf740",
-        (f"{CDN}/572377fcaa704a05f72eb42c104079d3b3bcf740.pdf", f"{MIRROR}/CR-v1.2.pdf"),
-        f"{NEWS}/rules-and-releases/riftbound-core-rules-spiritforged-patch-notes/",
-        "cdn-verified",
-    ),
-    RulesDoc(
-        "core",
-        "1.3",
-        "7affc578516386a973dffcc8132350856c5a104c",
-        # Not on Riot's CDN under this hash (SPIKE_1, finding 1): mirror only.
-        (f"{MIRROR}/CR-v1.3.pdf",),
-        f"{NEWS}/rules-and-releases/riftbound-core-rules-unleashed-patch-notes/",
-        "mirror-only-unverified",
-    ),
-    RulesDoc(
-        "core",
-        "1.4",
-        "e9ac8e3d33e0f78cef296f5945aba7bc1313b086",
-        (f"{CDN}/e9ac8e3d33e0f78cef296f5945aba7bc1313b086.pdf", f"{MIRROR}/CR-v1.4.pdf"),
-        f"{NEWS}/announcements/core-rules-vendetta-patch-notes/",
-        "cdn-verified",
-    ),
-)
+def vkey(version: str) -> tuple[int, ...]:
+    return tuple(int(x) for x in version.split("."))
+
+
+def parse(rows: list[dict[str, Any]]) -> tuple[RulesDoc, ...]:
+    """Registry rows to documents, refusing anything that could mis-ingest. Pure."""
+    docs = []
+    for r in rows:
+        v = str(r["version"])
+        if not re.fullmatch(r"\d+\.\d+", v):
+            raise ValueError(f"version {v!r}: expected MAJOR.MINOR")
+        if not _SHA1.match(str(r["sha1"])):
+            raise ValueError(f"{v}: sha1 must be 40 lowercase hex characters")
+        if r["provenance"] not in PROVENANCE:
+            raise ValueError(f"{v}: provenance must be one of {PROVENANCE}")
+        if not r["urls"]:
+            raise ValueError(f"{v}: no urls")
+        docs.append(
+            RulesDoc("core", v, r["sha1"], tuple(r["urls"]), r.get("patch_notes"),
+                     r["provenance"], str(r.get("name") or ""))
+        )  # fmt: skip
+    versions = [d.version for d in docs]
+    if len(set(versions)) != len(versions):
+        raise ValueError(f"duplicate versions in the registry: {versions}")
+    if versions != sorted(versions, key=vkey):
+        raise ValueError(f"registry out of order: {versions}")
+    return tuple(docs)
+
+
+def load(path: Path = REGISTRY) -> tuple[RulesDoc, ...]:
+    return parse(yaml.safe_load(path.read_text()))
+
+
+CORE_RULES: tuple[RulesDoc, ...] = load()

@@ -51,21 +51,22 @@ export default function Home() {
           <div>
             <h2>How it works</h2>
             <ol>
-              <li><b>You ask with a date.</b> &ldquo;Does a countered spell count as played?&rdquo; as of 27 May 2026.</li>
-              <li><b>Only rules in force that day are searched.</b> That date falls in v1.3, so v1.4&apos;s wording is out.</li>
-              <li><b>The answer cites the version.</b> Every claim points at a rule like <code className="inline">core@1.3:419.4.b</code>.</li>
+              <li><b>You ask with a date.</b> &ldquo;Does a countered spell count as played?&rdquo; as of 4 Feb 2026.</li>
+              <li><b>Only rules in force that day are searched.</b> That date falls in v1.2, so the wording Riot changed in v1.3 is out.</li>
+              <li><b>The answer cites the version.</b> Every claim points at a rule like <code className="inline">core@1.2:412.1.b</code>.</li>
             </ol>
           </div>
           <pre aria-label="Example tool call">{`// search_rules, called by Claude Desktop
 {
   "question": "Does a countered spell count as played?",
-  "as_of": "2026-05-27"
+  "as_of": "2026-02-04"
 }
 // result (rule text omitted here)
 [{
-  "ref": "core@1.3:419.4.b",
-  "valid_from": "2026-03-30",
-  "valid_to": "2026-07-24",
+  "ref": "core@1.2:412.1",
+  "rules": ["core@1.2:412.1", "core@1.2:412.1.a", "core@1.2:412.1.b"],
+  "valid_from": "2025-12-12",
+  "valid_to": "2026-03-30",
   "newer_version_exists": true
 }]`}</pre>
         </section>

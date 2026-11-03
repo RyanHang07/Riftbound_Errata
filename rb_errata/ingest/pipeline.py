@@ -80,8 +80,10 @@ def _load_effective() -> dict[str, date | None]:
 
 def _embed_all(
     conn: Any, client: Ollama, settings: Settings, digest: str, texts: list[str]
-) -> list[str]:
-    """Vector literals for `texts`, from the cache where possible."""
+) -> tuple[list[str], int]:
+    """Vector literals for `texts`, from the cache where possible, and how many
+    were embedded fresh (slice 18 reports it: a new version should mostly hit
+    the cache, since most of its text is unchanged)."""
     prefix = settings.embed_doc_prefix
     hashes = [hashlib.sha256(t.encode()).hexdigest() for t in texts]
     cached = dict(
@@ -105,7 +107,7 @@ def _embed_all(
                 (hashes[i], digest, prefix, lit),
             )
             cached[hashes[i]] = lit
-    return [cached[h] for h in hashes]
+    return [cached[h] for h in hashes], len(todo)
 
 
 def doc_chunks(
@@ -162,7 +164,9 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
                     (doc.id, doc.doc, doc.version, doc.sha1, sources.get(doc.id, doc.urls[0]),
                      doc.provenance, printed[doc.version], iv.valid_from, iv.valid_to),
                 )  # fmt: skip
-                vectors = _embed_all(conn, client, settings, digest, [c.text for c in chunks])
+                vectors, fresh = _embed_all(
+                    conn, client, settings, digest, [c.text for c in chunks]
+                )
                 for c, vec in zip(chunks, vectors, strict=True):
                     h = hashlib.sha256(c.text.encode()).hexdigest()
                     n = count(c.text)
@@ -176,7 +180,10 @@ def run_ingest(settings: Settings, raw: Path = RAW) -> list[str]:
                     )  # fmt: skip
                     manifest.append(manifest_entry(doc, c, iv, printed[doc.version], n))
                 window = f"{iv.valid_from} to {iv.valid_to or 'now'}"
-                lines.append(f"ingested {doc.id}: {len(chunks)} chunks, valid {window}")
+                lines.append(
+                    f"ingested {doc.id}: {len(chunks)} chunks ({fresh} embedded, "
+                    f"{len(chunks) - fresh} from cache), valid {window}"
+                )
     finally:
         client.close()
 

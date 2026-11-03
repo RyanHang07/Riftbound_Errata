@@ -65,11 +65,60 @@ def windows(corpus: Path = CORPUS) -> dict[str, Window]:
     return dict(sorted(seen.items(), key=lambda x: _vkey(x[0])))
 
 
+# --- versions registered but not ingested (slice 18) --------------------------
+
+
+def pending(effective: Path = EFFECTIVE) -> list[dict[str, Any]]:
+    """Registered versions newer than the newest ingested one: known, not searchable.
+
+    The gap between Riot publishing a version and `make ingest` is when a
+    search silently answers from replaced rules (Radiance: 18 days). Each
+    entry carries the effective date if `make dates` has parsed it, else None.
+    """
+    newest = _vkey(list(windows())[-1])
+    dated = {r["version"]: r for r in json.loads(effective.read_text())}
+    out = []
+    for d in CORE_RULES:
+        if _vkey(d.version) <= newest:
+            continue
+        row = dated.get(d.version, {})
+        start = row.get("effective") if row.get("status") == "known" else None
+        out.append({"version": d.version, "name": d.name,
+                    "effective": date.fromisoformat(start) if start else None})  # fmt: skip
+    return out
+
+
+def freshness(day: date, effective: Path = EFFECTIVE) -> list[str]:
+    """Warnings for a search dated `day`: a newer version may be in force but not ingested."""
+    newest = list(windows().values())[-1]
+    warnings = []
+    for p in pending(effective):
+        label = f"Core Rules v{p['version']}" + (f" ({p['name']})" if p["name"] else "")
+        if p["effective"] is None and day >= newest.valid_from:
+            warnings.append(
+                f"{label} is published but not dated or ingested yet. If it was in force on "
+                f"{day}, these passages from v{newest.version} may be outdated. "
+                "Run `make dates` and `make ingest` in the project folder."
+            )
+        elif p["effective"] is not None and day >= p["effective"]:
+            warnings.append(
+                f"{label} took effect on {p['effective']} and is not ingested yet, so these "
+                f"passages come from v{newest.version}, which it replaced. "
+                "Run `make ingest` in the project folder."
+            )
+    return warnings
+
+
 def _version(raw: str, field_name: str) -> str:
     v = raw.strip().removeprefix("v")
     known = windows()
     if v in known:
         return v
+    if v in {p["version"] for p in pending()}:
+        raise ToolError(
+            f"{field_name}: version {v} is registered but not ingested yet; run `make ingest`. "
+            f"Searchable: {', '.join(known)}."
+        )
     refused = {d.version for d in CORE_RULES} - set(known)
     if v in refused:
         raise ToolError(
@@ -131,7 +180,10 @@ def _window_fields(version: str) -> dict[str, Any]:
         "version": version,
         "valid_from": w.valid_from.isoformat(),
         "valid_to": w.valid_to.isoformat() if w.valid_to else None,
-        "newer_version_exists": w.valid_to is not None,
+        # A registered later version counts even before it is ingested: the
+        # rule was replaced whether or not the corpus has caught up.
+        "newer_version_exists": w.valid_to is not None
+        or any(_vkey(p["version"]) > _vkey(version) for p in pending()),
     }
 
 
@@ -152,10 +204,19 @@ def get_rule(ref: str, load: Callable[[str], dict[str, Rule]] = rules) -> dict[s
 def list_versions(effective: Path = EFFECTIVE) -> dict[str, Any]:
     basis = {r["version"]: r for r in json.loads(effective.read_text())}
     known = windows()
+    waiting = {p["version"]: p for p in pending(effective)}
     out = []
     for d in CORE_RULES:
         row = basis.get(d.version, {})
-        if d.version in known:
+        if d.version in waiting:
+            start = waiting[d.version]["effective"]
+            out.append({
+                "version": d.version,
+                "searchable": False,
+                "effective": start.isoformat() if start else None,
+                "reason": "registered, not ingested yet; run `make ingest`",
+            })  # fmt: skip
+        elif d.version in known:
             out.append({
                 **_window_fields(d.version),
                 "searchable": True,
@@ -291,6 +352,7 @@ def search_rules(question: str, as_of: str | None, k: int, search: Search) -> di
         "as_of": day.isoformat(),
         "version_in_effect": in_effect.version,
         "method": SEARCH_METHOD,
+        "warnings": freshness(day),
         "passages": [
             {
                 "ref": p.source_ref,

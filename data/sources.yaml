@@ -1,0 +1,65 @@
+# Every Core Rules version: where its bytes come from and which bytes they must be.
+#
+# Data, not code, so a new version is one appended entry (`make add-version`),
+# never a code change. Each PDF is pinned by SHA-1. Riot's CDN names files by
+# the SHA-1 of their bytes, so for a CDN URL the pin and the filename are the
+# same fact; a mirror copy is accepted only if it hashes to the same value.
+#
+# Fields:
+#   version      "1.4"; document ids are core@<version>
+#   name         the set it shipped with, from the mirror's rules-manifest.json
+#   sha1         the pinned bytes
+#   urls         tried in order; the first that hashes correctly wins
+#   patch_notes  the announcement that states the effective date (A16); null
+#                means none exists, and the version is refused at ingestion
+#   provenance   cdn-verified | mirror-only-unverified
+#
+# Mirrors are pinned to a commit of github.com/ChristianIvicevic/riftboundfaq,
+# so they cannot change underneath us either.
+
+- version: "1.0"
+  name: Pre-Origins
+  sha1: c780858c1621672aea0dc6b454e9233f5a43d000
+  urls:
+    - https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/c780858c1621672aea0dc6b454e9233f5a43d000.pdf
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.0.pdf
+  # The pre-release edition (June 2025) had no patch notes. With no stated
+  # effective date it is refused; that is the A16 guard working.
+  patch_notes: null
+  provenance: cdn-verified
+
+- version: "1.1"
+  name: Origins
+  sha1: dbc96e31db9d0257b0791aafb6dbb0cd219d3efb
+  urls:
+    - https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/dbc96e31db9d0257b0791aafb6dbb0cd219d3efb.pdf
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.1.pdf
+  patch_notes: https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-patch-notes/
+  provenance: cdn-verified
+
+- version: "1.2"
+  name: Spiritforged
+  sha1: 572377fcaa704a05f72eb42c104079d3b3bcf740
+  urls:
+    - https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/572377fcaa704a05f72eb42c104079d3b3bcf740.pdf
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.2.pdf
+  patch_notes: https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-spiritforged-patch-notes/
+  provenance: cdn-verified
+
+- version: "1.3"
+  name: Unleashed
+  sha1: 7affc578516386a973dffcc8132350856c5a104c
+  # Not on Riot's CDN under this hash (SPIKE_1, finding 1): mirror only.
+  urls:
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.3.pdf
+  patch_notes: https://playriftbound.com/en-us/news/rules-and-releases/riftbound-core-rules-unleashed-patch-notes/
+  provenance: mirror-only-unverified
+
+- version: "1.4"
+  name: Vendetta
+  sha1: e9ac8e3d33e0f78cef296f5945aba7bc1313b086
+  urls:
+    - https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/e9ac8e3d33e0f78cef296f5945aba7bc1313b086.pdf
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.4.pdf
+  patch_notes: https://playriftbound.com/en-us/news/announcements/core-rules-vendetta-patch-notes/
+  provenance: cdn-verified

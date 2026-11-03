@@ -1798,3 +1798,40 @@ Radiance, effective 16 October 2026. The corpus ends at v1.4 and marks it
 current, so `search_rules` dated after 15 October answers from superseded
 rules. Ingesting it is its own slice (fetch, dates, ingest, a new
 `questions_sha256`), not part of this fix.
+
+### A45. Slice 18: a path for new rules versions (2026-11-03)
+
+*The user's choice: build a system that anticipates expansions, with
+Radiance as the test.* Radiance (v1.5, effective 16 Oct 2026) went unnoticed
+for 18 days, and `search_rules` answered dates after it from v1.4 without a
+word. Inserted before slice 11; A41's order otherwise stands.
+
+- **Registry as data:** `data/sources.yaml` replaces the Python list. Loading
+  refuses a malformed SHA-1, a duplicate, an unknown provenance, or versions
+  out of numeric order (windows derive from the order; 1.10 sorts after 1.9).
+- **`make check-updates`:** registry against the mirror's
+  `rules-manifest.json` and Riot's Rules Hub when reachable; exit 1 when
+  behind, so a scheduled job can alert.
+- **`make add-version V= NOTES=`:** mirror bytes pinned at its current
+  commit, `cdn-verified` only if Riot's CDN serves the same SHA-1, entry
+  appended (comments survive) and the whole file validated before writing.
+  NOTES must be Riot's page: the effective date is parsed from it (A16).
+- **`make version-impact V=`:** counts, labelled questions citing changed or
+  removed rules, meaning-flip ranking for drafting version-change questions.
+  Refs only. It drafts nothing into the question set: A44's check is a
+  person's job.
+- **Freshness at query time:** a registered, un-ingested version makes
+  `search_rules` return `warnings` for the dates it may affect,
+  `list_versions` show it as not searchable, and `newer_version_exists`
+  true. The server's instructions tell the client to pass warnings on.
+- **No hard-coded latest version:** `mcp-check` and the tests derive it; the
+  ingest log reports fresh against cached embeddings.
+- **Fixed on the way:** the landing page's flip card and "How it works"
+  example still showed the two labels A44 corrected (v1.3 "no"). Now v1.2
+  "no" against v1.3 onward "yes", checked to hold through v1.5, and the
+  example result is the real top result from the current best run.
+
+The first real use is the user's: `make add-version` for v1.5 on a machine
+that reaches Riot's CDN, then fetch, dates, ingest, recall. The next is
+Legacy (set 6, listed for 29 January 2027): if it needs a code change, this
+slice failed.

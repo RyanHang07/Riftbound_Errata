@@ -188,6 +188,30 @@ def _mcp_check(_: argparse.Namespace) -> int:
     return 0
 
 
+def _check_updates(_: argparse.Namespace) -> int:
+    from rb_errata.ingest.updates import check_updates
+
+    lines, up_to_date = check_updates()
+    print("\n".join(lines))
+    return 0 if up_to_date else 1
+
+
+def _add_version(args: argparse.Namespace) -> int:
+    from rb_errata.ingest.updates import add_version
+
+    print("\n".join(add_version(args.version, args.notes)))
+    return 0
+
+
+def _version_impact(args: argparse.Namespace) -> int:
+    from rb_errata.ingest.updates import write_impact
+
+    out = write_impact(args.version)
+    print(out.read_text())
+    print(f"written to {out}")
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -299,6 +323,9 @@ def main(argv: list[str] | None = None) -> int:
         "recall-compare": (_recall_compare, "pair two recall runs: discordant counts, McNemar"),
         "taxonomy": (_taxonomy, "slice 12: one category for every miss in a recall run"),
         "mcp-check": (_mcp_check, "slice 15: the MCP server over stdio against the snapshot"),
+        "check-updates": (_check_updates, "slice 18: is a newer rules version out? exit 1 if so"),
+        "add-version": (_add_version, "slice 18: register a new rules version (pinned SHA-1)"),
+        "version-impact": (_version_impact, "slice 18: what a version changes, which labels"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -319,6 +346,11 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("dir")
         if name == "recall":
             p.add_argument("--method", default="naive", help="naive | as-of | lexical | hybrid")
+        if name == "add-version":
+            p.add_argument("version", help="MAJOR.MINOR, like 1.5")
+            p.add_argument("--notes", required=True, help="Riot's patch notes URL")
+        if name == "version-impact":
+            p.add_argument("version")
         if name == "recall-compare":
             p.add_argument("a")
             p.add_argument("b")

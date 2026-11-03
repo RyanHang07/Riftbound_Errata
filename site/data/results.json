@@ -1970,6 +1970,30 @@
    "prediction": "About 9 s to parse a rules PDF on first use",
    "result": "2.4 to 3.1 s",
    "verdict": "wrong"
+  },
+  {
+   "slice": "New rules version (18)",
+   "prediction": "About 80 rules changed from v1.4 to v1.5",
+   "result": "81",
+   "verdict": "right"
+  },
+  {
+   "slice": "New rules version (18)",
+   "prediction": "About 60 rules added (25 to 150)",
+   "result": "159",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "New rules version (18)",
+   "prediction": "About 15 rules removed (0 to 40)",
+   "result": "44",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "New rules version (18)",
+   "prediction": "About 10% of ruling questions cite a rule v1.5 changed",
+   "result": "49%",
+   "verdict": "wrong"
   }
  ],
  "cards": [

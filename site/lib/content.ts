@@ -16,6 +16,7 @@ export const CONTENT: Record<string, () => Promise<{ default: ComponentType }>> 
   "versions-and-dates": () => import("@/content/docs/versions-and-dates.mdx"),
   "why-naive-search-fails": () => import("@/content/docs/why-naive-search-fails.mdx"),
   "search-pipeline": () => import("@/content/docs/search-pipeline.mdx"),
+  "new-versions": () => import("@/content/docs/new-versions.mdx"),
   "question-set": () => import("@/content/docs/question-set.mdx"),
   "changelog": () => import("@/content/docs/changelog.mdx"),
   "credits": () => import("@/content/docs/credits.mdx"),
