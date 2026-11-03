@@ -672,3 +672,32 @@ inherits the judge's validity: if slice 11's kappa is poor, so is this.
   construction on its own data; out of fold it should stay close.
 - **Discrimination modest:** answers in the top fifth of confidence about
   **20 points** more often correct than those in the bottom fifth.
+
+## Slice 14: the agent (LangGraph), traced in Phoenix
+
+A graph: **route** (does the question name a specific card? asked of the
+generator, JSON), **retrieve** (as-of, k = 5), **answer**, **check**
+(freshness warnings and slice 13's confidence), and one **re-search** when
+confidence is below 0.5: retrieve again at k = 10 and answer again. Card
+questions carry a note that card text is not in the corpus (slice 12's
+finding). Every node is an OpenTelemetry span with OpenInference
+attributes, exported to a local Arize Phoenix (`make phoenix-up`).
+
+Measured on the question set, against slice 11's answers (the same pipeline
+without the loop): judged accuracy with and without the loop, paired by
+question (exact McNemar); router accuracy against each ruling's source
+category (cards against general rules and mechanics).
+
+### Prediction (written 2026-11-03, before the agent has run)
+
+- **Router accuracy about 85%** on the 168 rulings (cards: 119). Card names
+  that are ordinary words ("Defy", "Flash") will be missed.
+- **Re-search fires on about 30%** of questions.
+- **Accuracy with the loop: about +3 points overall, not significant**
+  (McNemar p > 0.05). A null result is the likely one and will be reported
+  as one. The gain should come from `below-cutoff` questions whose rule sits
+  at rank 6 to 10 (26 of slice 12's 47).
+- **Some answers get worse**: re-searching with more passages can change a
+  right answer into a wrong one; about a third as many as get better.
+- **Time:** about +35% over single-pass in total (route call on every
+  question, a second generation on re-searched ones).
