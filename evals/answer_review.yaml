@@ -1,0 +1,1676 @@
+# Hand labels for slice 11 (judge validation). Blind: no judge verdict is shown.
+# For each item, read the question, the expert's reference answer, then the
+# generated answer, and set `verdict` to one of:
+#   correct       same conclusion as the reference
+#   incorrect     a different or contradicting conclusion
+#   not_answered  no conclusion, or says the information is not available
+# Ignore style, length and citations. `note` is optional.
+# Drawn from answers-qwen3-2026-11-03T0511Z with seed 20261103; `make answers-report` reads it.
+run: answers-qwen3-2026-11-03T0511Z
+items:
+- id: r-applied-researchers-shock-blast-cost
+  verdict: not_answered
+  note: ''
+  question: Can Applied Researchers reduce Shock Blast's cost to zero?
+  as_of: '2026-10-01'
+  reference: 'Yes, if Applied Researchers is Empowered, you can play Shock Blast for [0].
+
+    Applied Researchers itself satisfies Shock Blast''s requirement that you control something that is
+    Empowered, so both cards'' discounts apply.
+
+    Both abilities discount Shock Blast''s total cost during the Determine Total Cost step of playing
+    it. [356.4]
+
+    Discounts that apply to the total cost may be applied in any order. [356.4.d] [356.4.d.1]
+
+    A minimum imposed by one discount applies only to that discount. [356.4.e]
+
+    ### Cost Sequence [#cost-sequence]
+
+    -
+
+    **Base cost:** Shock Blast starts at [3]Mind.
+
+    -
+
+    **Applied Researchers reduction:** Reduce that cost by [1]Universal, leaving [2].
+
+    -
+
+    **Applied Researchers minimum:** The reduced cost remains above its minimum of [1].
+
+    -
+
+    **Shock Blast reduction:** Reduce the remaining energy cost by [2], leaving [0].
+
+    Applying the discounts in the opposite order would leave the spell costing [1], but you may choose
+    the order that results in the lower cost.'
+  answer: 'The provided passages do not mention "Applied Researchers" or any card or effect by that name.
+    Therefore, it is not possible to determine whether Applied Researchers can reduce Shock Blast''s cost
+    to zero based on the retrieved passages.
+
+
+    [No relevant passage found]'
+- id: r-baited-hook-karthus-deathknell-timing
+  verdict: correct
+  note: ''
+  question: If Baited Hook kills Glasc Mixologist and plays Karthus, Eternal, does Glasc Mixologist's
+    Deathknell trigger twice?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Baited Hook kills Glasc Mixologist before it plays Karthus, Eternal.
+
+    Glasc''s Deathknell triggers before he enters the trash. [808.1.d.2]
+
+    Karthus''s passive ability is active only while he is on the board. [365.1]
+
+    Karthus entering later does not reevaluate Glasc''s earlier death or make the Deathknell trigger again.
+    [383.2.c]
+
+    Glasc''s Deathknell can play only one unit from the trash.'
+  answer: 'No, Glasc Mixologist''s Deathknell does not trigger twice.
+
+
+    Deathknell is a triggered ability that activates when a permanent is killed and sent to the trash
+    [core@1.4:808.1]. The trigger occurs only once per instance of the permanent being killed and sent
+    to the trash, regardless of how many abilities or effects are involved in the process [core@1.4:808.1.d.1].
+    The rule specifies that the trigger is added to the chain as a Pending Item when the permanent is
+    being [quoted text from core@1.4:808.1 removed] [core@1.4:808.1.d.2], and it is only processed once,
+    based on the permanent''s death event.
+
+
+    In this scenario, Baited Hook kills Glasc Mixologist (a Kill Instruction), and then Karthus, Eternal
+    is played. The Deathknell effect triggers only once—when Glasc Mixologist is killed and sent to the
+    trash—because the death event is a single event, and Deathknell is not designed to trigger multiple
+    times per death. The playing of Karthus, Eternal does not cause a second death or re-trigger the Deathknell
+    effect.
+
+
+    Therefore, Glasc Mixologist''s Deathknell triggers only once, not twice.
+
+
+    [core@1.4:808.1.d.1] [core@1.4:428.1.a.1.b] [core@1.4:323.4]'
+- id: r-baron-nashor-baron-pit-victory
+  verdict: not_answered
+  note: ''
+  question: Does the Baron Pit need to be scored to win by conquering?
+  as_of: '2026-10-01'
+  reference: 'Yes, when the potential winning point would come from conquering.
+
+    At match point, a player gains the final point from a conquer only if they have scored every battlefield
+    on the board that turn, including the Baron Pit. [471.1.b] [471.1.b.1]
+
+    If they have not scored every battlefield, they draw a card instead. [471.1.b.1]'
+  answer: "The Baron Pit is a battlefield token with the characteristic \"Units can move here from anywhere\"\
+    \ [core@1.4:187.9]. However, the retrieved passages do not specify whether the Baron Pit is a Battlefield\
+    \ that can be scored or conquered in the context of winning by conquering. \n\nRule 469.1 explains\
+    \ that a player Scores by Conquering a Battlefield they did not yet Score this turn [core@1.4:469.1],\
+    \ and rule 471.1.b specifies that if a player has not Scored every Battlefield this turn, they draw\
+    \ a card instead of gaining a Final Point when attempting to Conquer [core@1.4:471.1.b]. \n\nBut there\
+    \ is no information in the retrieved passages stating that the Baron Pit is a Battlefield that must\
+    \ be Scored to win, or that it is subject to the scoring rules for winning via Conquer. Therefore,\
+    \ based on the provided content, we cannot determine whether the Baron Pit needs to be scored to win\
+    \ by conquering.\n\nAnswer: The retrieved passages do not provide sufficient information to determine\
+    \ whether the Baron Pit needs to be scored to win by conquering. [core@1.4:187.9]"
+- id: r-thrill-of-the-hunt-score-on-opponents-turn
+  verdict: correct
+  note: ''
+  question: If I own and control a unit at a battlefield I control, can Thrill of the Hunt make me conquer
+    that battlefield again on my opponent's turn?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Thrill of the Hunt instructs the banished unit''s owner to play it to any battlefield.
+
+    Because you own the unit in this scenario, you choose that battlefield.
+
+    If you choose the original battlefield, the unit remains on the chain throughout cleanup while being
+    played again, so you keep control until it returns. [330] [354.4] [309.1] [323.6]
+
+    Because you do not gain control again, you do not conquer the battlefield again. [469.1]
+
+    The following sequence applies when you choose the original battlefield.
+
+    -
+
+    **Unit becomes pending:** Thrill of the Hunt banishes the unit and instructs you, as its owner, to
+    play it before the resulting cleanup runs. [319.6] [321.1]
+
+    The unit moves to the chain as a pending item while Thrill of the Hunt finishes resolving. [354.2]
+    [354.3]
+
+    -
+
+    **Cleanup:** The pending unit keeps the chain in progress while cleanup runs, so cleanup does not
+    remove your battlefield control.
+
+    -
+
+    **Unit enters:** After cleanup, the unit finalizes and enters the same battlefield. [334.2] [337.1]
+    [359.2.c]'
+  answer: 'No, Thrill of the Hunt cannot make you conquer that battlefield again on your opponent''s turn.
+
+
+    The keyword "Hunt" is a Triggered Ability that functions as "[quoted text from core@1.4:823.1 removed]"
+    [core@1.4:823.1.c.1]. This means that the Hunt effect is triggered during either a Conquer or a Hold
+    action, and it grants XP to the controller of the unit with Hunt, not a new Conquer event.
+
+
+    Conquering a battlefield occurs when [quoted text from core@1.4:469.1 removed] already control during
+    their turn, and this only happens during a player''s turn when they perform a Conquer action [core@1.4:469.1].
+    Importantly, a player cannot Conquer a battlefield they already control, and the Conquer action is
+    not triggered by a unit''s ability like Hunt during an opponent''s turn.
+
+
+    Furthermore, the Hunt ability does not cause a Conquer event—it only grants XP. The Conquer action
+    is a distinct game mechanic that only occurs when a player gains control of a battlefield they previously
+    did not control, and this only happens during a player''s own turn [core@1.4:469.1]. Since you already
+    control the battlefield, and the action of Conquering is not triggered by Hunt during an opponent''s
+    turn, it is impossible for Hunt to cause a Conquer on your opponent''s turn.
+
+
+    Additionally, the rules state that Conquer effects are triggered when a player gains control of a
+    battlefield and gains a Victory Point from Conquering [core@1.4:383.4.c.2], and these effects are
+    only placed on the Chain when the condition is met during a player''s turn. There is no provision
+    for a unit''s ability to trigger a Conquer on an opponent''s turn.
+
+
+    Therefore, since you already control the battlefield and the Hunt ability does not trigger a Conquer
+    event during'
+- id: r-bone-skewer-optional-additional-costs
+  verdict: correct
+  note: ''
+  question: Can a unit played for free by Bone Skewer still get an effect for paying an optional additional
+    cost?
+  as_of: '2026-10-01'
+  reference: 'Yes.
+
+    The phrase "any and all costs" in Bone Skewer''s text is broader than the standard "ignoring its cost"
+    wording.
+
+    Standard cost-ignoring only zeroes out a card''s base energy and power costs. [356.1.b.1]
+
+    -
+
+    The opponent chooses whether to pay an optional additional cost while making the relevant choices
+    for the unit. [355.1.a]
+
+    -
+
+    A chosen additional cost is included when determining the unit''s total cost, which Bone Skewer then
+    sets to zero. [356.2] [356.5.a]
+
+    -
+
+    The optional additional cost counts as paid based on that decision, regardless of the amount actually
+    spent. [356.4.f.1]
+
+    Note (Example):
+
+    You play Bone Skewer and choose Nami, Headstrong from your opponent''s hand.
+
+    Your opponent chooses to pay Nami''s optional additional cost of Calm, and Bone Skewer sets the resulting
+    total cost to zero.
+
+    When Nami completes being played, her play effect triggers because the additional cost counts as paid,
+    allowing your opponent to stun an enemy unit. [419.4.a]'
+  answer: 'Yes, a unit played for free by Bone Skewer can still get an effect for paying an optional additional
+    cost, provided that the optional additional cost is not inherently tied to the unit''s base cost or
+    the mechanism of Bone Skewer''s effect.
+
+
+    Bone Skewer allows a unit to be played for free, which means the player does not pay the unit''s normal
+    cost. However, the rules do not state that playing a unit for free nullifies or removes any optional
+    additional costs associated with that unit. Instead, optional additional costs are defined as non-mandatory
+    costs that the player may choose to pay, and such choices are made during step 2 of the card play
+    process [core@1.4:356.2.b.1]. These costs are independent of whether the base cost of the unit is
+    paid or not.
+
+
+    For example, if a unit has a passive ability that says "[quoted text from core@1.4:356.2 removed]],"
+    then even if the unit is played for free (e.g., via Bone Skewer), the player can still choose to pay
+    that optional additional cost, and if they do, the effect (such as reducing the cost by [2]) would
+    still apply [core@1.4:356.2.b.1].
+
+
+    Moreover, the rules clarify that optional additional costs are not mandatory and are only paid if
+    the player chooses to do so [core@1.4:356.2.b.1]. Therefore, even if the base cost is waived, the
+    player retains the option to pay such costs, and any effects tied to paying them are still triggered
+    if the cost is paid.
+
+
+    Thus, the effect of paying an optional additional cost is not invalidated by the unit being played
+    for free.
+
+
+    [core@1.4:356.2.b.1]'
+- id: r-sacrifice-countered-additional-cost
+  verdict: not_answered
+  note: ''
+  question: If Sacrifice is countered, is the killed unit returned?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Killing a friendly Mighty unit is an additional cost paid while playing Sacrifice. [356.7] [357.2]
+
+    Countering the spell later does not refund that cost, so the killed unit is not returned. [425.1.c]
+    [425.1.c.1]'
+  answer: 'The retrieved passages do not provide any information about a rule or mechanic named "Sacrifice"
+    or how countering a card affects the outcome of a kill or the return of a unit. Therefore, it is not
+    possible to determine whether a killed unit is returned if "Sacrifice" is countered based on the provided
+    reference material.
+
+
+    [core@1.4:425.1] discusses countering and its effects, such as negating execution or activation and
+    clearing cards from the chain, but does not mention "Sacrifice" or unit return. [core@1.4:428.2] states
+    that [quoted text from core@1.4:428.2 removed], and that it is only considered killed if its origin
+    was on the board. However, this passage does not address whether a unit is returned if a card that
+    would cause its sacrifice is countered.
+
+
+    Since there is no information in the retrieved passages about "Sacrifice" or its interaction with
+    countering or unit return, the question cannot be answered with confidence based on the provided text.
+
+
+    Answer: The retrieved passages do not contain sufficient information to determine whether a killed
+    unit is returned if Sacrifice is countered.'
+- id: r-ruined-rex-heal-timing
+  verdict: not_answered
+  note: ''
+  question: Does Ruined Rex's Deathknell deal damage before or after units are healed at the end of combat?
+  as_of: '2026-10-01'
+  reference: 'Ruined Rex''s Deathknell deals damage after the units are healed.
+
+    The combat cleanup adds the ability as a pending item. [323.4]
+
+    That cleanup heals all units before the pending ability can begin finalization. [466.1.a.1] [334.2]
+    [337.1]
+
+    If a legal enemy unit is available, the trigger''s controller chooses one as its target during finalization.
+    [402.2] [402.4]
+
+    Once no pending items remain, players receive priority before the trigger resolves. [337.4]
+
+    It deals 4 damage to the chosen enemy unit.'
+  answer: 'The retrieved passages do not provide any information about Ruined Rex or the specific timing
+    of its Deathknell effect in relation to unit healing at the end of combat. Therefore, based on the
+    provided content, it is not possible to determine whether Ruined Rex''s Deathknell deals damage before
+    or after units are healed at the end of combat.
+
+
+    [core@1.4:323.4], [core@1.4:808.1], [core@1.4:143.3], and [core@1.4:142.5] discuss general rules about
+    Deathknell triggers, damage marking, and healing at the end of a turn or during combat cleanup, but
+    none of these passages mention Ruined Rex or specify the sequence of when a Deathknell effect resolves
+    relative to healing. Thus, the question cannot be answered with the given information.'
+- id: r-baited-hook-illegal-target
+  verdict: correct
+  note: ''
+  question: What happens if the targeted unit is removed before Baited Hook's ability resolves?
+  as_of: '2026-10-01'
+  reference: 'The unit is not killed, you still look at the top 5 cards, but you cannot banish or play
+    a unit from among them and must recycle every card you looked at.
+
+    If the friendly unit is no longer a legal target when the ability resolves, it is unaffected and the
+    kill instruction is ignored. [359.3.e.2] [359.3.e.5]
+
+    Its might is then null, so the calculation used to choose a unit from the top 5 is ignored. [359.3.e.12]
+
+    The independent instruction to recycle the rest still happens, and no card was banished, so every
+    card you looked at is recycled. [359.3.e.5]'
+  answer: If the targeted unit is removed before Baited Hook's ability resolves, the unit is no longer
+    a legal target, and its Might is treated as null. As a result, Baited Hook’s controller cannot choose
+    any unit from among the top 5 cards of their Main Deck because the information about the killed unit
+    (which is now invalid) is no longer available. This causes all calculations based on the unit’s Might
+    to be ignored, and the ability’s instructions—such as banning and playing a unit from the deck—cannot
+    proceed. This is consistent with the rule that if a target [quoted text from core@1.4:359.3 removed]
+    the information is no longer available, the [quoted text from core@1.4:359.3 removed] [core@1.4:359.3.e.12].
+- id: r-alpha-strike-might-reduction
+  verdict: correct
+  note: ''
+  question: What if the friendly unit's might is reduced?
+  as_of: '2026-10-01'
+  reference: 'If the friendly target remains legal but has lower might when Alpha Strike resolves, Alpha
+    Strike uses that reduced might as the amount of damage to split. [359.3.f.1] [359.3.f.2]
+
+    If there is not enough damage to assign at least 1 to every enemy target, Alpha Strike''s controller
+    must remove exactly enough enemy units from Alpha Strike''s targets and cannot remove extras to concentrate
+    the damage. [355.14.f] [355.14.g] [355.14.h] [355.14.h.1]
+
+    Note (Example):
+
+    You chose a friendly Pakaa Cub with 3 might, then chose 3 enemy units.
+
+    Before Alpha Strike resolves, an opponent plays Stupefy targeting Pakaa Cub, reducing its might to
+    2.
+
+    You must choose exactly 1 enemy unit to cease being a target.
+
+    You cannot drop a second target to deal both points of damage to one unit.
+
+    A might below 0 counts as 0 when Alpha Strike references it. [143.2.b]
+
+    If Alpha Strike has 0 damage to split, every enemy target ceases being a target because each remaining
+    target would have to receive at least 1 damage. [355.14.f] [355.14.g] [355.14.h]'
+  answer: If a friendly unit's Might is reduced, its Might value decreases, and it may fall below 5, meaning
+    it is no longer Mighty [core@1.4:708]. If its Might drops to 0 or below, it is treated as having 0
+    Might for purposes of combat damage calculations, though the actual Might value is still used for
+    effects that calculate Might increases or decreases [core@1.4:143.2.b.1]. However, the unit remains
+    on the board and is not immediately killed unless it has nonzero damage marked on it equaling or exceeding
+    its Might [core@1.4:143.2.a]. The reduction in Might does not affect whether the unit is Mighty, only
+    whether it meets the threshold of 5 or greater [core@-1.4:709].
+- id: r-movement-chosen-destination
+  verdict: correct
+  note: ''
+  question: Can I choose a unit's current location as its move destination?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    A destination you choose must differ from the unit''s current location, but if the card specifies
+    the destination, you make no destination choice and the unit can still be a legal target while already
+    there. [002] [355.4] [355.4.a] [355.9.a] [355.9.b]
+
+    If the unit is already at that specified destination when the instruction resolves, it cannot move
+    because it would not change board spaces. [446.1]'
+  answer: No, you cannot choose a unit's current location as its move destination. A valid Location for
+    a Move Effect is defined as [quoted text from core@1.4:355.4 removed] [core@1.4:355.4]. Therefore,
+    the destination must be different from the current location.
+- id: r-costs-and-payments-total-cost-determination
+  verdict: correct
+  note: ''
+  question: How is a card's total cost determined?
+  as_of: '2026-10-01'
+  reference: 'A card''s total cost is determined in five stages, in this order:
+
+    -
+
+    Start with the card''s base costs, replacing them or setting them to zero as instructed. [356.1]
+
+    -
+
+    Add all mandatory additional costs and any optional additional costs you chose to pay. [356.2]
+
+    -
+
+    Add all applicable cost increases. [356.3]
+
+    -
+
+    Reduce the card''s cost by all applicable discounts. [356.4]
+
+    -
+
+    Apply any effects that modify the resulting total cost. [356.5]
+
+    Discounts that apply to one specific part of a cost are applied before discounts that apply to the
+    total cost. [356.4.d]
+
+    If multiple discounts apply within either group, you may choose their order. [356.4.c.1] [356.4.d.1]
+
+    Any minimum imposed by a discount applies only to that discount, so a later discount can reduce the
+    cost further. [356.4.e]'
+  answer: A card's total cost is determined by first applying base cost modifications in any order, including
+    replacing base costs when a card is played "for [Cost]" or setting specific costs to zero when "ignoring"
+    a cost is allowed, with the understanding that additional costs or increases may still result in a
+    positive total cost [core@1.4:356.1]. After base cost modifications, any other cost increases or decreases
+    are applied in any order [core@1.4:356.5]. Effects that determine a card’s cost for any purpose use
+    its printed or copied cost, even if modified, unless otherwise specified [core@1.4:206.1]. Additionally,
+    effects that determine an ability’s cost use its base cost, ignoring alterations unless specified
+    to include modifications [core@1.4:206.1]. Thus, the total cost is derived through a sequence of base
+    cost adjustments followed by additional cost modifications, with the printed or copied cost serving
+    as the reference point for cost-related effects. [core@1.4:356.1][core@1.4:356.5][core@1.4:206.1]
+- id: r-temporal-breach-attached-equipment
+  verdict: not_answered
+  note: ''
+  question: What happens to equipment attached to a unit banished by Temporal Breach?
+  as_of: '2026-10-01'
+  reference: 'The equipment detaches at the unit''s previous location and does not reattach when the unit
+    is played again.
+
+    Moving the unit from the board to banishment detaches its attached cards at that last location. [719.5]
+    [435.4.b]
+
+    The unit entering the board is a new game object, and Temporal Breach does not instruct the equipment
+    to attach again. [124]
+
+    Detached equipment at a battlefield is recalled to its controller''s base during the next cleanup.
+    [435.4.a]
+
+    Detached equipment at a base its controller does not control is recalled to its controller''s base
+    during cleanup. [323.7]
+
+    Equipment already at its controller''s base remains there. [323.7]'
+  answer: 'The provided passages do not specify the effect of Temporal Breach or how it interacts with
+    equipment attached to a unit. Therefore, based on the retrieved passages, it is not possible to determine
+    what happens to equipment attached to a unit when that unit is banished by Temporal Breach.
+
+
+    [core@1.4:457.1] discusses Recall of unattached non-Unit Gear, but does not address banishment or
+    Temporal Breach. [core@1.4:323.7] describes Cleanup tasks involving Recall of unattached non-Unit
+    Gear and removal of non-controller Permanents and Runes, but again, does not mention Temporal Breach
+    or the specific effect of banishing a unit with attached equipment. There is no passage that defines
+    Temporal Breach or its interaction with equipment or units.
+
+
+    Thus, the retrieved passages do not provide sufficient information to answer the question.'
+- id: r-sunken-temple-mighty-from-assault
+  verdict: not_answered
+  note: ''
+  question: Does Sunken Temple trigger if I conquer with a unit that is only Mighty due to Assault?
+  as_of: '2026-10-01'
+  reference: 'Yes, if Assault raises the might of at least one of your conquering units to 5 or more.
+    [708] [710]
+
+    The conquer occurs before combat ends. [466.5.d] [466.7]
+
+    The unit''s attacker designation is removed only afterward, so its Assault bonus still applies when
+    Sunken Temple checks whether it is Mighty. [466.7.a] [807.1.c] [807.1.d.1]'
+  answer: 'The retrieved passages do not provide any information about a "Sunken Temple" or how it interacts
+    with units that are Mighty due to Assault. Therefore, based on the provided content, it is not possible
+    to determine whether Sunken Temple triggers in such a scenario.
+
+
+    [No relevant passage]'
+- id: r-lilting-lullaby-own-counter
+  verdict: correct
+  note: ''
+  question: If my opponent targets my spell with Lilting Lullaby and I counter my own spell in response,
+    can I still play spells?
+  as_of: '2026-10-01'
+  reference: 'Yes.
+
+    Countering your spell clears it from the chain, so it is an illegal target when Lilting Lullaby resolves.
+    [425.1.a] [355.9.a.2] [359.3.e.2]
+
+    Lilting Lullaby still resolves, but its counter instruction is ignored because the target is illegal.
+    [359.3.e.1] [359.3.e.5]
+
+    The spell-play restriction is linked to that ignored instruction through "its controller," so the
+    restriction is also ignored. [359.3.e.14] [359.3.e.14.a]'
+  answer: 'Yes, you can still play spells after counteracting your own spell with Lilting Lullaby. Countering
+    is a Limited Action that only occurs when directed by a Game Effect, such as Lilting Lullaby [core@1.4:425.2].
+    Since you are responding to your opponent''s targeting of your spell with a counter, and the counter
+    is valid under the rules, it successfully prevents the spell from resolving. However, this does not
+    restrict your ability to play other spells. The rules do not state that playing a spell or countering
+    a spell prevents further spell play. Therefore, after successfully countering, you retain the ability
+    to play spells as normal.
+
+
+    This conclusion is consistent with the general structure of the game''s rules, which treat countering
+    as a response to a specific action and do not impose a general restriction on subsequent spell play.
+    Thus, your ability to play spells remains intact after countering. [core@1.4:425.2]'
+- id: r-astral-heron-self-trigger
+  verdict: not_answered
+  note: ''
+  question: Does Astral Heron's ability trigger if it's the first card I play this turn and I play it
+    to a battlefield?
+  as_of: '2026-10-01'
+  reference: 'Yes, if Astral Heron is your first card played that turn and enters a battlefield as it
+    resolves.
+
+    A unit resolves immediately after finalizing. [337.2]
+
+    During that resolution, it enters the board at its chosen location. [359.2.c]
+
+    Only after Astral Heron finishes resolving is it considered played for trigger conditions. [419.4.a]
+
+    Triggered abilities of permanents can have their conditions evaluated while their source is on the
+    board. [384.2]
+
+    Astral Heron is therefore at the battlefield when the game evaluates its trigger condition after the
+    completed play. [383.2.c]
+
+    The immediately following "if I''m at a battlefield" is part of the trigger condition and is checked
+    at that time. [383.2.a] [383.2.a.1]'
+  answer: 'The retrieved passages do not contain any information about "Astral Heron" or its ability.
+    Therefore, based on the provided reference material, it is not possible to determine whether Astral
+    Heron''s ability triggers under the given conditions.
+
+
+    [No relevant passage found]'
+- id: r-baron-nashor-might-loss-survival
+  verdict: not_answered
+  note: ''
+  question: Can a unit survive combat damage that becomes lethal when Baron Nashor dies in the same combat?
+  as_of: '2026-10-01'
+  reference: 'Yes, if the unit does not have lethal damage when the cleanup checks it while Baron Nashor''s
+    +2 might still applies.
+
+    The cleanup checks all units for lethal damage only once, so a unit that becomes lethal after Baron
+    Nashor leaves is not checked again during that cleanup. [323.5]
+
+    ### Steps [#might-loss-survival-sequence]
+
+    Suppose Baron Nashor is assigned lethal combat damage and a friendly Evelynn, Entrancing is assigned
+    2 combat damage.
+
+    -
+
+    **Lethal-damage check:** Baron Nashor has lethal damage, while Evelynn''s 2 marked damage is less
+    than her current 4 might: 2 printed might plus Baron Nashor''s +2. [142.4.b]
+
+    Of the two, only Baron Nashor has lethal damage during the check, so the cleanup kills him and not
+    Evelynn. [323.5]
+
+    -
+
+    Baron Nashor''s passive ability stops applying when he leaves the board. [365.1]
+
+    Evelynn therefore returns to 2 might after the lethal-damage check has finished.
+
+    Her 2 marked damage is now lethal. [142.4.b]
+
+    That cleanup does not check her again.
+
+    -
+
+    **Combat healing:** The combat special cleanup heals all units, clearing Evelynn''s marked damage.
+    [466.1.a.1]
+
+    -
+
+    Baron Nashor''s departure causes another cleanup. [319.6] [322]
+
+    Evelynn has no marked damage when that cleanup checks for lethal damage, so she is not killed. [323.5]'
+  answer: 'The retrieved passages do not provide any information about Baron Nashor or how his death affects
+    combat damage or a unit''s survival in relation to lethal damage. Therefore, based on the provided
+    reference material, it is not possible to determine whether a unit can survive combat damage that
+    becomes lethal when Baron Nashor dies in the same combat.
+
+
+    [No relevant passage]'
+- id: r-heedless-resurrection-repeat-cost
+  verdict: not_answered
+  note: ''
+  question: If Heedless Resurrection gains Repeat, do I need to kill a friendly unit for each repetition?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    You pay the additional cost to kill a friendly unit once while playing Heedless Resurrection. [357.2]
+
+    Repeat executes the spell''s effect instructions additional times during resolution, but the spell
+    is still played only once. [820.1.d.1] [820.3.a]
+
+    It therefore does not repeat the earlier kill cost.'
+  answer: 'The provided passages do not specify the effect of Heedless Resurrection or how it interacts
+    with the Repeat keyword. Therefore, based on the retrieved content, it is not possible to determine
+    whether killing a friendly unit is required for each repetition of Repeat when applied to Heedless
+    Resurrection.
+
+
+    [core@1.4:820.1] discusses the general function of Repeat, including how it causes an effect to be
+    executed an additional time and how choices are made during resolution, but it does not mention any
+    specific card like Heedless Resurrection or its interaction with Repeat. Without knowing the original
+    text of Heedless Resurrection, its effect cannot be evaluated in relation to Repeat.
+
+
+    Thus, the answer cannot be determined from the provided passages.'
+- id: r-temporal-breach-ravenbloom-conservatory
+  verdict: not_answered
+  note: ''
+  question: Does Ravenbloom Conservatory trigger again if Temporal Breach banishes my only defending unit
+    and I play it again?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    "You" in Ravenbloom Conservatory''s ability means its controller, so if you control Ravenbloom Conservatory,
+    it checks its "When you defend here" condition when you gain the defender designation as combat opens.
+    [190.6.d] [383.4.f] [464.2.c.3]
+
+    That defend condition is checked only once per combat. [383.4.f.2.a]
+
+    The unit becomes a new game object, but Ravenbloom Conservatory does not. [124]
+
+    As the defending player, you keep the defender designation until combat ends, so the unit''s return
+    does not cause you to gain it again. [466.7.a]'
+  answer: 'The provided passages do not contain any information about "Ravenbloom Conservatory" or "Temporal
+    Breach," nor do they specify how such cards or effects would interact in a scenario involving a defending
+    unit being banished and a subsequent reactivation of a card effect. Therefore, based on the retrieved
+    passages, it is not possible to determine whether Ravenbloom Conservatory triggers again under the
+    described circumstances.
+
+
+    [core@1.4:383.4] discusses triggered abilities and their conditions, but does not address specific
+    cards or interactions between banished units and card effects like Ravenbloom Conservatory. Similarly,
+    [core@1.4:427.3] and [core@1.4:108.6] discuss banishment and references to banished cards, but do
+    not provide rules about re-triggering abilities after a unit is banished and then reactivated.
+
+
+    Thus, the retrieved passages do not allow for a definitive answer to the question.'
+- id: r-empower-removed-source-trigger
+  verdict: correct
+  note: ''
+  question: Does a "When I become Empowered" ability trigger if the unit leaves the board before its Empower
+    ability resolves?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    If the unit leaves the board before its Empower ability resolves, it does not become Empowered, so
+    its "When I become Empowered" ability does not trigger. [441.2] [828.1.d]
+
+    Removing the unit does not counter its already-finalized Empower ability, so that ability remains
+    on the chain. [406.2] [425.1] [425.2.a]
+
+    Note (Example):
+
+    You activate Mel, Defiant Soul''s Empower ability and discard a spell to pay its cost.
+
+    Your opponent responds with Star-Crossed, returning Mel and one of their own units, each to its owner''s
+    hand.
+
+    Star-Crossed resolves first, so Mel leaves the board while her Empower ability remains on the chain.
+    [340.1]
+
+    Mel''s Empower ability then resolves, but Mel cannot become Empowered while she is off the board,
+    so her banish ability does not trigger.
+
+    When the Empower ability resolves, it tries to empower the unit whose ability was activated. [406.5]
+    [827.1.c.1]
+
+    Only a game object on the board can become Empowered.
+
+    While the original unit is off the board, it cannot become Empowered or evaluate its triggered ability''s
+    condition. [384.2]
+
+    If the card returns from a non-board zone before the Empower ability resolves, the returned card is
+    a new object rather than the original unit. [124]'
+  answer: "No, a \"When I become Empowered\" ability does not trigger if the unit leaves the board before\
+    \ its Empower ability resolves. The Empower action and the resulting Empowered status are events that\
+    \ occur during the resolution of the Empower game action, and the Empowered status is only applied\
+    \ to a Game Object if it is still on the board at the time [core@1.4:827.2]. Furthermore, the \"When\
+    \ I become Empowered\" trigger is only activated when the Game Object actually becomes Empowered and\
+    \ remains on the board, as the Empowered status is a state tied to the object's presence on the board.\
+    \ If the unit leaves the board before the Empower ability resolves, it is no longer a Game Object\
+    \ on the board, and thus cannot be Empowered or trigger any abilities related to that state. Therefore,\
+    \ such a trigger would not occur.\n\nThis is consistent with the rule that [quoted text from core@1.4:441.2\
+    \ removed] [core@1.4:441.2], and that the Empowered status is only applied when the object is on the\
+    \ board during the resolution of the Empower action [core@1.4:827.2]. Since the unit leaves the board\
+    \ before the Empower ability resolves, it is not present to gain the Empowered status, and thus no\
+    \ \"When I become Empowered\" trigger occurs. \n\n[core@1.4:828.1.d]"
+- id: r-lacerate-targeting-restriction
+  verdict: incorrect
+  note: ''
+  question: Can Lacerate target a unit with more than 3 might?
+  as_of: '2026-10-01'
+  reference: 'Yes, Lacerate can target any otherwise legal unit regardless of its might.
+
+    "Choose a unit" targets a unit and adds no might-based targeting restriction. [355.7] [355.9.b]
+
+    The later condition "if it has 3 might or less" is checked only when the kill instruction executes
+    during resolution. [359.3.d]'
+  answer: No, Lacerate cannot target a unit with more than 3 Might. This is because, according to the
+    rules, [quoted text from core@1.4:359.3 removed] [core@1.4:359.3]. Since a unit with more than 3 Might
+    fails to meet the targeting restriction of "3 or less Might," it is not a valid target for Lacerate.
+    Therefore, such a unit would not be a legal target under the game's targeting rules.
+- id: r-showdowns-attack-defend-triggers
+  verdict: correct
+  note: ''
+  question: When do attack and defend triggers happen?
+  as_of: '2026-10-01'
+  reference: 'An attack or defend trigger is checked when its unit or player first gains the matching
+    attacker or defender designation during a combat. [383.4.e] [383.4.f]
+
+    Units already present gain their designations when combat opens, while units that become present later
+    gain them during the cleanup following their arrival. [464.2.c.3] [464.2.c.3.a]
+
+    If the trigger has another condition, that condition must also be fulfilled at that time. [383.4.e.2.b]
+    [383.4.f.2.b]
+
+    ### Units can join combat late and still trigger [#late-combat-triggers]
+
+    If a unit becomes present at a battlefield where combat is already in progress, it gains its controller''s
+    attacker or defender designation during the next cleanup.
+
+    Its eligible "When I attack" or "When I defend" abilities trigger then, after their other conditions
+    are checked.
+
+    ### Can attack and defend abilities trigger more than once per combat? [#once-per-combat-triggers]
+
+    An attack or defend trigger''s condition is checked only once per combat, even if its unit loses and
+    regains the matching designation. [383.4.e.2.a] [383.4.f.2.a]
+
+    A unit that leaves the combat battlefield loses its designation during the next cleanup. [323.2.c]
+
+    If it returns during the same combat, it regains its controller''s designation during a later cleanup,
+    but its attack or defend trigger is not checked again. [323.2.a]'
+  answer: Attack and defend triggers happen when a Unit or Player gains the Attacker or Defender designation
+    for the first time during a combat. These triggers are placed on the Chain as Pending Items after
+    the Unit or Player gains the respective designation during Combat [core@1.4:383.4.e.2]. Specifically,
+    Attack Triggers occur [quoted text from core@1.4:383.4 removed], and Defend Triggers occur [quoted
+    text from core@1.4:383.4 removed] [core@1.4:383.4.e.1 and 383.4.f.1]. The condition for these triggers
+    is checked only once per combat, even if the unit gains and loses the designation multiple times [core@1.4:383.4.e.2.a
+    and 383.4.f.2.a]. Additionally, these triggers are added to the Combat Chain during the Combat Showdown
+    Step, specifically after establishing the Attacker and Defender designations [core@1.4:[quoted text
+    from core@1.4:464.2 removed] these triggers [quoted text from core@1.4:464.2 removed], and then the
+    Defending Player [core@1.4:464.2.e.1].
+- id: r-empower-empower-timing
+  verdict: correct
+  note: ''
+  question: When can I activate an Empower ability?
+  as_of: '2026-10-01'
+  reference: 'By default, you can activate it only while its source is not Empowered and during your own
+    Main Phase while no showdown, combat, or chain is in progress. [310.1] [310.1.a] [312.2.a] [381] [827.1.c.1]
+
+    Empower follows these restrictions because it is an activated ability. [827.1]
+
+    Card text may override the default activation restriction or change an Empower ability''s timing.
+    [002] [827.1.c.4]
+
+    If it explicitly has Action, you may activate it during showdowns on any player''s turn. [806.1.c.2]
+
+    If it has Reaction, you may also activate it on any player''s turn during closed states, while a chain
+    exists. [309.1] [813.1.b] [813.1.c.2]'
+  answer: You can activate an Empower ability only when directed to do so by a Game Effect, as Empowering
+    is a Limited Action [core@1.4:441.3]. This means that players may not activate Empower abilities on
+    their own initiative; instead, they must be instructed to do so by a game effect. Additionally, the
+    ability is formatted as “Empower [Cost]” and may include text that alters the cost or timing, but
+    activation is still restricted to when directed by a game effect [core@1.4:827.1.c.4].
+- id: r-shadow-assassin-self-count
+  verdict: not_answered
+  note: ''
+  question: Does Shadow Assassin count itself when I play it from my trash?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    When played from your trash, Shadow Assassin moves from your trash to the chain, then leaves the chain
+    as it enters the board. [354] [359.2] [359.2.c]
+
+    By the time its ready condition applies, that copy is no longer in your trash, so it enters ready
+    only if a different card named Shadow Assassin remains in your trash.'
+  answer: 'The provided passages do not contain any information about a card named "Shadow Assassin" or
+    its specific abilities, including whether it counts itself when played from the trash. Therefore,
+    based on the retrieved passages, it is not possible to determine whether Shadow Assassin counts itself
+    when played from the trash.
+
+
+    [core@1.4:141.1] discusses Units in the Trash and their treatment, but does not address self-counting
+    or specific card behaviors. No rule or example in the passages refers to a card named "Shadow Assassin"
+    or its interaction with playing from the trash.
+
+
+    Thus, the question cannot be answered with the given information.'
+- id: r-hidden-blade-draw-if-illegal
+  verdict: correct
+  note: ''
+  question: If Hidden Blade's target becomes illegal, does that target's controller draw?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    An illegal target is unaffected by Hidden Blade, so the kill instruction is ignored. [359.3.e.5]
+
+    Hidden Blade''s draw is linked to its kill instruction because "its controller" refers to the unit
+    affected by that instruction. [359.3.e.14]
+
+    When an earlier linked instruction is ignored, its later linked instructions are also ignored, so
+    the controller does not draw. [359.3.e.14.a]
+
+    Note (Example):
+
+    You play Hidden Blade targeting an opponent''s unit at a battlefield.
+
+    They respond by moving it to their base using Flash.
+
+    Hidden Blade resolves.
+
+    The unit is no longer at a battlefield, so it is an illegal target.
+
+    The unit is not killed and the opponent does not draw.'
+  answer: 'No, if Hidden Blade''s target becomes illegal, that target''s controller does not draw. The
+    draw instruction still occurs, but only if the target remains legal. According to rule 359.3.e.5,
+    "[quoted text from core@1.4:359.3 removed]." While the example in the passage states that "Void Seeker''s
+    controller still draws 1" when the target is no longer legal, this is because the draw instruction
+    is separate from the damage instruction and is not dependent on the legality of the target. However,
+    in the case of Hidden Blade, the card''s effect includes both dealing damage and drawing a card. If
+    the target becomes illegal due to a reaction (e.g., being moved to base), then the damage instruction
+    is ignored, but the draw instruction is not automatically preserved.
+
+
+    The retrieved passages do not explicitly state whether the draw instruction is unaffected when the
+    target becomes illegal. However, rule 359.3.e.5 says that "[quoted text from core@1.4:359.3 removed],"
+    and rule 359.3.e.6 says that "instructions that can''t be followed... are ignored." Since the draw
+    instruction is not tied to the target (as it is a separate action), it may still occur. But the passage
+    does not confirm this for Hidden Blade specifically.
+
+
+    Therefore, based on the provided rules and examples, we cannot definitively conclude whether the draw
+    occurs when the target becomes illegal. The rules do not specify that the draw instruction is unaffected
+    by illegal targets in the case of Hidden Blade.
+
+
+    Answer: The retrieved passages do not specify whether the draw instruction occurs when Hidden Blade''s
+    target becomes illegal. While the draw instruction is separate from the damage instruction, the rules
+    do not confirm that it is unaffected by illegal targets in this specific case. Therefore, based on
+    the provided information, it cannot be determined with certainty. [core@1.4:359.3.e.5]'
+- id: r-equipment-equipment-control-change
+  verdict: not_answered
+  note: ''
+  question: What happens to attached equipment when I take control of an enemy unit?
+  as_of: '2026-10-01'
+  reference: 'The equipment stays attached and keeps its existing controller; you take control only of
+    the unit. [718.1] [718.5.f]
+
+    The equipment''s controller can still choose it with Weaponmaster while it is attached to the unit
+    you now control. [718.5.b] [821.1.c]
+
+    If its Equip cost can be paid and it can legally be detached and attached, it detaches and attaches
+    to the newly played unit. [821.1.c] [821.1.c.5] [434.1.f]'
+  answer: 'When you take control of an enemy unit, the attached equipment does not automatically change
+    control or become detached. According to rule [quoted text from core@1.4:718.5 removed]." This means
+    that even if the unit you control changes hands, the attached equipment remains under the control
+    of its original controller and is not affected by the change in control of the unit it is attached
+    to. Therefore, the equipment remains attached and under the original controller''s control, and no
+    action is triggered by the change in control of the unit.
+
+
+    [core@1.4:718.5]'
+- id: r-repeat-repeated-spell-countering
+  verdict: not_answered
+  note: ''
+  question: What happens if a spell with Repeat is countered?
+  as_of: '2026-10-01'
+  reference: 'Neither the initial nor any additional execution occurs, and the paid Repeat cost is not
+    refunded.
+
+    Repeat does *not* create a second instance of the spell on the chain. [820.3.a]
+
+    Instead, it modifies how the spell resolves by executing its instructions an additional time. [820.1.d.1]
+
+    When a spell is countered, it does nothing and is cleared from the chain, so none of its executions
+    happen. [425.1.a]
+
+    Countering does not refund additional costs paid to play the spell. [425.1.c] [425.1.c.1]'
+  answer: The provided passages do not address what happens if a spell with Repeat is countered. Therefore,
+    based on the retrieved content, it is not possible to answer the question. [none]
+- id: r-chain-and-priority-empty-battlefield-control
+  verdict: correct
+  note: ''
+  question: Outside a showdown, do I lose control of a battlefield as soon as my last unit leaves it?
+  as_of: '2026-10-01'
+  reference: 'If a chain is still in progress or combat is ongoing at that battlefield, your last unit
+    leaving does not make you lose control during the resulting cleanup.
+
+    Battlefield control is checked during cleanup.
+
+    An item remaining on the chain keeps the empty battlefield under your control. [323.6] [330] [309.1]
+
+    An ongoing combat at that battlefield also prevents control of that battlefield from changing. [190.4.b]
+
+    Removing the chain''s final item causes a later cleanup to check again; if the battlefield is still
+    empty and no combat is ongoing there, you lose control then. [190.4.c] [319.5] [309.2]'
+  answer: 'No, you do not lose control of a battlefield as soon as your last unit leaves it outside of
+    a showdown. According to rule [quoted text from core@1.4:190.4 removed]. This means that control is
+    not lost immediately when the last unit leaves, but only during the cleanup phase of the turn, under
+    specific conditions (an Open state and no ongoing Combat or Showdown). Therefore, control is maintained
+    until the cleanup step, at which point it may be lost if the conditions are met.
+
+
+    [core@1.4:190.4.c]'
+- id: r-costs-and-payments-optional-additional-costs
+  verdict: correct
+  note: ''
+  question: What are optional additional costs?
+  as_of: '2026-10-01'
+  reference: 'Optional additional costs are additional costs you may choose to pay. [356.2.b.1]
+
+    Their rules text uses both "may" and the exact phrase "as an additional cost."
+
+    Accelerate and Repeat are keyworded optional additional costs. [805.1.a] [820.1.d]
+
+    You choose whether to pay an optional additional cost while making the relevant choices for the card
+    or ability being played. [355.1.a] [399]
+
+    If chosen, it is added while determining the total cost before applicable discounts are applied. [356.2]
+    [356.4]
+
+    The optional additional cost counts as paid even if discounts reduce it to zero. [356.4.f] [356.4.f.1]'
+  answer: Optional additional costs are additional costs specified by passive abilities on a card that
+    [quoted text from core@1.4:356.2 removed] chooses to do so during step 2 of playing the card. These
+    costs use the phrase "as an additional cost" and are accompanied by the word "may." For example, a
+    unit with [quoted text from core@1.4:356.2 removed]]" allows the player to decide whether to pay the
+    cost; if they choose to pay it, they must discard a card to fulfill that cost [core@1.4:356.2.b.1].
+- id: r-targeting-illegal-targets
+  verdict: correct
+  note: ''
+  question: What happens if a target becomes illegal before a spell or ability resolves?
+  as_of: '2026-10-01'
+  reference: 'The spell or ability still resolves, but the illegal target is unaffected, instructions
+    related to it cannot be followed, and independent instructions continue normally. [359.3.e.1] [359.3.e.5]
+    [406.5]
+
+    If all of an instruction''s targets are illegal, that instruction does not execute. [359.3.e.7]
+
+    If at least one target remains legal, the instruction executes using only the legal targets. [359.3.e.8]
+
+    If a group of targets no longer collectively meets its targeting restriction, the spell or ability''s
+    controller chooses a legal subset of the original targets for it to affect. [355.11.b]
+
+    A target is illegal when the spell or ability resolves if it no longer meets the targeting requirements
+    or has changed zones to or from a non-board zone. [359.3.e.2]
+
+    A target that stops meeting a requirement and then meets it again is legal, but a target that changes
+    to or from a non-board zone is a new object and remains illegal even if it returns. [359.3.e.3] [359.3.e.4]
+
+    If an instruction needs information from the illegal target, that information is null and calculations
+    using it are ignored. [359.3.e.12]
+
+    If a later instruction is linked to an earlier instruction that was ignored, the later instruction
+    is also ignored. [359.3.e.14.a]'
+  answer: If a target becomes illegal before a spell or ability resolves, the spell or ability will mistarget
+    on resolution, and any instructions related to that target will be ignored as the spell resolves [core@1.4:758.1].
+    This occurs when a Game Object becomes untargetable after being targeted and before the spell resolves
+    [core@1.4:758.1]. Additionally, if the target no longer meets the targeting requirements of the spell
+    during resolution, it is considered illegal, and the instruction related to that target is ignored
+    [core@1.4:359.3.e.2].
+- id: r-astral-heron-trigger-timing
+  verdict: not_answered
+  note: ''
+  question: When exactly does Astral Heron trigger, and which card gets its discount?
+  as_of: '2026-10-01'
+  reference: 'Astral Heron triggers after your first card of the turn finishes resolving, and if its triggered
+    ability resolves, it discounts the next card you play this turn after that resolution.
+
+    In a trigger condition, "When you play" is checked only when the act of playing that card is completed
+    by its resolution. [419.4.a]
+
+    If a spell is countered instead of resolving, it does not trigger Astral Heron, and the first card
+    you later resolve that turn can trigger it instead. [419.4.a.1]
+
+    When the condition is fulfilled, the triggered ability is placed on the chain and must resolve before
+    the discount exists. [383.3] [406.5] [390.4]
+
+    Once it resolves, "the next card you play this turn" means the next card you place on the chain and
+    queue for finalization. [419.1]
+
+    Astral Heron''s discount is applied while determining that card''s total cost, before you pay the
+    cost and finish finalizing it. [356.4] [357]'
+  answer: The retrieved passages do not contain any information about Astral Heron or its triggering conditions
+    or associated discounts. Therefore, based on the provided content, it is not possible to answer when
+    Astral Heron triggers or which card gets its discount. [none]
+- id: r-abilities-optional-trigger-decision
+  verdict: correct
+  note: ''
+  question: When do I choose whether to use a triggered ability that says "you may"?
+  as_of: '2026-10-01'
+  reference: 'If "you may" begins the effect, choose during finalization; if it appears later, choose
+    during resolution.
+
+    - **Initial "you may":** Choose while the pending ability is being finalized. [383.3.a]
+
+    If you decline, the ability is removed from the chain and considered not to have triggered. [383.3.a.2]
+
+    If you proceed, make its required choices and pay any costs incurred during finalization before the
+    ability becomes a finalized chain item. [402.2] [404.1] [406.2]
+
+    For example, Tideturner begins its effect with "you may," so its controller decides whether to use
+    the ability during finalization.
+
+    - **Later "you may":** If another effect instruction comes first, make the optional choice when resolution
+    reaches that later instruction. [383.3.a.3]
+
+    For example, Ornn, Blacksmith first instructs its controller to look at cards, then says "You may
+    reveal a gear," so that choice is made during resolution.'
+  answer: When a triggered ability says "you may" and that phrase appears as the first part of its effect,
+    you choose whether to use the ability during finalization of the chain [core@1.4:383.3.a]. This decision
+    is made by the controller of the source of the triggered ability, and if they choose not to perform
+    it, the ability is removed from the chain and considered not to have triggered [core@1.4:383.3.a.2].
+    If the "you may" appears in any later part of the effect, the choice is made on resolution, not during
+    finalization [core@1.4:383.3.a.3].
+- id: r-ambush-unit-play-reactions
+  verdict: incorrect
+  note: ''
+  question: Can opponents react to a unit being played with Ambush?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Ambush changes when the unit can be played, [822.1.b] but the unit otherwise enters normally.
+
+    Finalizing it does not pass priority. [337.1.a]
+
+    It then resolves and enters the board immediately. [337.2] [359.2.c]
+
+    This is a common point of confusion with cards like Kha''Zix, Mutating Horror, which has Ambush and
+    triggers if an enemy unit is alone when he attacks or defends.
+
+    An opponent cannot play a unit in response to Kha''Zix being placed on the chain in an attempt to
+    break the "alone" condition before he enters.'
+  answer: Yes, opponents can react to a unit being played with Ambush. This is because "Reaction" is a
+    permission that allows players to respond to certain actions, such as playing a unit, and it does
+    not alter the function of the instruction itself [core@1.4:813.3]. Since Ambush is a Reaction ability,
+    it triggers a situation where players—specifically opponents—can respond during the appropriate phase
+    of gameplay. Furthermore, the rule states that "[quoted text from core@1.4:406.4 removed]" [core@1.4:406.4],
+    which includes reactions to unit plays with Ambush. Therefore, opponents are permitted to react when
+    a unit is played with Ambush.
+- id: r-empower-empower-reactions
+  verdict: not_answered
+  note: ''
+  question: Can opponents react to an Empower ability?
+  as_of: '2026-10-01'
+  reference: 'Yes.
+
+    Empower is an activated ability keyword, [827.1] and activated abilities use the chain. [377.3]
+
+    After the ability is finalized and no other cards or abilities are waiting to finalize, opponents
+    have an opportunity to play Reactions before it resolves. [337.4] [406.4]'
+  answer: The retrieved passages do not address whether opponents can react to an Empower ability. Therefore,
+    based on the provided information, it is not possible to determine if opponents can react to an Empower
+    ability. [none]
+- id: r-chain-and-priority-pending-item-order
+  verdict: correct
+  note: ''
+  question: In what order are multiple pending chain items finalized and resolved?
+  as_of: '2026-10-01'
+  reference: 'Pending items undergo finalization from oldest to newest, finalized items still waiting
+    on the chain resolve from newest to oldest, and units, gear, and Add abilities resolve as soon as
+    they finalize.
+
+    - **Pending items:** Take them through finalization in the order they were added, from oldest to newest,
+    until each item finalizes or leaves the chain. [337.1] [337.1.b]
+
+    - **Finalized items:** Among those that remain on the chain, the newest resolves first. [340.1]
+
+    - **Immediate resolution:** Units, gear, and abilities that use Add resolve when they finalize, even
+    if other pending items still need to finalize. [337.2]'
+  answer: Multiple pending chain items are finalized and resolved in the order they were appended to the
+    Chain [core@1.4:337.1.b].
+- id: r-irresistible-faefolk-combat-attacker
+  verdict: not_answered
+  note: ''
+  question: If Irresistible Faefolk moves to an uncontested, uncontrolled battlefield outside a showdown
+    and pulls an enemy unit there, who is the attacker?
+  as_of: '2026-10-01'
+  reference: 'Irresistible Faefolk''s controller is the attacker.
+
+    Irresistible Faefolk reaches the battlefield before its triggered ability can pull the enemy unit.
+    [383.2.c]
+
+    It contests that battlefield for its controller because no one controls it and it was not already
+    contested. [190.3.a.1]
+
+    Its ability then pulls the enemy unit there.
+
+    With opposing units now at the contested battlefield, the next cleanup marks it for combat. [319.8]
+    [323.9]
+
+    When that combat begins, Irresistible Faefolk''s controller is the attacker and the pulled unit''s
+    controller is the defender because Irresistible Faefolk was the unit that contested the battlefield.
+    [464.2.c.1] [464.2.c.2]'
+  answer: 'The question involves a scenario where Irresistible Faefolk moves to an uncontested, uncontrolled
+    battlefield outside a showdown and pulls an enemy unit there. However, the retrieved passages do not
+    define or describe how a unit like Irresistible Faefolk functions in terms of initiating combat or
+    establishing attacker status when moving to a battlefield or pulling an enemy unit.
+
+
+    Specifically, the rules provided do not address:
+
+    - The mechanics of a unit pulling an enemy unit into a battlefield.
+
+    - How such an action would trigger or establish a combat or contested status.
+
+    - Who becomes the attacker when a unit moves to a battlefield and interacts with an enemy unit, especially
+    if no prior contested status or combat has occurred.
+
+
+    The rules only specify that [quoted text from core@1.4:462.2 removed] [core@1.4:462.1], and that a
+    battlefield must have a contested status for combat to begin [core@1.4:464.2]. However, there is no
+    rule stating that moving a unit to an uncontested battlefield and pulling an enemy unit into it automatically
+    establishes a combat or defines an attacker.
+
+
+    Therefore, based on the retrieved passages, it is not possible to determine who the attacker is in
+    this scenario.
+
+
+    Answer: [The retrieved passages do not provide sufficient information to determine who the attacker
+    is in this scenario.]'
+- id: r-costs-and-payments-countered-costs
+  verdict: correct
+  note: ''
+  question: Are paid costs refunded if a card or ability is countered?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Countering does not refund any costs paid to play a card, activate an ability, or trigger an ability,
+    including additional costs. [425.1.c] [425.1.c.1]'
+  answer: No, paid costs are not refunded if a card or ability is countered. The rules state that [quoted
+    text from core@1.4:425.1 removed], including additional costs [core@1.4:425.1.c]. This means that
+    once costs have been paid during the cost resolution step, those payments are final and not reversed
+    when the card or ability is countered.
+- id: r-showdowns-non-combat-showdown
+  verdict: correct
+  note: ''
+  question: What happens if an opposing player's unit moves into an existing non-combat showdown?
+  as_of: '2026-10-01'
+  reference: 'When an opposing player''s unit becomes present during a non-combat showdown, combat is
+    staged and the showdown becomes a combat showdown during the cleanup following that unit''s arrival.
+    [316.8.b.1.a] [323.9]
+
+    When combat opens, the player who began the non-combat showdown is the attacker, and the player whose
+    unit joined is the defender. [464.2.c.1] [464.2.c.2]
+
+    Both players and their units at that battlefield then gain the matching attacker or defender designation,
+    identifying them as attacking or defending for that combat. [464.2.c.3]
+
+    Eligible attack and defend triggers are checked when those designations are gained. [383.4.e] [383.4.f]'
+  answer: If an opposing player's unit moves into an existing non-combat showdown, the Showdown will become
+    a Combat Showdown in the following cleanup [core@1.4:316.8.b.1.a].
+- id: r-bone-skewer-targeting-protection
+  verdict: incorrect
+  note: ''
+  question: Can Bone Skewer choose a unit that says it "can't be chosen by enemy spells and abilities"?
+  as_of: '2026-10-01'
+  reference: 'Yes.
+
+    The unit''s untargetability ability is inactive while the card is in hand, and Bone Skewer''s choice
+    does not target it.
+
+    "I can''t be chosen by enemy spells and abilities" is a passive untargetability ability. [757] [757.1]
+
+    Passive abilities of permanents are typically active only while they are on the board. [365.1]
+
+    An ability that functions in another zone describes that context itself, [366.1] which this ability
+    does not, so it has no effect in hand.
+
+    Separately, a card in hand is not a target because the hand is not a public zone. [355.10.a]'
+  answer: No, Bone Skewer cannot choose a unit that says it "can't be chosen by enemy spells and abilities."
+    This is because such a unit is designated as Untargetable by enemy spells and abilities, and thus
+    [quoted text from core@1.4:355.9 removed] [core@1.4:757.1]. Since Bone Skewer is an enemy spell or
+    ability, it would be prohibited from targeting such a unit. [core@1.4:757.1]
+- id: r-bone-skewer-hide-instead-of-play
+  verdict: correct
+  note: ''
+  question: If a unit chosen by Bone Skewer has Hidden, can the opponent hide it instead of playing it?
+  as_of: '2026-10-01'
+  reference: 'No.
+
+    Hide is a separate action, not a way to fulfill Bone Skewer''s instruction to play the unit. [811.1.c.1]
+
+    Bone Skewer instructs the opponent to play the unit as a limited action, following the normal play
+    process except where the effect says otherwise. [419.3] [419.3.b]'
+  answer: 'No, the opponent cannot hide a unit chosen by Bone Skewer instead of playing it.
+
+
+    The rule states that "Hiding is a Discretionary Action" and that "[quoted text from core@1.4:811.1
+    removed]" [core@1.4:811.1]. This means that a player can only hide a card if [quoted text from core@1.4:421.2
+    removed]. However, the action of hiding applies only to cards that are in a player''s hand or Champion
+    Zone and are being hidden at a battlefield the player controls.
+
+
+    Moreover, the rule specifies that "a hidden permanent must be played to that battlefield" [core@1.4:811.1.d.1].
+    This implies that the card must be played, not merely hidden. The act of choosing a unit by a spell
+    like Bone Skewer results in a play action, and if a unit has the Hidden keyword, it must be played
+    to the battlefield where it was hidden, not hidden and then replaced by another action.
+
+
+    Additionally, the rule clarifies that "[quoted text from core@1.4:811.1 removed]" [core@1.4:811.1.c.3],
+    meaning that the action of playing from Hidden is treated as a play action and triggers chain effects.
+    Therefore, the opponent cannot choose to hide a unit that has already been selected by Bone Skewer,
+    because hiding is not an alternative to playing a card—it is a separate action that applies only to
+    cards in a player''s hand or Champion Zone, and only under specific conditions.
+
+
+    Furthermore, the rule states that "[quoted text from core@1.4:811.1 removed]" [core@1.4:811.1.d],
+    and that "[quoted text from core@1.4:811.1 removed] hidden permanent chooses any targets, those targets
+    must'
+- id: r-abilities-costs-within-instructions
+  verdict: correct
+  note: ''
+  question: When do I pay costs in a triggered ability?
+  as_of: '2026-10-01'
+  reference: 'The "[do X] to [do Y]" form creates a cost within instructions: [do X] is the cost and [do
+    Y] is its effect. [740.4.a]
+
+    Pay [do X] during finalization if it begins the triggered effect or immediately follows an initial
+    "you may." [383.3.b] [383.3.b.1] [740.4.a.2]
+
+    Pay it during resolution if it appears later. [740.4.a.2.a]
+
+    If that cost is due during finalization and you decline to pay it, the pending ability is removed
+    from the chain without finalizing. [404.2]
+
+    The "[do X]. If you do, [do Y]" form does not create a cost within instructions.
+
+    The [do X] instruction is executed during resolution. [406.5]
+
+    For example, Vayne, Hunter says "When I conquer, you may pay [1] to return me to my owner''s hand."
+
+    The "pay [1] to return me" form creates a cost within instructions immediately after the initial "you
+    may," so you pay it during finalization.
+
+    If you pay, the ability finalizes and opponents may react before it resolves. [406.4]
+
+    By contrast, Insightful Investigator first has an opponent reveal their hand and only then offers
+    a payment, so that cost within instructions appears later and you pay it during resolution.'
+  answer: 'When do I pay costs in a triggered ability?
+
+
+    For triggered abilities, costs within instructions are paid at different times depending on their
+    placement in the effect:
+
+
+    - If the cost appears as the first part of the trigger effect (i.e., at the beginning of the effect),
+    it [quoted text from core@1.4:383.3 removed] and must be paid to finalize the ability and place it
+    on the Chain. This payment occurs during the finalization of the triggered ability [core@1.4:383.3.b],
+    [core@1.4:204.3.a], and [core@1.4:740.4.a.2.a].
+
+
+    - If the cost appears in any later part of the trigger effect (i.e., not in the first part), it is
+    paid on resolution of the ability, not during finalization [core@1.4:204.3.b] and [core@1.4:740.4.a.2.a].
+
+
+    Additionally, players may choose to decline to pay such costs at any time during the resolution phase,
+    which causes the ability to be removed from the Chain and cease being a Pending Item, without being
+    countered [core@1.4:404.2].
+
+
+    Thus, the timing of cost payment in a triggered ability depends on where the cost appears in the ability''s
+    text: at the beginning of the effect (paid upon finalization) or in a later part (paid upon resolution).'
+- id: r-fallen-feline-naming-timing
+  verdict: not_answered
+  note: ''
+  question: When can I react to Fallen Feline's play effect?
+  as_of: '2026-10-01'
+  reference: 'You can react before its controller names a spell, but once the name is chosen, it is too
+    late to start playing that spell while Fallen Feline remains at a battlefield.
+
+    The name is chosen only when the play effect resolves, [355.17] after players have had the opportunity
+    to react to the finalized ability. [406.4]
+
+    The Vendetta FAQ confirms this timing.'
+  answer: The retrieved passages do not provide any information about "Fallen Feline" or its play effect.
+    Therefore, it is not possible to determine when a reaction to Fallen Feline's play effect can occur
+    based on the provided content. [none]
+- id: r-movement-failed-move-linked-instructions
+  verdict: correct
+  note: ''
+  question: Does a later linked instruction still execute if a move is prevented or cannot happen?
+  as_of: '2026-10-01'
+  reference: 'If the move is prevented or cannot happen for a reason other than an illegal or unavailable
+    target, yes, unless the linked instruction specifically requires the move to have occurred.
+
+    The Vendetta FAQ classifies the failed move as negated rather than ignored, so it does not cause other
+    linked instructions to be ignored.
+
+    Note (Rules citation needed):
+
+    Core Rules 1.4 still describes a move prevented by a location restriction as ignored. [359.3.e.6]
+
+    It would therefore also ignore a later linked instruction under the current Core Rules wording. [359.3.e.14.a]
+
+    The Vendetta FAQ takes precedence on this point until a later Core Rules Document says otherwise.'
+  answer: 'A later linked instruction does not execute if a move is prevented or cannot happen, because
+    such a prevention means the earlier linked instruction—on which the later instruction depends—was
+    not actually performed. According to the retrieved passages, [quoted text from core@1.4:359.3 removed]
+    (such as a move being prevented or not occurring), then the later linked instruction will also be
+    ignored [core@1.4:359.3.14.14].
+
+
+    For example, in the case of "Hidden Blade" reading “[quoted text from core@1.4:359.3 removed] [quoted
+    text from core@1.4:359.3 removed] the spell, the first instruction is ignored, and thus the second
+    instruction will not execute [core@1.4:359.3.14.14]. Similarly, if a move is prevented, the earlier
+    action fails to occur, and the later linked instruction fails to execute.
+
+
+    Therefore, if a move is prevented or cannot happen, the later linked instruction does not execute.'
+- id: r-rebuttal-new-choices
+  verdict: not_answered
+  note: ''
+  question: What choices can I remake when Rebuttal takes control of a spell?
+  as_of: '2026-10-01'
+  reference: 'Under the August 2026 Vendetta FAQ, you may either leave every target and mode unchanged
+    or remake any subset.
+
+    If you change nothing, existing choices may remain illegal.
+
+    If you remake at least one choice, every resulting choice must be legal, including choices you left
+    unchanged.
+
+    Targets and modes are among the choices normally made during finalization. [752] [752.1]
+
+    The Core Rules permit remaking any subset and prohibit illegal new choices, but they do not expressly
+    address the unchanged choices. [753] [753.1]
+
+    Note (Rules citation needed):
+
+    Core Rules 1.4 does not independently supply the distinction between remaking at least one choice
+    and leaving every choice unchanged.
+
+    The cited FAQ notes that this Core Rules section will be revised in a future update.'
+  answer: 'The retrieved passages do not provide any information about the spell "Rebuttal" or how it
+    interacts with taking control of a spell or remaking choices. Therefore, based on the provided content,
+    it is not possible to answer the question about what choices can be remade when Rebuttal takes control
+    of a spell.
+
+
+    [No relevant passage]'
+- id: v-created-permanent-location-current
+  verdict: incorrect
+  note: ''
+  question: If an effect creates a permanent without saying where, can I choose to put it at a battlefield?
+  as_of: '2026-10-01'
+  reference: 'In v1.3 a created permanent could go to any board location it could be played to. v1.4 sends
+    it to the appropriate zone for its type. Old answer: yes. Current: no choice. (No counterpart before
+    v1.3.)
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: Yes, if an effect creates a permanent without specifying a zone, you can choose to put it at
+    a battlefield, because [quoted text from core@1.4:439.2 removed] [core@1.4:439.2.b.1]. This means
+    the location is not fixed by the effect, and as long as the battlefield is a valid location for that
+    type of permanent, it can be chosen. Since battlefields are valid locations for permanents [core@1.4:198.1],
+    and the rule allows creation at any playable location on the board, placing the permanent at a battlefield
+    is permissible.
+- id: v-teammate-spells-2v2-current
+  verdict: incorrect
+  note: ''
+  question: In 2v2, can my teammate play spells during my turn whenever they want?
+  as_of: '2026-10-01'
+  reference: 'Up to v1.2 the turn player''s teammates could play spells and abilities on the turn player''s
+    turn. From v1.3 they may do so only when the turn player invites them with their own priority. Old
+    answer: yes. Current: only when invited.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: No, in 2v2, your teammate cannot play spells during your turn whenever they want. According
+    to rule 489.8.b.1, teammates may only play spells or activate abilities during their teammate's turn
+    if the Turn Player invites them to do so using their own Priority. This means that the Turn Player
+    must explicitly invite their teammate to play a spell or activate an ability, and such actions are
+    not automatic or unrestricted [core@1.4:489.8.a]. Therefore, the teammate does not have the freedom
+    to play spells at any time during your turn.
+- id: v-exhaust-off-board-current
+  verdict: correct
+  note: ''
+  question: Can an effect exhaust a card that is not on the board?
+  as_of: '2026-10-01'
+  reference: 'Until v1.3 exhausting applied to any non-spell game object. From v1.3 only to those on the
+    board. Old answer: yes. Answer since v1.3: no.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: No, an effect cannot exhaust a card that is not on the board. [quoted text from core@1.4:414.1
+    removed]" [core@1.4:414.1]. Since the card is not on the board, it does not qualify as a Game Object
+    on the board, and thus cannot be exhausted. The rule specifically applies to Game Objects that are
+    already on the board. There is no passage indicating that exhaustion can be applied to objects off
+    the board.
+- id: v-deflect-chosen-twice-current
+  verdict: correct
+  note: ''
+  question: If an enemy spell chooses my Deflect unit twice, does it have to pay the Deflect cost twice?
+  as_of: '2026-10-01'
+  reference: 'Up to v1.2 Deflect added its cost once to an enemy spell or ability that chose the unit.
+    v1.3 made it apply for each time the unit is chosen, and v1.4 kept that while changing "choose" to
+    "target". Old answer (v1.1-1.2): once. Answer since v1.3: once per choice, so twice.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: 'No, if an enemy spell chooses my Deflect unit twice, it does not have to pay the Deflect cost
+    twice. The Deflect cost is imposed once per instance of the spell or ability targeting the Deflect
+    unit, not per choice of the unit. According to rule 809.1.c, "[quoted text from core@1.4:809.1 removed]]."
+    This means the additional cost is applied each time the spell or ability *chooses* the unit, not each
+    time the unit is targeted. However, the key point is that the cost is applied per *choice*, not per
+    *targeting event*. Since the spell is targeting the same unit twice, it is considered two separate
+    choices, and thus the Deflect cost would be applied twice.
+
+
+    But note: the rule states that the additional cost is applied "for each time they choose [me/this]"
+    — this implies that each choice triggers the cost. Therefore, if an enemy spell chooses the Deflect
+    unit twice, it must pay the Deflect cost twice.
+
+
+    Thus, the correct answer is: Yes, it has to pay the Deflect cost twice.
+
+
+    [core@1.-4:809.1.c]'
+- id: v-battlefield-ability-controller-current
+  verdict: correct
+  note: ''
+  question: If an uncontrolled battlefield's ability says a specific player controls it, who controls
+    that ability?
+  as_of: '2026-10-01'
+  reference: 'Until v1.4 an uncontrolled battlefield''s abilities were always handled by the turn player.
+    v1.4 makes an exception when the ability names a player. Old answer: the turn player. Current: the
+    named player.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: If an uncontrolled battlefield's ability says a specific player controls it, then that specific
+    player controls the ability [core@1.4:190.6.c].
+- id: v-teammate-conquer-scoring-v1.3
+  verdict: correct
+  note: ''
+  question: In 2v2, if my teammate controlled a battlefield during my Beginning Phase, can the other team
+    still score it by conquering it this turn?
+  as_of: '2026-05-27'
+  reference: 'Until v1.4 such a battlefield could not be scored through conquer by any means. v1.4 disqualifies
+    it only for my team. Old answer: no. Current: yes.
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: 'No, in 2v2, if your teammate controlled a battlefield during your Beginning Phase, the other
+    team cannot score it by conquering it this turn. This is because, in 2v2 mode, Battlefields controlled
+    by a teammate during the Beginning Phase of a player''s turn are disqualified from being scored by
+    that team during that turn [core@1.3:484.8.b]. Since the other team is not the one whose teammate
+    controlled the battlefield during your Beginning Phase, this rule does not apply to them directly.
+    However, the rule specifically states that [quoted text from core@1.3:464.1 removed] disqualified
+    from being scored by that team, not by the opposing team. Therefore, the disqualification only affects
+    the team whose teammate controlled the battlefield during the Beginning Phase.
+
+
+    Thus, the other team is not restricted by this rule and could potentially score the battlefield by
+    conquering it, unless there is a rule that explicitly prevents opposing teams from scoring such battlefields.
+    Since no such rule exists in the provided passages, and the disqualification only applies to the team
+    whose teammate controlled the battlefield, the answer is:
+
+
+    No, the other team can still score it by conquering it this turn, because the disqualification rule
+    only applies to the team whose teammate controlled the battlefield during the Beginning Phase, not
+    to the opposing team.
+
+
+    However, this interpretation contradicts the phrasing of rule 484.8.b, which says: "[quoted text from
+    core@1.3:484.8 removed]." This means only the team whose teammate controlled the battlefield is disqualified
+    from scoring it. Therefore, the opposing team is not disqualified.
+
+
+    Thus, the correct answer is:
+
+
+    Yes, the other team can still score it by conquering it this turn, because only the team whose teammate
+    controlled the battlefield during the Beginning Phase is disqualified from scoring it. The disqualification
+    does not apply to the opposing'
+- id: v-contested-again-current
+  verdict: correct
+  note: ''
+  question: If a battlefield is already contested and more of my units move there, does it become contested
+    again?
+  as_of: '2026-10-01'
+  reference: 'Until v1.4 a destination battlefield not controlled by the mover became contested. v1.4
+    limits that to battlefields not already contested. Old answer: yes. Current: no.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: 'No, if a battlefield is already contested and more of your units move there, it does not become
+    contested again. The Contested status is a temporary status applied [quoted text from core@1.4:190.3
+    removed] [core@1.4:190.3.a]. Once a battlefield is already Contested, additional Units from the same
+    player moving there do not reapply the Contested status, as the condition for applying Contested status
+    is met only when a Unit from a player who does not control the battlefield becomes present. Since
+    your units are under your control and the battlefield is already contested, the status remains as
+    Contested without reapplication.
+
+
+    Moreover, the rule specifies that Contested status is only applied when a Unit moves to or is played
+    on a battlefield that is not already Contested and whose controller does not already control the battlefield
+    [core@1.4:190.3.a.1]. Therefore, if the battlefield is already Contested, the condition for reapplying
+    Contested status is not met, and no further application occurs.
+
+
+    Thus, the status remains Contested without being reactivated.'
+- id: v-legend-leave-zone-current
+  verdict: correct
+  note: ''
+  question: Can my Champion Legend ever leave the Legend Zone during a game?
+  as_of: '2026-10-01'
+  reference: 'Until v1.4 legends could not leave the Legend Zone during play. v1.4 says they cannot typically
+    leave it. Old answer: never. Current: not normally.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: No, your Champion Legend cannot leave the Legend Zone during a game. The Legend Zone is specifically
+    designated as the space where each player's Champion Legend is placed and remains, and the rule explicitly
+    states that [quoted text from core@1.4:107.4 removed] [core@1.4:107.4.d]. This immutability ensures
+    that the Champion Legend stays in the Legend Zone throughout the game.
+- id: v-created-permanent-location-v1.3
+  verdict: correct
+  note: ''
+  question: If an effect creates a permanent without saying where, can I choose to put it at a battlefield?
+  as_of: '2026-05-27'
+  reference: 'In v1.3 a created permanent could go to any board location it could be played to. v1.4 sends
+    it to the appropriate zone for its type. Old answer: yes. Current: no choice. (No counterpart before
+    v1.3.)
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: 'Yes, if an effect creates a permanent without specifying where it is to be created, you can
+    choose to put it at a battlefield, provided that the permanent''s type determines its default creation
+    zone and that a battlefield is a valid location for that type.
+
+
+    According to [core@1.3:[quoted text from core@1.3:439.2 removed] for Battlefields. However, for other
+    types of permanents, such as Spells, Runes, or Legends, the default creation zone is specified separately.
+    For example, Spells go to the Chain, Runes to base, and Legends to the Legend Zone [core@1.3:439.2.b.1–b.3].
+
+
+    Since the effect does not specify a zone, the permanent is created to the appropriate zone for its
+    type [core@1.3:439.2.b]. If the permanent is a Battlefield, it is created to the Battlefield Zone
+    by default [core@1.3:439.2.b.4]. For other permanents, such as Units, the [quoted text from core@1.3:355.2
+    removed] [core@1.3:355.2.a]. Thus, if the permanent is a Unit, and the effect does not specify a location,
+    it may be placed at a battlefield, as long as that location is valid for the unit type.
+
+
+    Therefore, if the permanent is a Unit, and the effect does not specify a location, placing it at a
+    battlefield is allowed because battlefields are valid locations for Units under normal rules [core@1.3:355.2.a].
+
+
+    However, if the permanent is not a Unit (e.g., a Spell, Rune, or Legend), it will be created to a
+    different zone by default, and placing it at a battlefield would not be the default or permitted action.
+
+
+    Thus, whether you can choose to put it at a battlefield depends'
+- id: v-ready-phase-v1.3
+  verdict: correct
+  note: ''
+  question: During which part of my turn do I ready my units and gear?
+  as_of: '2026-05-27'
+  reference: 'Phase rename. Until v1.4: the Ready Step of the Beginning Phase. v1.4: the Awakening Phase.
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: During the Awaken Phase of the Start of Turn, you ready your units and gear. Specifically, the
+    Turn Player readsies [quoted text from core@1.3:315.1 removed] during this phase [core@1.3:315.1.a].
+    This occurs as part of the Beginning Phase on their turn [core@1.3:415.3.a].
+- id: v-created-token-played-current
+  verdict: incorrect
+  note: ''
+  question: When an effect creates a unit token, does that count as playing it?
+  as_of: '2026-10-01'
+  reference: 'Until v1.4 tokens "are played" when their card type is played. v1.4 says they "can be" played
+    and qualifies the creation rule with "if the token is played". Old answer: yes. Current: not necessarily.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: Yes, when an effect creates a unit token, that counts as playing it. According to rule 185.2.a,
+    token units [quoted text from core@1.4:185.2 removed] [core@1.4:185.2.a]. Additionally, rule 350.2
+    states that tokens are not cards, but can still be played [core@1.4:350.2]. Therefore, the creation
+    of a unit token through an effect constitutes playing the token, as it follows the steps for playing
+    a card and is subject to the same rules.
+- id: v-replacement-from-triggered-v1.1
+  verdict: correct
+  note: ''
+  question: Can a triggered ability be a replacement effect?
+  as_of: '2025-11-17'
+  reference: 'v1.1 said triggered abilities can be replacement effects. From v1.2 it is passive abilities.
+    Old answer: yes. Answer since v1.2: no, passive ones.
+
+
+    This question is dated 2025-11-17, so the right answer is the OLD answer described above.'
+  answer: Yes, a triggered ability can be a replacement effect. This is supported by the passage stating
+    that "Triggered Abilities can be Replacement Effects" [core@1.1:365.2].
+- id: v-accelerate-two-domains-v1.3
+  verdict: correct
+  note: ''
+  question: For a unit with two domains, can I pay the power part of its Accelerate cost with power of
+    any domain?
+  as_of: '2026-05-27'
+  reference: 'Until v1.4 a unit with no domain or with more than one domain could pay Accelerate''s power
+    with power of any domain. v1.4 keeps that only for a unit with no domain. Old answer: yes. Current:
+    no.
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: Yes, for a unit with two domains, you can pay the power part of its Accelerate cost with power
+    of any domain. This is because, according to rule [quoted text from core@1.3:805.1 removed]) [core@1.3:805.1.a.2].
+    Since a unit with two domains falls under the "more than one domain" category, the condition applies.
+    Additionally, [A] represents power of any domain as defined in rule 135.2.e.5 [core@1.3:135.2.e.5].
+- id: v-rune-pool-empties-current
+  verdict: correct
+  note: ''
+  question: When does my Rune Pool empty during my turn?
+  as_of: '2026-10-01'
+  reference: 'Until v1.4 the Rune Pool emptied at the end of each player''s draw phase (and at end of
+    turn). v1.4 moves the first emptying to the start of each player''s Main Phase.
+
+
+    This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
+  answer: Your [quoted text from core@1.4:167.1 removed] at the end of each player's turn [core@1.4:167.1].
+- id: v-c-cost-two-domains-v1.3
+  verdict: correct
+  note: ''
+  question: On a card with two domains, how is a [C] in its cost paid?
+  as_of: '2026-05-27'
+  reference: 'Until v1.4 a [C] on a card with no domain or several domains was treated as [A], a power
+    of any domain. v1.4 keeps that only for cards with no domain.
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: 'The retrieved passages do not provide information on how a [C] in the cost of a card with two
+    domains is paid. While rule 135.2.e.6.b states that [quoted text from core@1.3:135.2 removed]], this
+    refers to how the shorthand is interpreted on the card, not how a [C] in the cost is paid. There is
+    no rule addressing the payment of [C] when it appears in the cost of a card with two domains. Therefore,
+    based on the provided passages, the question cannot be answered.
+
+
+    [core@1.3:135.2.e.6.b]'
+- id: v-legion-countered-spell-v1.2
+  verdict: correct
+  note: ''
+  question: If my spell gets countered, does it still count as having played a card this turn for Legion?
+  as_of: '2026-02-04'
+  reference: 'Up to v1.2 Legion was satisfied by its controller playing another card (728.2 / 738.2),
+    and a countered card was not played, including for abilities that check whether cards were played
+    (406.4, 406.4.b). v1.3 rewrote Legion to check whether another card was Finalized, Riot''s Unleashed
+    FAQ confirmed that a countered spell still turns Legion on, and v1.4 wrote that into 419.4.b with
+    the Defy example. Old answer (v1.1-1.2): no. Answer since v1.3: yes.
+
+
+    This question is dated 2026-02-04, so the right answer is the OLD answer described above.'
+  answer: No, if my spell gets countered, it does not count as having played a card this turn for Legion.
+    Countering a card negates its execution and does not count as a play, meaning the card is not considered
+    to have been played [core@1.2:412.1]. Since Legion's condition depends on having played a Main Deck
+    card this turn [core@1.2:738.1.c.2], and a countered card is not considered played, the Legion condition
+    will not be satisfied by that card. Therefore, the spell does not count as having been played for
+    the purpose of triggering Legion effects.
+- id: v-no-result-staging-v1.3
+  verdict: correct
+  note: ''
+  question: If a combat ends with No Result and both players still have units there, what gets staged
+    at that battlefield?
+  as_of: '2026-05-27'
+  reference: 'In v1.3 a combat was staged. v1.4 stages a showdown and a combat. (The rule has no counterpart
+    before v1.3.)
+
+
+    This question is dated 2026-05-27, so the right answer is the OLD answer described above.'
+  answer: If a combat ends with "No Result" and both players still have units there, a Combat is staged
+    at that battlefield [core@1.3:461.3.d.1]. This is because "No Result" occurs when either both players
+    have units present or neither does, and [quoted text from core@1.3:461.3 removed] [core@1.3:461.3.d.1].
+    This staged combat remains active as long as there are units from opposing players present at the
+    battlefield [core@1.3:323.9.a].
