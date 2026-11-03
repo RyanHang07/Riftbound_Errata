@@ -158,3 +158,9 @@ def test_no_kappa_against_another_runs_labels(
     )
     monkeypatch.setattr(answers, "REVIEW", review)
     assert "No kappa here" in answers.agreement_lines({"a": "correct"}, "agent-y")[0]
+
+
+def test_identical_counts_prompts_with_one_distinct_output() -> None:
+    from rb_errata.determinism import identical
+
+    assert identical([["a", "a", "a"], ["a", "b", "a"], ["c", "c", "c"]]) == 2

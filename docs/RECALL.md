@@ -911,3 +911,20 @@ model treats an authoritative-sounding instruction as one wherever it sits.
 retrieved text with instructions at all: only Riot's documents are ingested
 (the corpus has no such text), and anything third-party (card text, future
 FAQs) needs the same provenance rule before it enters.
+
+## Determinism check: is identical input identical output?
+
+A54 found GPU generation not repeatable at temperature 0 with a fixed seed.
+`make determinism`: 10 seeded questions, each prompt built once, then
+generated 3 times on the GPU and 3 times on the CPU only (`num_gpu = 0`).
+Reported: per placement, how many prompts gave the same text all 3 times.
+Answers are stored as hashes and lengths only.
+
+### Prediction (written 2026-11-03, before it runs)
+
+- **GPU: about half** the prompts (5 of 10) give identical text all 3
+  times (A54: 49 of 100 differed in length across two runs).
+- **CPU: all 10** identical. Without GPU batching and parallel kernels,
+  llama.cpp's CPU path at temperature 0 should be deterministic.
+- If both hold, CPU runs become the reference for any comparison that has to
+  separate an effect from noise, at about 20 times the time.

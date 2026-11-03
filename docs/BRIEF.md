@@ -2013,3 +2013,17 @@ are ingested) is the defence, not the prompt.
   only), extended to any third-party text before slice 10 ingests it.
 - Fixed: a run's report computed kappa against hand labels from a different
   run; kappa now appears only for the labelled run.
+
+### A55. Closing the remaining steps (2026-11-03)
+
+- `make integrate V= NOTES=`: the whole new-version path (register, fetch,
+  dates, impact, ingest, recall, mcp-check), each step its own process
+  because the registry is loaded at import; stops at the first failure, and
+  before ingest if the new version's effective date was not parsed (tested).
+- The date parser is tested on Radiance's two quoted phrasings (title
+  "Effective October 16, 2026" and "effective starting from the Radiance
+  Pre-Rift events on October 16, 2026"): 2026-10-16, stated.
+- `make determinism` (prediction committed): the same 10 prompts 3 times on
+  the GPU and 3 times on the CPU, hashes only.
+- Open, and the user's alone: reading Riot's legal pages, which gates slice
+  10 (card database) and deploying the site.

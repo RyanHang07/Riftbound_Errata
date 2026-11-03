@@ -95,3 +95,30 @@ def test_appended_entry_keeps_the_registry_valid() -> None:
 def test_add_version_refuses_bad_input(version: str, notes: str, match: str) -> None:
     with pytest.raises(SystemExit, match=match):
         updates.check_new(version, notes, CORE_RULES)
+
+
+def test_integrate_stops_before_ingest_without_an_effective_date(
+    tmp_path: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import json
+    import subprocess
+    from types import SimpleNamespace
+
+    ran: list[tuple[str, ...]] = []
+
+    def fake_run(cmd: list[str], **_: Any) -> Any:
+        ran.append(tuple(cmd[3:]))
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    dates = tmp_path / "dates.json"
+    dates.write_text(json.dumps([{"version": "9.0", "status": "unknown", "reason": "ambiguous"}]))
+    assert updates.integrate("9.0", "https://playriftbound.com/x", dates) == 1
+    assert [r[0] for r in ran] == ["add-version", "fetch", "dates"]  # never ingest
+
+    ran.clear()
+    dates.write_text(json.dumps([{"version": "9.0", "status": "known", "effective": "2030-01-01",
+                                  "basis": "stated"}]))  # fmt: skip
+    assert updates.integrate("9.0", "https://playriftbound.com/x", dates) == 0
+    assert [r[0] for r in ran] == ["add-version", "fetch", "dates", "version-impact", "ingest",
+                                   "recall", "mcp-check"]  # fmt: skip

@@ -143,3 +143,27 @@ def test_dates_in_related_articles_are_not_this_articles_date() -> None:
     )
     r = find_effective_date("1.4", URL, page)
     assert (r.status, r.effective) == ("known", "2026-07-24")
+
+
+RADIANCE = (
+    "<html><head><title>Core Rules: Radiance Patch Notes (Effective October 16, 2026)</title>"
+    "</head><body><h1>Core Rules: Radiance Patch Notes (Effective October 16, 2026)</h1>"
+    "<p>These rules are effective starting from the Radiance Pre-Rift events on October 16, "
+    "2026.</p><p>Three new keywords arrive: Deploy, Disarm and Show Off.</p></body></html>"
+)
+
+
+def test_radiance_wording_parses_to_one_date() -> None:
+    # Slice 18: the two phrasings search results quote from Riot's Radiance
+    # page (the page itself is blocked from the cloud session). Both must give
+    # 16 Oct, or `make dates` would refuse v1.5 on the user's machine.
+    r = find_effective_date("1.5", URL, RADIANCE)
+    assert (r.status, r.effective, r.basis) == ("known", "2026-10-16", "stated")
+
+
+def test_a_second_effective_date_on_the_page_is_refused_not_guessed() -> None:
+    page = RADIANCE.replace(
+        "</body>", "<p>The Vendetta rules were effective from July 24, 2026.</p></body>"
+    )
+    r = find_effective_date("1.5", URL, page)
+    assert r.status == "unknown" and "ambiguous" in r.reason

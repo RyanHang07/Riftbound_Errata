@@ -339,6 +339,21 @@ def _injection_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _determinism(_: argparse.Namespace) -> int:
+    from rb_errata.determinism import run
+
+    out = run(config.load())
+    print((out / "report.md").read_text())
+    print(f"written to {out}/")
+    return 0
+
+
+def _integrate(args: argparse.Namespace) -> int:
+    from rb_errata.ingest.updates import integrate
+
+    return integrate(args.version, args.notes)
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -463,6 +478,8 @@ def main(argv: list[str] | None = None) -> int:
         "ask": (_ask, "slice 14: ask the agent one question"),
         "injection": (_injection, "slice 16: planted-passage attacks against four prompts"),
         "injection-report": (_injection_report, "slice 16: recompute the injection report"),
+        "determinism": (_determinism, "same prompts 3x on GPU and 3x on CPU: identical?"),
+        "integrate": (_integrate, "slice 18: the whole new-version path, stopping safely"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -516,6 +533,9 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument(
                 "--resume", help="continue a stopped run: its evals/runs/answers-... dir"
             )
+        if name == "integrate":
+            p.add_argument("version", help="MAJOR.MINOR, like 1.5")
+            p.add_argument("--notes", required=True, help="Riot's patch notes URL")
         if name == "version-impact":
             p.add_argument("version")
         if name == "recall-compare":

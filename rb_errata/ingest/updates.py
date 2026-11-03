@@ -23,6 +23,7 @@ which is a person's job.
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import subprocess
 from pathlib import Path
@@ -270,3 +271,49 @@ def write_impact(version: str) -> Path:
     out = IMPACT / f"core-{version}.md"
     out.write_text("\n".join(impact(version)) + "\n")
     return out
+
+
+# --- one command for the whole path ------------------------------------------------
+
+
+def integrate(
+    version: str, notes: str, effective_file: Path = Path("data/effective_dates.json")
+) -> int:
+    """Every step of the new-version path, each as its own process.
+
+    Separate processes because `add-version` changes the registry that every
+    module loads at import; an in-process chain would ingest with the old one.
+    Stops at the first failing step, and before the database is rebuilt if the
+    new version's effective date was not parsed: A16 would refuse it anyway,
+    and a corpus rebuilt without it would only look up to date.
+    """
+    import sys
+
+    def step(*args: str) -> int:
+        print(f"\n=== make {' '.join(args)}", flush=True)
+        return subprocess.run([sys.executable, "-m", "rb_errata.cli", *args]).returncode
+
+    registered = [d.version for d in sources.load(sources.REGISTRY)]
+    if version not in registered and step("add-version", version, "--notes", notes):
+        return 1
+    for name in ("fetch", "dates"):
+        if step(name):
+            return 1
+    dated = {r["version"]: r for r in json.loads(effective_file.read_text())}
+    if dated.get(version, {}).get("status") != "known":
+        reason = dated.get(version, {}).get("reason", "no row")
+        print(f"\nSTOP: v{version}'s effective date was not parsed ({reason}).\n"
+              "Run `make dates-debug` and paste its output; nothing was re-ingested.")  # fmt: skip
+        return 1
+    print(f"\nv{version} effective {dated[version]['effective']} ({dated[version]['basis']})")
+    later: list[tuple[str, ...]] = [
+        ("version-impact", version),
+        ("ingest",),
+        ("recall", "--method", "as-of"),
+        ("mcp-check",),
+    ]
+    for args in later:
+        if step(*args):
+            return 1
+    print(f"\nv{version} integrated. Commit data/, evals/ and push.")
+    return 0
