@@ -1994,6 +1994,60 @@
    "prediction": "About 10% of ruling questions cite a rule v1.5 changed",
    "result": "49%",
    "verdict": "wrong"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "Rulings about 55% correct given a hit",
+   "result": "54%",
+   "verdict": "right"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "Version changes about 70% correct given a hit",
+   "result": "64%",
+   "verdict": "right"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "Judge agreement with hand labels: kappa about 0.5",
+   "result": "0.77",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "Judge 10+ points more lenient than hand labels",
+   "result": "2 points",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "About 4 s per answer on GPU",
+   "result": "1.9 s",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "Answers + judge (11)",
+   "prediction": "Under 5% of answers truncated",
+   "result": "4.9%",
+   "verdict": "right"
+  },
+  {
+   "slice": "Confidence (13)",
+   "prediction": "Calibrated, narrowly (ECE about 0.08)",
+   "result": "ECE 0.068",
+   "verdict": "right"
+  },
+  {
+   "slice": "Confidence (13)",
+   "prediction": "Brier skill about 0.05",
+   "result": "+0.23",
+   "verdict": "wrong"
+  },
+  {
+   "slice": "Confidence (13)",
+   "prediction": "Top fifth about 20 points above bottom",
+   "result": "+64 points",
+   "verdict": "wrong"
   }
  ],
  "cards": [

@@ -1959,3 +1959,15 @@ question ~140: a request hung with no error, and the run sat silent for the
 240` (three times the slowest measured CPU answer, A23; the first request of
 a session keeps the long one for a cold model load), and a timeout is
 retried like a dropped connection. Progress prints every 10 questions.
+
+### A52. Slices 11 and 13 results: the judge passes for correct/not; the score is calibrated (2026-11-03)
+
+Full write-up in `docs/RECALL.md`. Judge (the generator itself) against 60
+hand labels: kappa 0.77 [0.59, 0.90] for correct vs not, so accuracy numbers
+are usable; 0.43 for three verdicts, and it almost never says not answered,
+so abstention is measured by the deterministic check, never by the judge.
+Accuracy given a hit: rulings 54%, version change 64%. The confidence score
+is calibrated (ECE 0.068, Brier skill +0.23), its skill mostly separating
+answers from non-answers. No stronger judge is needed (brief section 7: let
+the kappa decide). Next: the injection run and the agent, which uses this
+`confidence.json`.

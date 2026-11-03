@@ -731,3 +731,74 @@ slice: adopting a defence means a new template hash and a slice 11 rerun.
   Weakest: the instruction leak, under **5%** everywhere.
 - **Datamarking costs answers:** among attacked cases, fewer answers still
   cite a real retrieved rule than with the framed prompt.
+
+### Results: `evals/runs/answers-qwen3-2026-11-03T0511Z` (user's GPU)
+
+224 answers, 100% on GPU, median 1.91 s each (p90 3.60), 2 dropped
+connections retried, 2 manual restarts after hangs (A51), 11 stopped at the
+token cap, 99 had copied rule text removed. Judge: the generator itself, 298 s.
+
+| stratum | judged accuracy given a hit | unconditioned |
+|---|---|---|
+| expert rulings | 54/100 = 54% [44, 63] | 64/160 = 40% [33, 48] |
+| FAQ rulings | 0/3 | 0/8 |
+| version change | 29/45 = 64% [50, 77] | 37/56 = 66% [53, 77] |
+
+**Judge against 60 hand labels:** correct vs not, kappa **0.77 [0.59,
+0.90]**, substantial; three verdicts, kappa 0.43 [0.31, 0.56]. "Correct"
+rate: hand 53%, judge 55%. The hand labels are the user's, with 8 of 60
+revised after Claude's second read and before the judge ran (each noted in
+`evals/answer_review.yaml`), so kappa measures agreement with that reviewed
+set, not with one person's first pass.
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| rulings about 55% given a hit (40 to 70) | 54% | Right. |
+| version change about 70% (55 to 85) | 64% | Right. |
+| unconditioned about 10 points lower on rulings | 14 points lower | Close. |
+| kappa about 0.5 (0.3 to 0.7) | 0.77 binary; 0.43 three-way | **Wrong**: better on the headline split. |
+| judge 10+ points more lenient | 2 points (55% vs 53%) | **Wrong.** |
+| about 4 s per answer on GPU | 1.91 s | **Wrong**: twice as fast. |
+| quote guard on about 30% | 44% (99 of 224) | **Wrong.** |
+| under 5% truncated | 4.9% (11) | Right, barely. |
+
+**What it says:**
+- **The judge is usable for correct against not correct, and only for
+  that.** It used "not_answered" 3 times in 224. Of the 19 answers hand-
+  labelled not answered, it called 15 incorrect and **4 correct**; of the 80
+  answers that say the passages do not cover the question (the deterministic
+  abstention check in `confidence.py`), it called 23 correct. So accuracy
+  figures stand; the judge's not-answered count does not, and abstention is
+  measured by the deterministic check instead.
+- **The generator abstains even when retrieval worked.** 45 of the 148
+  answers whose right rule was in the top 5 say the passages do not cover
+  the question, mostly on card questions: the rule is there, the card's own
+  text is not. Slice 10 (card database) is the lever for answers too.
+- **The quote guard can hide the conclusion.** In some answers the removed
+  run was the sentence that answered the question (`v-rune-pool-empties-
+  current`). The judge saw the same text as the hand labeller, so the
+  comparison is fair, but a guarded answer is harder to read.
+- FAQ rulings: 0 of 8, too few to say more than "none".
+
+### Results: `confidence.md` in the same run
+
+**Calibrated:** ECE 0.068 (pass at most 0.10), Brier 0.190 against 0.248 for
+the base rate (skill +0.23). Bins, low to high: 1% / 33% / 54% / 65% / 71%
+predicted against 0% / 51% / 51% / 60% / 64% observed.
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| "in effect" and "versions disagree" constant | both constant | Right. |
+| abstention and citation signals dominate, distance little | citations +0.95, abstains -0.32, distance -0.10 | Right. |
+| ECE about 0.08, calibrated narrowly | 0.068, calibrated | Right. |
+| Brier skill about 0.05 | +0.23 | **Wrong**: much better. |
+| top fifth about 20 points above bottom | +64 points | **Wrong**: much larger. |
+
+**What it says:** most of the skill is telling answers from non-answers. The
+bottom fifth (no citation; 1% predicted, 0% correct) is answers that cite
+nothing. Among answers that do answer (bins 2 to 5) observed accuracy only
+rises from 51% to 64%, and bin 2 is under-confident (33% predicted, 51%
+observed). For the agent that is the useful part: a re-search below 0.5
+fires mostly on answers that found nothing. "Cites any" and "cites only in
+effect" are identical under the date filter (172 of 224 each), so their
+weights split one signal.
