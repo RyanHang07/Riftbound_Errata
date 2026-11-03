@@ -1,0 +1,1131 @@
+{
+ "captured_at": "2026-11-03T08:02:45+00:00",
+ "judge_model": "qwen3:4b-instruct-2507-q4_K_M",
+ "judge_digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+ "template_sha256": "a326d5d4b29386f57370e88cd82280ecab0d15fb879717d41d1b23de19173fc9",
+ "gpu_fraction": 1.0,
+ "cpu_only": false,
+ "seconds": 369.1,
+ "judgments": [
+  {
+   "id": "r-abandoned-hall-countered-spell",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Abandoned Hall's ability does not trigger if the spell is countered, consistent with the reference answer."
+  },
+  {
+   "id": "r-abandoned-hall-movement-eligibility",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that no information is available in the retrieved passages to determine whether a unit moved into or away from Abandoned Hall can be targeted."
+  },
+  {
+   "id": "r-abandoned-hall-replay",
+   "verdict": "incorrect",
+   "reason": "The answer states it is not possible to determine based on the content, contradicting the reference answer which clearly concludes 'yes'."
+  },
+  {
+   "id": "r-akshan-mischievous-aurora-timing",
+   "verdict": "incorrect",
+   "reason": "The answer states it is not possible to determine due to lack of relevant passages, but the reference answer clearly concludes 'No', so it contradicts the correct conclusion."
+  },
+  {
+   "id": "r-akshan-mischievous-dual-akshan-control",
+   "verdict": "incorrect",
+   "reason": "The answer states the information is not available, but the reference answer clearly specifies that the surviving Akshan controls the gear when either dies."
+  },
+  {
+   "id": "r-alpha-strike-targeting",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that targets are finalized when the spell is placed on the chain, contradicting the reference which says targets are finalized when the spell is finalizing, and that the number of targets cannot exceed the damage available from the friendly unit's might."
+  },
+  {
+   "id": "r-alpha-strike-split-distribution",
+   "verdict": "correct",
+   "reason": "The answer correctly states that Alpha Strike's damage is distributed during resolution, limited by the friendly unit's might, and that targets are adjusted if there are more than the available damage."
+  },
+  {
+   "id": "r-alpha-strike-might-reduction",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that a reduction in Might affects whether the unit is 'Mighty' and introduces a new condition about dropping below 5, while the reference answer only addresses damage splitting and damage assignment based on reduced might, with no mention of a 'Mighty' threshold."
+  },
+  {
+   "id": "r-alpha-strike-illegal-friendly-target",
+   "verdict": "correct",
+   "reason": "The answer concludes that Alpha Strike deals no damage if the chosen friendly unit leaves the board or becomes illegal before resolution, matching the reference answer's conclusion."
+  },
+  {
+   "id": "r-alpha-strike-illegal-enemy-target",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that if a chosen enemy unit becomes illegal or leaves the battlefield before Alpha Strike resolves, it is no longer a legal target and damage is only split among remaining valid targets."
+  },
+  {
+   "id": "r-aphelios-exalted-equipment-copy-effects",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer provides a clear conclusion about the interaction."
+  },
+  {
+   "id": "r-applied-researchers-other-spell-costs",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly concludes that the information is not available, while the reference answer clearly states that Applied Researchers does reduce Repeat, Flow, and Deflect costs under specific conditions."
+  },
+  {
+   "id": "r-applied-researchers-shock-blast-cost",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly concludes that the information is not available, while the reference answer clearly states that Applied Researchers can reduce Shock Blast's cost to zero under the rules."
+  },
+  {
+   "id": "r-arcane-shift-replay-at-same-battlefield",
+   "verdict": "incorrect",
+   "reason": "The reference answer states that it is allowed, while the graded answer concludes it is not allowed, reaching a contradictory conclusion."
+  },
+  {
+   "id": "r-astral-heron-trigger-timing",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, contradicting the reference answer which clearly specifies when and how Astral Heron triggers and discounts cards."
+  },
+  {
+   "id": "r-astral-heron-self-trigger",
+   "verdict": "correct",
+   "reason": "The answer concludes that Astral Heron's ability triggers when it is the first card played and entered to the battlefield, consistent with the reference answer."
+  },
+  {
+   "id": "r-astral-heron-moved-during-resolution",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer clearly concludes that Astral Heron does not trigger under the given conditions."
+  },
+  {
+   "id": "r-astral-heron-removed-in-response",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the cost reduction cannot be stopped after the ability is on the chain, aligning with the reference answer."
+  },
+  {
+   "id": "r-astral-heron-discount-after-counter",
+   "verdict": "incorrect",
+   "reason": "The answer states that no information is provided, contradicting the reference answer which clearly concludes 'No'."
+  },
+  {
+   "id": "r-azir-sovereign-attack-trigger-without-azir",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the retrieved passages do not provide sufficient information to determine whether token units move, aligning with the reference answer's conclusion."
+  },
+  {
+   "id": "r-baited-hook-kill-reaction-window",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the opponent can react before Baited Hook kills the unit."
+  },
+  {
+   "id": "r-baited-hook-illegal-target",
+   "verdict": "correct",
+   "reason": "The answer correctly states that the unit is no longer a legal target, its might is null, and no unit can be chosen from the top 5 cards, which aligns with the reference answer's conclusion."
+  },
+  {
+   "id": "r-baited-hook-deathknell-order",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, but the reference answer clearly states the sequence and concludes that Deathknell resolves after the unit played by Baited Hook and its triggers."
+  },
+  {
+   "id": "r-baited-hook-karthus-deathknell-timing",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Glasc Mixologist's Deathknell does not trigger twice."
+  },
+  {
+   "id": "r-baron-nashor-creation-movement",
+   "verdict": "incorrect",
+   "reason": "The answer states that the information is not available, contradicting the reference answer which clearly concludes that Baron Nashor enters the Baron Pit directly."
+  },
+  {
+   "id": "r-baron-nashor-baron-pit-showdown",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is provided about what happens after Baron Nashor enters the Baron Pit, but the reference answer clearly describes the sequence of events, so it reaches a different conclusion."
+  },
+  {
+   "id": "r-baron-nashor-baron-pit-victory",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that the Baron Pit does not need to be scored to win by conquering, while the reference answer states that it does."
+  },
+  {
+   "id": "r-baron-nashor-might-loss-survival",
+   "verdict": "incorrect",
+   "reason": "The reference answer states that a unit can survive, while the graded answer concludes there is no information to determine this, contradicting the reference."
+  },
+  {
+   "id": "r-baron-nashor-warden-play-lock",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating the information is not available, while the reference clearly confirms that Baron Nashor can be played when an opponent's Mageseeker Warden is on the battlefield."
+  },
+  {
+   "id": "r-bone-skewer-targeting-protection",
+   "verdict": "incorrect",
+   "reason": "The answer concludes 'No' while the reference answer states 'Yes', contradicting the correct conclusion."
+  },
+  {
+   "id": "r-bone-skewer-stun-targeting",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that the passages do not provide sufficient information, contradicting the reference answer which states 'Yes' based on the rules."
+  },
+  {
+   "id": "r-bone-skewer-hide-instead-of-play",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the opponent cannot hide the unit instead of playing it, aligning with the reference answer."
+  },
+  {
+   "id": "r-bone-skewer-optional-additional-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a unit played for free by Bone Skewer can still get an effect for paying an optional additional cost."
+  },
+  {
+   "id": "r-brynhir-thundersong-existing-cards",
+   "verdict": "incorrect",
+   "reason": "The answer claims it is not possible to determine based on the reference material, but the reference clearly states that Brynhir Thundersong does not stop cards already on the chain."
+  },
+  {
+   "id": "r-call-to-battle-same-battlefield-destination",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a unit's current battlefield cannot be chosen as Call to Battle's destination, aligning with the reference answer."
+  },
+  {
+   "id": "r-consuming-curse-self-count",
+   "verdict": "incorrect",
+   "reason": "The answer states that the information is not available, but the reference answer clearly concludes that Consuming Curse does not count itself for bonus damage."
+  },
+  {
+   "id": "r-diana-lunari-trigger-resolution-order",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer clearly concludes that Diana's ability resolves after attack and defend abilities."
+  },
+  {
+   "id": "r-diana-lunari-ability-finalization-cost",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that the payment happens when the ability resolves, while the reference answer specifies it occurs during finalization, before opponents can react."
+  },
+  {
+   "id": "r-elder-dragon-combat-damage-assignment",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that the retrieved passages do not provide information on how Elder Dragon affects combat damage assignment, when the reference answer clearly explains that Elder Dragon does affect combat damage assignment by setting a lethal damage minimum of 1."
+  },
+  {
+   "id": "r-elder-dragon-lethal-damage-timing",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating the retrieved passages do not provide information, while the reference clearly explains that damage becomes lethal and reactions are not possible."
+  },
+  {
+   "id": "r-elder-dragon-zhonyas-target-timing",
+   "verdict": "incorrect",
+   "reason": "The reference answer explicitly states that Elder Dragon can target a unit after Zhonya's Hourglass recalls it, while the graded answer claims no information is available, contradicting the reference."
+  },
+  {
+   "id": "r-elder-dragon-zero-target-finalization",
+   "verdict": "incorrect",
+   "reason": "The answer claims it cannot be determined based on the passages, but the reference answer clearly states 'Yes' and provides a detailed reasoning based on the rules, so the conclusion differs."
+  },
+  {
+   "id": "r-emperors-dais-ability-finalization-cost",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating the information is not available, while the reference clearly explains when and how the cost is paid and the unit is returned."
+  },
+  {
+   "id": "r-emperors-dais-source-location",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer concludes that the Sand Soldier cannot be played if Emperor's Dais leaves without replacement, indicating a specific outcome based on the rules."
+  },
+  {
+   "id": "r-endless-riches-draw-phase-duration",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer clearly states that Endless Riches skips Draw Phases as long as it remains on the board."
+  },
+  {
+   "id": "r-endless-riches-hide-from-trash",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that hiding cards from the trash is not permitted, consistent with the reference answer."
+  },
+  {
+   "id": "r-endless-riches-recycle-destination",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly concludes that no information is available, while the reference answer clearly states that the spell is recycled in both possible orders of effect application."
+  },
+  {
+   "id": "r-ezreal-prodigy-optional-additional-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Ezreal reduces optional additional costs."
+  },
+  {
+   "id": "r-fallen-feline-existing-spells",
+   "verdict": "incorrect",
+   "reason": "The answer claims it is not possible to determine based on the provided content, but the reference answer clearly concludes that Fallen Feline does not stop a named spell already on the chain."
+  },
+  {
+   "id": "r-fallen-feline-naming-timing",
+   "verdict": "incorrect",
+   "reason": "The answer states that no information is available, contradicting the reference answer which clearly specifies the timing of reaction to Fallen Feline's play effect."
+  },
+  {
+   "id": "r-flash-target-in-base",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that Flash cannot target a unit already in base, contradicting the reference answer which states that Flash can."
+  },
+  {
+   "id": "r-gangplank-naval-partial-resolution",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the provided passages do not contain information about Gangplank, Naval or its interaction with spell resolution, thus agreeing with the reference answer's implication that the rest of the spell still resolves based on existing rules."
+  },
+  {
+   "id": "r-gangplank-naval-switcheroo-might-reduction",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer clearly explains what happens, so it contradicts the conclusion of the reference."
+  },
+  {
+   "id": "r-glasc-mixologist-same-event-target",
+   "verdict": "incorrect",
+   "reason": "The answer states it cannot be determined from the reference material, but the reference answer explicitly confirms that Glasc Mixologist's Deathknell can target a unit that died from the same event."
+  },
+  {
+   "id": "r-glasc-mixologist-play-to-same-battlefield",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that Deathknell cannot play a unit to the battlefield, contradicting the reference answer which states it can, under the given conditions."
+  },
+  {
+   "id": "r-glasc-mixologist-deathknell-combat-result",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the provided passages do not contain information about Glasc Mixologist or the specific scenario, matching the reference answer's conclusion that the situation cannot be determined from the given material."
+  },
+  {
+   "id": "r-heedless-resurrection-countered-additional-cost",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the killed unit is not returned if Heedless Resurrection is countered."
+  },
+  {
+   "id": "r-heedless-resurrection-self-resurrection",
+   "verdict": "incorrect",
+   "reason": "The answer states that the information is not available, while the reference answer clearly concludes that it is not possible to kill and resurrect a unit with Heedless Resurrection."
+  },
+  {
+   "id": "r-heedless-resurrection-ignore-additional-costs",
+   "verdict": "incorrect",
+   "reason": "The answer states it is not possible to determine based on the reference material, while the reference clearly concludes that additional costs like Accelerate are not ignored."
+  },
+  {
+   "id": "r-heedless-resurrection-repeat-cost",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that no friendly unit must be killed for each repetition, aligning with the reference answer despite lacking direct card text."
+  },
+  {
+   "id": "r-hidden-blade-draw-if-not-killed",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that no draw occurs when the kill is prevented or replaced, contradicting the reference answer which states that a draw occurs if the unit remains on the board."
+  },
+  {
+   "id": "r-hidden-blade-draw-if-illegal",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the target's controller does not draw when Hidden Blade's target becomes illegal."
+  },
+  {
+   "id": "r-irelia-fervent-targeting-before-counter",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that Irelia does not get +1 Might, while the reference answer states she does."
+  },
+  {
+   "id": "r-irelia-fervent-blade-dancer",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, while the reference answer clearly concludes that Blade Dancer's ability does trigger Irelia's +1 might under specific conditions."
+  },
+  {
+   "id": "r-irelia-fervent-awaken-phase-readying",
+   "verdict": "incorrect",
+   "reason": "The reference answer states 'Yes', while the graded answer concludes 'No information is provided', reaching a different conclusion."
+  },
+  {
+   "id": "r-irelia-fervent-repeat-targeting-twice",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by concluding that +1 Might is not applied twice, while the reference states it is applied twice when Repeat is used."
+  },
+  {
+   "id": "r-irresistible-faefolk-combat-attacker",
+   "verdict": "incorrect",
+   "reason": "The answer concludes there is no attacker, but the reference answer states Irresistible Faefolk's controller is the attacker."
+  },
+  {
+   "id": "r-irresistible-faefolk-playing-vs-moving",
+   "verdict": "incorrect",
+   "reason": "The answer states it is not possible to determine based on the passages, while the reference answer clearly concludes 'No'."
+  },
+  {
+   "id": "r-irresistible-faefolk-removed-in-response",
+   "verdict": "correct",
+   "reason": "The answer concludes that the enemy unit still moves, consistent with the reference answer."
+  },
+  {
+   "id": "r-karthus-eternal-simultaneous-deathknell",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, but the reference answer clearly concludes that Karthus's ability does apply under specific simultaneous death conditions."
+  },
+  {
+   "id": "r-karthus-eternal-countering-dual-deathknells",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the provided information does not allow determination of whether a single Not So Fast counter both Deathknell triggers, aligning with the reference answer's conclusion that it is not possible to determine based on the rules given."
+  },
+  {
+   "id": "r-kennen-storm-of-shuriken-minefield-flow",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that the retrieved passages do not provide sufficient information, while the reference answer definitively states that Kennen cannot grant Flow under the given conditions."
+  },
+  {
+   "id": "r-khazix-mutating-horror-unit-play-in-response",
+   "verdict": "correct",
+   "reason": "Both answers conclude that an opponent cannot play a unit in reaction to prevent Kha'Zix, Mutating Horror's effect."
+  },
+  {
+   "id": "r-khazix-mutating-horror-trigger-per-combat",
+   "verdict": "incorrect",
+   "reason": "The answer to grade concludes that the information is not available, while the reference answer clearly states that Kha'Zix, Mutating Horror can trigger multiple times in the same turn."
+  },
+  {
+   "id": "r-lacerate-targeting-restriction",
+   "verdict": "incorrect",
+   "reason": "The answer states Lacerate cannot target units with more than 3 Might, contradicting the reference answer that it can target any legal unit regardless of might."
+  },
+  {
+   "id": "r-lilting-lullaby-own-counter",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that you can still play spells after counteracting your own spell with Lilting Lullaby."
+  },
+  {
+   "id": "r-lotus-trap-combat-assignment",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Lotus Trap affects how much damage needs to be assigned in combat."
+  },
+  {
+   "id": "r-lux-crownguard-hard-bargain-payment",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that the information is not available, while the reference clearly concludes that Lux's ability cannot be used to pay for Hard Bargain."
+  },
+  {
+   "id": "r-nocturne-horrifying-burn-and-minefield",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Nocturne, Horrifying cannot be banished and played if moved to trash by Burn or Minefield."
+  },
+  {
+   "id": "r-promising-future-resolution",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating that the information is not available, when the reference clearly explains how Promising Future resolves."
+  },
+  {
+   "id": "r-promising-future-counterspells",
+   "verdict": "incorrect",
+   "reason": "The reference answer states 'Yes' under specific conditions, while the graded answer concludes 'No information is available' and asserts a negative conclusion without reaching the same factual outcome."
+  },
+  {
+   "id": "r-promising-future-gear-targeting",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that the passages contain no information about the cards, when the reference answer clearly addresses the scenario using the rules."
+  },
+  {
+   "id": "r-promising-future-brynhir-thundersong",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, but the reference answer clearly concludes that Brynhir Thundersong does stop the opponent's card from being played under specific conditions."
+  },
+  {
+   "id": "r-promising-future-akshan-aurora",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that no, you do not have to pay Akshan's additional cost before knowing whether you can take Dazzling Aurora."
+  },
+  {
+   "id": "r-promising-future-disarming-rake",
+   "verdict": "not_answered",
+   "reason": "The answer states that the reference material does not provide information about the specific cards or their interaction, concluding that it is not possible to determine the outcome, which contradicts the reference answer that explicitly states both cards can kill Dazzling Aurora under the given conditions."
+  },
+  {
+   "id": "r-promising-future-ravenbloom-prefect",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available in the reference material, but the reference answer clearly addresses and concludes that Ravenbloom Prefect can banish Dazzling Aurora under specific conditions."
+  },
+  {
+   "id": "r-rebuttal-power-payment-timing",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, contradicting the reference answer which clearly states when the choice occurs."
+  },
+  {
+   "id": "r-rebuttal-new-choices",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available about Rebuttal, but the reference answer explicitly addresses what choices can be remade when Rebuttal takes control."
+  },
+  {
+   "id": "r-rebuttal-hidden-target-restriction",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that it is not possible to determine whether Rebuttal can redirect a spell played from Hidden based on the provided passages, aligning with the reference answer's conclusion that no such information is available."
+  },
+  {
+   "id": "r-rebuttal-play-trigger-controller",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that 'when you play a spell' abilities trigger for the player who actually played the spell, but the reference answer states they trigger for the player who gains control of the spell after Rebuttal takes control, not the original player."
+  },
+  {
+   "id": "r-ruined-rex-heal-timing",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, but the reference answer states the timing clearly, so the conclusion differs."
+  },
+  {
+   "id": "r-ruined-rex-ferrous-forerunner-mechs",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Ruined Rex's Deathknell cannot target the Mech tokens created by Ferrous Forerunner's Deathknell."
+  },
+  {
+   "id": "r-sacrifice-countered-additional-cost",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that no information is provided about 'Sacrifice' or the effect of countering it on a killed unit, matching the reference answer's conclusion that the unit is not returned due to lack of rule support."
+  },
+  {
+   "id": "r-sacrifice-cost-reaction-window",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that the opponent can play a reaction, while the reference answer states that they cannot."
+  },
+  {
+   "id": "r-sacrifice-deathknell-before-spell",
+   "verdict": "incorrect",
+   "reason": "The answer to grade contradicts the reference by stating the information is not available, while the reference clearly concludes that Deathknell resolves before Sacrifice."
+  },
+  {
+   "id": "r-shadow-assassin-self-count",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the provided passages do not contain information about Shadow Assassin counting itself when played from trash, aligning with the reference answer's implication that it does not count itself."
+  },
+  {
+   "id": "r-shadowblade-lurker-self-count",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the information is not available in the reference material, consistent with the reference answer's implication that Shadowblade Lurker does not discount its own cost due to lack of supporting rules."
+  },
+  {
+   "id": "r-shady-spectacles-copying-temporary",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the retrieved passages do not provide sufficient information to determine whether a Reflection token with Temporary loses Temporary after Shady Spectacles makes it a copy of a unit that doesn't have Temporary."
+  },
+  {
+   "id": "r-smite-death-replacement-effects",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, while the reference answer clearly states that yes, these cards can save a unit from Smite under specific conditions."
+  },
+  {
+   "id": "r-sunken-temple-mighty-from-assault",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly concludes that no information is available, while the reference answer clearly states that Sunken Temple does trigger under the given conditions."
+  },
+  {
+   "id": "r-switcheroo-might-swap",
+   "verdict": "incorrect",
+   "reason": "The answer claims no information is available, contradicting the reference answer which fully explains how Switcheroo works."
+  },
+  {
+   "id": "r-switcheroo-existing-modifiers",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly concludes that the information is not available, while the reference answer clearly states that existing bonuses are not counted again and continue applying after Switcheroo resolves."
+  },
+  {
+   "id": "r-switcheroo-later-modifier-changes",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available in the passages, but the reference answer explicitly addresses what happens with Switcheroo and equipment/passives, concluding that the modifier change applies while Switcheroo's effect remains fixed."
+  },
+  {
+   "id": "r-switcheroo-negative-might",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating Switcheroo cannot result in negative might, while the reference explicitly says it can."
+  },
+  {
+   "id": "r-temporal-breach-hidden-targeting-restriction",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Temporal Breach from Hidden cannot banish a unit at a different battlefield."
+  },
+  {
+   "id": "r-temporal-breach-replayed-unit-state",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the unit does not retain temporary modifications or statuses when banished by Temporal Breach and re-played."
+  },
+  {
+   "id": "r-temporal-breach-attached-equipment",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the retrieved passages do not provide information about Temporal Breach or its effect on equipment, matching the reference answer's implication that the rules do not specify what happens to equipment when a unit is banished by Temporal Breach."
+  },
+  {
+   "id": "r-temporal-breach-replayed-combat-triggers",
+   "verdict": "incorrect",
+   "reason": "The graded answer concludes that no information is provided about Temporal Breach, but the reference answer confirms that Temporal Breach does allow a unit's attack or defend ability to trigger again during the same combat."
+  },
+  {
+   "id": "r-temporal-breach-ravenbloom-conservatory",
+   "verdict": "incorrect",
+   "reason": "The answer states that the retrieved passages do not contain information about the card or its interaction, implying it cannot be determined, but the reference answer clearly concludes 'No' and provides a detailed reasoning based on the rules."
+  },
+  {
+   "id": "r-temporal-breach-token-unit",
+   "verdict": "not_answered",
+   "reason": "The answer states that no information is available, while the reference answer asserts a specific outcome about token existence after banishment."
+  },
+  {
+   "id": "r-temporal-breach-optional-additional-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the information is insufficient due to the absence of reference to Temporal Breach in the rules, matching the reference answer's reasoning."
+  },
+  {
+   "id": "r-temporal-breach-mandatory-additional-cost",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the play fails and the card is not played when the owner cannot pay a mandatory additional cost."
+  },
+  {
+   "id": "r-temporal-breach-hide-instead-of-play",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the unit cannot be hidden instead of played after being banished."
+  },
+  {
+   "id": "r-temporal-breach-score-on-opponents-turn",
+   "verdict": "incorrect",
+   "reason": "The answer states that no information is provided about Temporal Breach, while the reference answer clearly concludes 'No' and explains the mechanics of how Temporal Breach works to prevent reconquering the same battlefield."
+  },
+  {
+   "id": "r-temporal-breach-prevented-replay",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the retrieved passages do not provide sufficient information to determine whether Rockfall Path or Brynhir Thundersong can stop a unit from being played after Temporal Breach banishes it."
+  },
+  {
+   "id": "r-thrill-of-the-hunt-score-on-opponents-turn",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Thrill of the Hunt cannot make a player conquer a battlefield they already control on their opponent's turn."
+  },
+  {
+   "id": "r-vex-apathetic-stun-targeting",
+   "verdict": "incorrect",
+   "reason": "The answer states it is not possible to determine based on the reference material, while the reference answer clearly concludes 'No'."
+  },
+  {
+   "id": "r-vex-cheerless-hidden-cost-increase",
+   "verdict": "incorrect",
+   "reason": "The reference answer states that Vex, Cheerless does increase the cost of enemy spells played from Hidden, while the graded answer concludes there is no information to determine this, contradicting the reference."
+  },
+  {
+   "id": "r-vex-cheerless-deflect-cost-reduction",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, but the reference answer confirms that Vex, Cheerless does reduce Deflect costs under the specified conditions."
+  },
+  {
+   "id": "r-abilities-triggered-ability-timing",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that triggered abilities can trigger on an opponent's turn without Reaction, aligning with the reference answer."
+  },
+  {
+   "id": "r-abilities-ability-reactions",
+   "verdict": "correct",
+   "reason": "The answer concludes that reactions to both triggered and activated abilities are permitted, consistent with the reference answer."
+  },
+  {
+   "id": "r-abilities-source-removal",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that removing the source at the time of trigger condition fulfillment stops the ability from triggering, which contradicts the reference answer that states the ability still resolves and does not stop."
+  },
+  {
+   "id": "r-abilities-trigger-time-conditions",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the game checks an 'if' condition only when it is immediately following the trigger condition, matching the reference answer."
+  },
+  {
+   "id": "r-abilities-optional-trigger-decision",
+   "verdict": "correct",
+   "reason": "The answer correctly states that 'you may' at the beginning of an effect is chosen during finalization and at a later point in the effect is chosen during resolution, matching the reference answer."
+  },
+  {
+   "id": "r-abilities-costs-within-instructions",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies that costs at the beginning of a triggered ability are paid during finalization and costs later in the effect are paid during resolution, matching the reference answer's conclusion."
+  },
+  {
+   "id": "r-chain-and-priority-unit-play-reactions",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that reactions can be played in response to units being played, which contradicts the reference answer that states you cannot react to a unit before it enters the board."
+  },
+  {
+   "id": "r-chain-and-priority-pending-item-order",
+   "verdict": "correct",
+   "reason": "The answer correctly states that pending items are finalized in the order they were added, from oldest to newest, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "r-chain-and-priority-partial-chain-reactions",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that reactions cannot be played after partial resolution, contradicting the reference answer which states that a reaction can be played after one but not all items have resolved."
+  },
+  {
+   "id": "r-chain-and-priority-empty-battlefield-control",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that control is not lost immediately when the last unit leaves, but only during cleanup under specific conditions."
+  },
+  {
+   "id": "r-costs-and-payments-total-cost-determination",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that cost increases or decreases are applied in any order, contradicting the reference answer which specifies a strict sequence of five stages with specific application orders."
+  },
+  {
+   "id": "r-costs-and-payments-countered-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that paid costs are not refunded when a card or ability is countered, matching the reference answer."
+  },
+  {
+   "id": "r-costs-and-payments-optional-additional-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies optional additional costs as costs that may be paid and are specified with 'may' and 'as an additional cost', aligning with the reference answer's conclusion."
+  },
+  {
+   "id": "r-costs-and-payments-ignored-costs",
+   "verdict": "correct",
+   "reason": "The answer correctly states that only the specifically ignored cost is set to zero, and other costs like power cost or additional increases still apply, matching the reference answer's conclusion."
+  },
+  {
+   "id": "r-costs-and-payments-cost-reaction-window",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that players cannot react while costs are being paid."
+  },
+  {
+   "id": "r-movement-entering-board",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a unit does not move when it enters the board."
+  },
+  {
+   "id": "r-movement-chosen-destination",
+   "verdict": "correct",
+   "reason": "Both answers conclude that a unit cannot choose its current location as a move destination."
+  },
+  {
+   "id": "r-movement-failed-move-linked-instructions",
+   "verdict": "correct",
+   "reason": "The answer concludes that a later linked instruction still executes if the move is prevented or cannot happen, unless it directly references the game action, which aligns with the reference answer's conclusion that such instructions execute unless specifically requiring the move to have occurred."
+  },
+  {
+   "id": "r-playing-cards-play-definition",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies 'play' as involving the completion of a card's resolution process and distinguishes it from mere possession or placement, aligning with the reference answer's three meanings."
+  },
+  {
+   "id": "r-playing-cards-play-process",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies that playing a card involves placing it on the chain, finalizing it, and completing the process, which aligns with the reference answer's conclusion that playing a card moves through six steps and resolves based on its category."
+  },
+  {
+   "id": "r-playing-cards-playing-from-trash",
+   "verdict": "incorrect",
+   "reason": "The answer claims there is no information to answer the question, but the reference answer clearly states that a card leaves trash when playing it, so the conclusions contradict."
+  },
+  {
+   "id": "r-showdowns-showdown-close",
+   "verdict": "correct",
+   "reason": "The answer states that a showdown closes only after every player passes focus in sequence without playing a spell or activating an ability, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "r-showdowns-non-combat-showdown",
+   "verdict": "correct",
+   "reason": "The answer correctly states that the showdown becomes a combat showdown during the cleanup phase when an opposing unit moves into it."
+  },
+  {
+   "id": "r-showdowns-attack-defend-triggers",
+   "verdict": "correct",
+   "reason": "The answer correctly states that attack and defend triggers happen when a unit gains the attacker or defender designation during combat, and that they are only checked once per combat, regardless of multiple gains and losses."
+  },
+  {
+   "id": "r-targeting-target-definition",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies the conditions under which something is a target, aligning with the reference answer's exceptions and key principles."
+  },
+  {
+   "id": "r-targeting-target-restrictions",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that only units with 3 might or less can be chosen, while the reference answer states that any legal unit can be chosen, with the 'if' condition governing the effect, not the targeting."
+  },
+  {
+   "id": "r-targeting-illegal-targets",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the spell or ability still resolves, the illegal target is unaffected, and instructions related to it are ignored, consistent with the reference answer."
+  },
+  {
+   "id": "r-targeting-ignored-negated-instructions",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the difference between an ignored and a negated instruction cannot be determined based on the retrieved passages, matching the reference answer's conclusion."
+  },
+  {
+   "id": "r-ambush-ambush-base",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Ambush cannot be used to play a unit to a base, aligning with the reference answer."
+  },
+  {
+   "id": "r-ambush-unit-play-reactions",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that opponents can react to a unit being played with Ambush, while the reference answer states that they cannot."
+  },
+  {
+   "id": "r-ambush-ambush-showdown-focus",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the next player in Turn Order gets to act after an Ambush during a showdown, aligning with the reference answer's conclusion about focus transfer and chain resolution."
+  },
+  {
+   "id": "r-deathknell-trigger-timing",
+   "verdict": "correct",
+   "reason": "The answer correctly states that a Deathknell ability is added to the chain before the permanent is sent to the trash, aligning with the reference answer."
+  },
+  {
+   "id": "r-deathknell-cleanup-timing",
+   "verdict": "incorrect",
+   "reason": "The answer states that the Deathknell ability resolves during the cleanup phase, contradicting the reference answer which says it resolves only after cleanup finishes."
+  },
+  {
+   "id": "r-deathknell-killing-card-timing",
+   "verdict": "incorrect",
+   "reason": "The answer generalizes that Deathknell always resolves before the killing action, contradicting the reference answer which specifies that the timing depends on how and when the unit is killed."
+  },
+  {
+   "id": "r-empower-empower-reactions",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that the provided material does not address whether opponents can react to an Empower ability, when the reference answer clearly confirms that opponents can react to it."
+  },
+  {
+   "id": "r-empower-empower-timing",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that Empower must be directed by a game effect, contradicting the reference answer which states it can be activated during own Main Phase under normal conditions."
+  },
+  {
+   "id": "r-empower-removed-source-trigger",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the ability does not trigger when the unit leaves the board before its Empower ability resolves."
+  },
+  {
+   "id": "r-empower-empower-other-objects",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a unit or gear without an Empower or Empowered ability can become Empowered."
+  },
+  {
+   "id": "r-equipment-equipment-after-death",
+   "verdict": "incorrect",
+   "reason": "The answer incorrectly states that attached equipment remains attached until the unit is removed and then is recalled, contradicting the reference answer which states that attached equipment detaches and is then recalled during cleanup."
+  },
+  {
+   "id": "r-equipment-equipment-control-change",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that attached equipment remains under its original controller and does not detach when the unit is taken control of."
+  },
+  {
+   "id": "r-equipment-equipment-unit-selection",
+   "verdict": "incorrect",
+   "reason": "The answer contradicts the reference by stating that Equip, Quick-Draw, and Weaponmaster do not count as choosing a unit, while the reference explicitly states that Equip and Quick-Draw do count as choosing a unit."
+  },
+  {
+   "id": "r-equipment-equipment-reactions",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the provided material does not specify whether opponents can react to these abilities, matching the reference answer's conclusion."
+  },
+  {
+   "id": "r-flow-play-timing",
+   "verdict": "correct",
+   "reason": "Both answers conclude that Flow allows playing a spell from trash at the same timing as normal, without changing the timing restrictions or enabling actions outside normal timing."
+  },
+  {
+   "id": "r-flow-countered-destination",
+   "verdict": "incorrect",
+   "reason": "The answer concludes the spell goes to the trash, while the reference answer states it is banished due to the Flow replacement effect."
+  },
+  {
+   "id": "r-flow-printed-cost",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the retrieved passages do not provide sufficient information to determine whether Defy can counter a spell whose Flow cost exceeds Defy's limit."
+  },
+  {
+   "id": "r-flow-abandon-destination",
+   "verdict": "incorrect",
+   "reason": "The answer states the information is not available, but the reference answer concludes that the spell is banished regardless of order, so the conclusion differs."
+  },
+  {
+   "id": "r-repeat-repeat-decision-timing",
+   "verdict": "correct",
+   "reason": "The answer correctly states that the decision to pay for Repeat is made during the steps of playing the spell or ability, when making relevant choices, which aligns with the reference answer."
+  },
+  {
+   "id": "r-repeat-repeated-instructions",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that Repeat repeats the execution of a spell or ability's instructions during resolution, not the card itself."
+  },
+  {
+   "id": "r-repeat-repeated-spell-countering",
+   "verdict": "incorrect",
+   "reason": "The answer claims the information is not available, contradicting the reference answer which clearly states what happens when a spell with Repeat is countered."
+  },
+  {
+   "id": "v-legion-countered-spell-current",
+   "verdict": "incorrect",
+   "reason": "The answer states that a countered spell does not count as played for Legion, contradicting the reference answer which says since v1.3 a countered spell still turns Legion on."
+  },
+  {
+   "id": "v-legion-countered-spell-v1.2",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a countered spell does not count as having played a card for Legion, aligning with the reference answer's old (pre-v1.3) conclusion."
+  },
+  {
+   "id": "v-deflect-chosen-twice-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the Deflect cost is paid twice when the enemy spell chooses the unit twice, aligning with the reference answer."
+  },
+  {
+   "id": "v-deflect-chosen-twice-v1.2",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the Deflect cost is paid only once, regardless of how many times the spell chooses the unit, which matches the reference answer's conclusion for the old version (v1.1-1.2)."
+  },
+  {
+   "id": "v-teammate-spells-2v2-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that teammates cannot play spells during a turn unless invited by the turn player."
+  },
+  {
+   "id": "v-teammate-spells-2v2-v1.2",
+   "verdict": "correct",
+   "reason": "The answer concludes that teammates can play spells during the turn, but only under specific conditions, which aligns with the reference answer's conclusion that it is only allowed when invited."
+  },
+  {
+   "id": "v-gear-to-battlefield-current",
+   "verdict": "correct",
+   "reason": "The answer concludes that gear cannot be played directly to a battlefield unless an effect specifies otherwise, which matches the reference answer's current conclusion."
+  },
+  {
+   "id": "v-gear-to-battlefield-v1.2",
+   "verdict": "correct",
+   "reason": "The answer concludes that an effect cannot play a gear directly to a battlefield, which matches the reference answer's old conclusion."
+  },
+  {
+   "id": "v-rune-pool-empties-current",
+   "verdict": "incorrect",
+   "reason": "The answer states the Rune Pool empties at the end of each player's turn, but the reference answer says it was moved to the start of Main Phase in v1.4, so the conclusions contradict."
+  },
+  {
+   "id": "v-rune-pool-empties-v1.3",
+   "verdict": "correct",
+   "reason": "The answer states that the Rune Pool empties at the end of the draw phase and at the end of the turn, which matches the reference answer's conclusion for pre-v1.4."
+  },
+  {
+   "id": "v-replacement-effect-order-current",
+   "verdict": "correct",
+   "reason": "Both answers state that the controller of the object decides the order of replacement effects."
+  },
+  {
+   "id": "v-replacement-effect-order-v1.3",
+   "verdict": "correct",
+   "reason": "The answer correctly states that the owner of the affected object ordered the replacement effects until v1.4, which aligns with the reference answer."
+  },
+  {
+   "id": "v-accelerate-two-domains-current",
+   "verdict": "incorrect",
+   "reason": "The answer claims yes, but the reference answer states no for a unit with two domains."
+  },
+  {
+   "id": "v-accelerate-two-domains-v1.3",
+   "verdict": "correct",
+   "reason": "The answer concludes that yes, you can pay the power part of the Accelerate cost with power of any domain for a unit with two domains, which matches the reference answer's old conclusion."
+  },
+  {
+   "id": "v-legend-leave-zone-current",
+   "verdict": "correct",
+   "reason": "The answer concludes that a Champion Legend cannot leave the Legend Zone, which matches the reference answer's current conclusion of 'not normally'."
+  },
+  {
+   "id": "v-legend-leave-zone-v1.3",
+   "verdict": "correct",
+   "reason": "The answer concludes that a Champion Legend cannot leave the Legend Zone, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "v-countered-spell-played-current",
+   "verdict": "correct",
+   "reason": "The answer correctly states that a countered spell does not count as a card played for the purpose of triggering abilities that depend on a card being played."
+  },
+  {
+   "id": "v-countered-spell-played-v1.2",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a countered spell does not count as a card played, aligning with the reference answer's old answer (v1.1-1.2)."
+  },
+  {
+   "id": "v-c-cost-two-domains-current",
+   "verdict": "incorrect",
+   "reason": "The answer states that a [C] can be paid with any power of the domains, but the reference answer says that only cards with no domain or several domains are treated as [A] until v1.4, and v1.4 only keeps that for cards with no domain, meaning [C] on cards with domains is not treated as [A] and cannot be paid with domain powers."
+  },
+  {
+   "id": "v-c-cost-two-domains-v1.3",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the information is not available in the provided passages, matching the reference answer's implication that prior to v1.4, [C] was treated as [A] only for cards with no domain, and thus the payment of [C] for cards with two domains is not specified."
+  },
+  {
+   "id": "v-attached-gear-moves-current",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that gear moves with the unit, but the reference answer states that currently, attached gear does not count as moving when the unit moves."
+  },
+  {
+   "id": "v-attached-gear-moves-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer states that the attached gear does not count as moving, but the reference answer says the old answer (which is correct for this date) is 'yes'."
+  },
+  {
+   "id": "v-contested-again-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the battlefield does not become contested again when more of the player's units move there."
+  },
+  {
+   "id": "v-contested-again-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer states that the battlefield does not become contested again, contradicting the reference answer which says the old answer (yes) is correct for the 2026-05-27 date."
+  },
+  {
+   "id": "v-control-without-contest-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that contesting is not required to gain control of a battlefield."
+  },
+  {
+   "id": "v-control-without-contest-v1.3",
+   "verdict": "correct",
+   "reason": "The answer concludes that contested status is not a prerequisite for gaining control, which matches the reference answer's current conclusion of 'no'."
+  },
+  {
+   "id": "v-no-result-staging-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a Showdown and a Combat are staged when a combat ends in 'No Result' and both players have units remaining."
+  },
+  {
+   "id": "v-no-result-staging-v1.3",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a combat is staged when a combat ends with no result and both players still have units at the battlefield, matching the reference answer."
+  },
+  {
+   "id": "v-battlefield-ability-controller-current",
+   "verdict": "correct",
+   "reason": "The answer states that the specific player controls the ability, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "v-battlefield-ability-controller-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that no player controls the ability, while the reference answer states that the named player does control it."
+  },
+  {
+   "id": "v-created-permanent-location-current",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that placement at a battlefield is permissible, contradicting the reference answer that states 'current: no choice'."
+  },
+  {
+   "id": "v-created-permanent-location-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that a permanent can be placed at a battlefield when no zone is specified, contradicting the reference answer which states 'no choice' in the current version."
+  },
+  {
+   "id": "v-ready-phase-current",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies the Awakening Phase as when units and gear are readied during a player's turn."
+  },
+  {
+   "id": "v-ready-phase-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer refers to the Awaken Phase, but the reference answer states that until v1.4 it was the Ready Step of the Beginning Phase, and that v1.4 changed it to the Awakening Phase. The answer contradicts the reference by implying the current rule is the Awaken Phase when the correct conclusion for the date in question is the older rule."
+  },
+  {
+   "id": "v-draw-phase-current",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies that the draw occurs during the Draw Phase of the turn, aligning with the reference answer."
+  },
+  {
+   "id": "v-draw-phase-v1.3",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies that drawing occurs during the Draw Phase of the Beginning Phase, aligning with the reference answer's conclusion."
+  },
+  {
+   "id": "v-token-on-chain-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a token does not stop existing when put on the chain, aligning with the reference answer."
+  },
+  {
+   "id": "v-token-on-chain-v1.2",
+   "verdict": "incorrect",
+   "reason": "The answer states that a token does not stop existing when put on the chain, but the reference answer says that until v1.3 a token ceased to exist when put into a non-board zone, and that the old answer was 'yes', meaning the conclusion is different."
+  },
+  {
+   "id": "v-replacement-from-triggered-current",
+   "verdict": "incorrect",
+   "reason": "The answer states that a triggered ability cannot be a replacement effect, but the reference answer says that in v1.1 it could, and since v1.2 it is passive abilities, implying that triggered abilities were once allowed to be replacement effects, so the conclusion contradicts the reference."
+  },
+  {
+   "id": "v-replacement-from-triggered-v1.1",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a triggered ability can be a replacement effect, aligning with the reference answer's old answer."
+  },
+  {
+   "id": "v-standard-move-in-combat-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that units cannot make a standard move during combat, aligning with the reference answer."
+  },
+  {
+   "id": "v-standard-move-in-combat-v1.2",
+   "verdict": "incorrect",
+   "reason": "The answer states that standard moves are barred during combat, contradicting the reference answer which says the old answer (yes) is correct for 2026-02-04."
+  },
+  {
+   "id": "v-unit-ability-phase-current",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies the Main Phase as the time when activated abilities can be used, aligning with the reference answer updated to v1.3 and beyond."
+  },
+  {
+   "id": "v-unit-ability-phase-v1.2",
+   "verdict": "correct",
+   "reason": "The answer correctly identifies the Action Phase as when activated abilities can be used, aligning with the reference answer prior to v1.3."
+  },
+  {
+   "id": "v-counter-abilities-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that both cards and abilities can be countered, aligning with the reference answer."
+  },
+  {
+   "id": "v-counter-abilities-v1.2",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that only cards can be countered, not abilities, which matches the reference answer's conclusion for the pre-v1.3 rules."
+  },
+  {
+   "id": "v-created-token-played-current",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that creating a unit token counts as playing it, but the reference answer states that it does not necessarily count as playing it."
+  },
+  {
+   "id": "v-created-token-played-v1.3",
+   "verdict": "correct",
+   "reason": "The answer concludes that creating a unit token does not count as playing a card, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "v-showdown-or-combat-first-current",
+   "verdict": "incorrect",
+   "reason": "The answer states that the showdown begins, but the reference answer says the combat begins in this scenario."
+  },
+  {
+   "id": "v-showdown-or-combat-first-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer states the showdown begins, but the reference answer concludes that the combat begins when both are staged at the same battlefield."
+  },
+  {
+   "id": "v-exhaust-off-board-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that an effect cannot exhaust a card not on the board, aligning with the reference answer."
+  },
+  {
+   "id": "v-exhaust-off-board-v1.2",
+   "verdict": "correct",
+   "reason": "The answer concludes that exhaustion only applies to cards on the board, which matches the reference answer's conclusion."
+  },
+  {
+   "id": "v-teammate-conquer-scoring-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that the other team can still score the battlefield because the disqualification only applies to the team whose teammate controlled it, not to the other team."
+  },
+  {
+   "id": "v-teammate-conquer-scoring-v1.3",
+   "verdict": "incorrect",
+   "reason": "The reference answer states that the old answer (no) is correct for the 2026-05-27 date, meaning the other team cannot score it, but the graded answer concludes that they can, contradicting the reference."
+  },
+  {
+   "id": "v-unit-gear-enters-ready-current",
+   "verdict": "correct",
+   "reason": "The answer correctly concludes that a gear that is also a unit does not enter the board ready, aligning with the reference answer."
+  },
+  {
+   "id": "v-unit-gear-enters-ready-v1.3",
+   "verdict": "incorrect",
+   "reason": "The answer concludes that a gear that is also a unit does not enter ready, contradicting the reference answer which states the old answer (yes) is correct for the date in question."
+  }
+ ]
+}
