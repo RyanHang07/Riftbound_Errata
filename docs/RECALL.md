@@ -605,3 +605,39 @@ after the user ingests v1.5.
 exited 1. `make add-version` registered it in a scratch copy: SHA-1
 `5c7946f7...`, `mirror-only-unverified` from the cloud session, where Riot's
 CDN is blocked.
+
+## Slice 11: answer generation and judge validation
+
+For every question: the current best retrieval (as-of, qwen3, k = 5), then
+the pinned generator (qwen3:4b-instruct-2507) with the committed prompt.
+Every answer records the prompt and template hashes, the model digest, every
+generation setting and where the model ran (GPU share from Ollama). An LLM
+judge then labels each answer against the reference answer: correct,
+incorrect, or not answered. The user hand-labels a stratified sample; Cohen's
+kappa between the two, with a bootstrap interval, decides whether the
+judge's accuracy numbers can be used (brief section 3).
+
+**Accuracy is conditioned on retrieval** (brief section 3): reported over
+questions whose right rule was in the top 5; the unconditioned figure is
+shown beside it, never instead.
+
+**No Riot text in committed answers:** any run of 10 or more consecutive
+words copied from a retrieved passage is replaced with a marker naming the
+passage before the answer is written.
+
+### Prediction (written 2026-11-03, before any answer is generated)
+
+- **Judged accuracy, given a hit:** expert rulings about **55%** (40 to
+  70); version-change about **70%** (55 to 85). A 4B model with the right
+  passage still has to apply it; version-change questions are mostly yes/no.
+- **Unconditioned accuracy** lower by about 10 points on rulings (misses are
+  38% of them and rarely answered right by luck).
+- **Kappa, judge against hand labels: about 0.5** (0.3 to 0.7, "moderate").
+  With the generator judging its own family, the judge is **more lenient**
+  than the hand labels: its "correct" rate at least 10 points higher on the
+  sample.
+- **GPU, per answer:** median about **4 s** (prompt about 850 tokens,
+  answer about 150). Whole set under 30 minutes.
+- **Quote guard:** about **30%** of answers contain a copied run of 10+
+  words that gets replaced.
+- **Truncated answers** (stopped at the token cap of 400): under **5%**.
