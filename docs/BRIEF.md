@@ -1916,3 +1916,21 @@ passages are never written out. The production template is a variant, not
 a subject of change: a test holds it byte-identical to `prompt.build`.
 Adopting a defence is a later decision with a new template hash and a slice
 11 rerun.
+
+### A50. Slice 17 built: the local web app (2026-11-03)
+
+`rb_errata/app.py`: Starlette (pinned; it already came with the MCP SDK) on
+127.0.0.1:8765, five endpoints that call `rb_errata/tools.py`, the MCP
+tools' own functions, so the browser and Claude Desktop cannot disagree. A
+ToolError is a 400 with its fix; a malformed body is a 400; anything else a
+500 naming no internals (tested). `app/`: Vite 8, React 19, TypeScript 5.9
+(the site's version), Tailwind 4 in the site's Hextech palette. Screens per
+SURFACE.md: Ask (clickable citations, confidence badge that says
+UNCALIBRATED when the score failed its check, sources with windows), Search,
+What changed (side by side), Versions, and a rule drawer. CI builds it.
+
+**Found by running it in a browser, not by the tests:** `AgentBackend`
+subclassed a dataclass without `@dataclass`, so its `field()` defaults stayed
+`Field` objects and the agent was never built; the MCP `ask` tool shipped in
+A48 had the same crash. Fixed, with a regression test. Also: tabs unmounted
+on switch and lost their results; every screen now stays mounted.

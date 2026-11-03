@@ -1,5 +1,32 @@
-<Callout>Planned (slice 17). Not built yet.</Callout>
+## Start it
 
-## What it will do
+Finish [Installation](/docs/installation/) first; Docker Desktop and Ollama must be running. Then, in the project folder:
 
-Pick a date, ask a question, and open any citation to see the rule with its version and the dates it was in force, served on `localhost` from your own copy.
+```
+make app-install
+```
+
+```
+make app-build
+```
+
+```
+make app
+```
+
+Open http://localhost:8765. The first two commands are needed once, and again after an update.
+
+## Screens
+
+- **Ask:** a question and a date. The agent's answer, with every cited rule clickable, a confidence badge that says whether the score passed its calibration check, and the sources it read with their validity dates.
+- **Search:** the passages in force on a date, without an answer.
+- **What changed:** two versions and, optionally, one rule. Rules are matched by wording, never by number.
+- **Versions:** every version and when it was in force.
+
+Clicking any reference opens the rule's text, with its version and dates.
+
+<Callout>The app listens on your machine only (127.0.0.1). Rule text comes from your own database and PDFs and is never sent anywhere.</Callout>
+
+## Errors
+
+The same messages as the MCP tools, shown in the page: start Docker Desktop and run `make db-up`, start Ollama, or run `make doctor`, `make ingest` or `make fetch`, whichever the message names.

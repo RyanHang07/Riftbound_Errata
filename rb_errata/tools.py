@@ -339,6 +339,7 @@ class Backend:
             raise ToolError("Ollama unreachable; start Ollama, then retry") from None
 
 
+@dataclass
 class AgentBackend(Backend):
     """The agent (slice 14) behind the `ask` tool: the search's checks plus the
     generator's pin, and the saved confidence model if one is configured."""

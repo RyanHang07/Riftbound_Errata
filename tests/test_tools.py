@@ -335,3 +335,10 @@ def test_ask_reports_citations_and_calibration_standing() -> None:
     assert none["confidence"] is None and "no confidence model" in none["confidence_standing"]
     with raises("question: empty"):
         tools.ask(" ", None, lambda q, d: (state, None))
+
+
+def test_agent_backend_starts_empty() -> None:
+    # Found by running the local app: without @dataclass on the subclass, its
+    # field() defaults stayed Field objects, so "build on first use" never ran.
+    be = tools.AgentBackend()
+    assert be._graph is None and be._model is None and be._client is None

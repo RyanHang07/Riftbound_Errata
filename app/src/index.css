@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* The site's Hextech palette (A40), dark only: one product, two surfaces. */
+@theme {
+  --color-void: #010a13;
+  --color-panel: #0a1428;
+  --color-line: #1e2328;
+  --color-gold: #c8aa6e;
+  --color-gold-deep: #785a28;
+  --color-parchment: #f0e6d2;
+  --color-muted: #a09b8c;
+  --color-hex: #0ac8b9;
+  --color-hex-pale: #cdfafa;
+  --color-warn: #e8a33d;
+  --font-display: "Marcellus", Georgia, serif;
+  --font-sans: "Source Sans 3", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html { background: var(--color-void); color: var(--color-parchment); font-family: var(--font-sans); }
+body { margin: 0; min-height: 100vh; }
+::selection { background: var(--color-gold-deep); color: var(--color-parchment); }
+input, textarea, select, button { font: inherit; }

@@ -13,7 +13,7 @@ export const NAV: DocGroup[] = [
   ] },
   { group: "Connect", hue: "var(--d-body)", pages: [
     { slug: "claude-desktop", title: "Claude Desktop", lede: "Give Claude the rules tools through MCP. Runs locally; nothing leaves your machine." },
-    { slug: "local-app", title: "Local web app", lede: "Ask questions in your browser, against the copy on your own machine.", soon: true },
+    { slug: "local-app", title: "Local web app", lede: "Ask questions in your browser, against the copy on your own machine." },
   ] },
   { group: "Tools reference", hue: "var(--d-mind)", pages: [
     { slug: "search-rules", title: "search_rules", lede: "Find the rules that answer a question, using only rules in force on a date." },

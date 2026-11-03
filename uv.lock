@@ -1183,7 +1183,9 @@ dependencies = [
     { name = "psycopg", extra = ["binary"] },
     { name = "pypdfium2" },
     { name = "pyyaml" },
+    { name = "starlette" },
     { name = "tiktoken" },
+    { name = "uvicorn" },
 ]
 
 [package.dev-dependencies]
@@ -1206,7 +1208,9 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
     { name = "pypdfium2", specifier = ">=4.30,<5" },
     { name = "pyyaml", specifier = ">=6,<7" },
+    { name = "starlette", specifier = "==1.7.0" },
     { name = "tiktoken", specifier = ">=0.7,<1" },
+    { name = "uvicorn", specifier = "==0.54.0" },
 ]
 
 [package.metadata.requires-dev]
