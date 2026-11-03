@@ -132,14 +132,21 @@ class Ollama:
         embeddings: list[list[float]] = data["embeddings"]
         return embeddings
 
-    def generate(self, prompt: str, *, max_tokens: int) -> Generation:
+    def generate(
+        self, prompt: str, *, max_tokens: int, model: str | None = None, json_mode: bool = False
+    ) -> Generation:
+        # `model` lets the judge (slice 11) use a different pinned model with
+        # identical settings; json_mode asks Ollama to constrain output to JSON,
+        # so a verdict is parsed, never pattern-matched out of prose.
+        extra: dict[str, Any] = {"format": "json"} if json_mode else {}
         data = self._post(
             "/api/generate",
             {
-                "model": self._s.gen_model,
+                "model": model or self._s.gen_model,
                 "prompt": prompt,
                 "stream": False,
                 "think": self._s.gen_think,
+                **extra,
                 "options": {
                     "temperature": self._s.gen_temperature,
                     "seed": self._s.gen_seed,

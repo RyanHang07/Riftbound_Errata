@@ -1835,3 +1835,31 @@ The first real use is the user's: `make add-version` for v1.5 on a machine
 that reaches Riot's CDN, then fetch, dates, ingest, recall. The next is
 Legacy (set 6, listed for 29 January 2027): if it needs a code change, this
 slice failed.
+
+### A46. Slice 11 built: answers, a blind hand-label sample, a judge, kappa (2026-11-03)
+
+Built in the cloud session with fakes; the runs need Ollama on the user's
+GPU (A41). Prediction committed first (`docs/RECALL.md`, slice 11).
+
+- `make answers [LIMIT=]`: as-of retrieval, k = 5, the pinned generator and
+  the committed prompt for every question. Per answer: prompt hash, token
+  counts, Ollama's own timings, `done_reason`, hit rank. Per run: generator
+  digest and settings, template hash, corpus and question hashes, placement
+  (GPU share from `/api/ps`, A41). Generation refuses a database whose
+  corpus differs from `data/corpus.json`, as recall does.
+- **Quote guard** (`generate/quotes.py`): any run of 10+ consecutive words
+  also found in a retrieved passage is replaced by a marker naming it, so
+  committed answers hold no Riot text by construction.
+- `make answer-sample RUN=`: 60 answers whose retrieval hit (40 rulings, 3
+  FAQ, 17 version-change), seeded, drawn without reading any verdict, into
+  `evals/answer_review.yaml`. The file shows no judge output: blind labels.
+- `make judge RUN=`: grades the conclusion against the expert's answer (the
+  change note's old or new side for version-change), JSON-constrained,
+  never shown the passages. Malformed replies count as `unparsed`, never
+  guessed. `judge_model` / `judge_digest` default to the generator; a
+  stronger judge is a pin away, and only the kappa should decide it (brief
+  section 7).
+- `make answers-report RUN=`: accuracy given a hit (headline) beside
+  unconditioned, per stratum, Wilson intervals; kappa (correct vs not, and
+  all three verdicts) with a seeded bootstrap interval, the confusion matrix
+  and both raters' "correct" rates.

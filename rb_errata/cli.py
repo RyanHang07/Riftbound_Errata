@@ -212,6 +212,46 @@ def _version_impact(args: argparse.Namespace) -> int:
     return 0
 
 
+def _answers(args: argparse.Namespace) -> int:
+    from rb_errata.answers import run
+
+    out = run(config.load(), args.limit)
+    print((out / "report.md").read_text())
+    print(f"answers and report written to {out}/")
+    return 0
+
+
+def _answer_sample(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.answers import sample
+
+    out = sample(Path(args.dir))
+    print(f"wrote {out}: set `verdict` on each item, then `make answers-report RUN={args.dir}`")
+    return 0
+
+
+def _judge(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.judge import run
+
+    out = run(config.load(), Path(args.dir))
+    print(f"judgments written to {out}")
+    return _answers_report(args)
+
+
+def _answers_report(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.answers import report
+
+    lines = report(Path(args.dir))
+    (Path(args.dir) / "report.md").write_text("\n".join(lines) + "\n")
+    print("\n".join(lines))
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -326,6 +366,10 @@ def main(argv: list[str] | None = None) -> int:
         "check-updates": (_check_updates, "slice 18: is a newer rules version out? exit 1 if so"),
         "add-version": (_add_version, "slice 18: register a new rules version (pinned SHA-1)"),
         "version-impact": (_version_impact, "slice 18: what a version changes, which labels"),
+        "answers": (_answers, "slice 11: generate an answer for every question (GPU per A41)"),
+        "answer-sample": (_answer_sample, "slice 11: draw the blind hand-label sample"),
+        "judge": (_judge, "slice 11: LLM judge over a run's answers, then the report"),
+        "answers-report": (_answers_report, "slice 11: accuracy and kappa from committed files"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -342,13 +386,22 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("fixture")
         if name == "questions":
             p.add_argument("rulings", help="path to a clone of ChristianIvicevic/riftboundfaq")
-        if name in ("regrade", "recall-report", "taxonomy"):
+        if name in (
+            "regrade",
+            "recall-report",
+            "taxonomy",
+            "answer-sample",
+            "judge",
+            "answers-report",
+        ):
             p.add_argument("dir")
         if name == "recall":
             p.add_argument("--method", default="naive", help="naive | as-of | lexical | hybrid")
         if name == "add-version":
             p.add_argument("version", help="MAJOR.MINOR, like 1.5")
             p.add_argument("--notes", required=True, help="Riot's patch notes URL")
+        if name == "answers":
+            p.add_argument("--limit", type=int, help="first N questions only (a quick check)")
         if name == "version-impact":
             p.add_argument("version")
         if name == "recall-compare":

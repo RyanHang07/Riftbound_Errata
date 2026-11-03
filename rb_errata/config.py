@@ -57,6 +57,19 @@ class Settings:
     gen_num_ctx: int = 8192
     gen_temperature: float = 0.0
     gen_seed: int = 42
+    # Slice 11. 400 is the drift cap A18 found too low only for the Thinking
+    # build; the instruct build's answers were 43 to 81 tokens. A truncated
+    # answer is recorded (done_reason "length"), never silently kept.
+    gen_max_tokens: int = 400
+
+    # --- Judge (slice 11) ------------------------------------------------
+    # Empty means "the generator": the cheapest judge, and the one most likely
+    # to be lenient with its own family's answers. The brief says a stronger
+    # judge is worth it only if kappa says so; changing these is that switch,
+    # and the pin works as for every other model (A3).
+    judge_model: str = ""
+    judge_digest: str = ""
+    judge_max_tokens: int = 200
 
     # --- Reranking (slice 9) ---------------------------------------------
     # A cross-encoder reads the question and one passage together and scores
@@ -90,6 +103,13 @@ class Settings:
     # A first call loads the model from disk; on a 16 GB CPU box that can take
     # tens of seconds, so a short timeout would report a healthy model as down.
     http_timeout_s: float = 600.0
+
+    @property
+    def judge(self) -> tuple[str, str]:
+        """(model tag, pinned digest) of the judge; the generator's when unset."""
+        if self.judge_model:
+            return self.judge_model, self.judge_digest
+        return self.gen_model, self.gen_digest
 
     @property
     def db_schema(self) -> str:

@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact answers answer-sample judge answers-report site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -124,6 +124,18 @@ mcp:  ## run the MCP server on stdio (what Claude Desktop starts; Ctrl+C to stop
 
 mcp-check:  ## the MCP server over stdio vs the committed snapshot (needs db-up and Ollama)
 	$(UV) python -m rb_errata.cli mcp-check
+
+answers:  ## slice 11: answer every question (GPU per A41): make answers [LIMIT=5]
+	$(UV) python -m rb_errata.cli answers $(if $(LIMIT),--limit $(LIMIT),)
+
+answer-sample:  ## the blind hand-label sample: make answer-sample RUN=evals/runs/answers-...
+	$(UV) python -m rb_errata.cli answer-sample $(RUN)
+
+judge:  ## LLM judge over a run, then the report: make judge RUN=evals/runs/answers-...
+	$(UV) python -m rb_errata.cli judge $(RUN)
+
+answers-report:  ## accuracy and kappa, offline: make answers-report RUN=evals/runs/answers-...
+	$(UV) python -m rb_errata.cli answers-report $(RUN)
 
 check-updates:  ## is a newer Core Rules version out? (mirror manifest + Riot Rules Hub; exit 1 if so)
 	$(UV) python -m rb_errata.cli check-updates
