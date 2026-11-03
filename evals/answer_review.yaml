@@ -326,8 +326,9 @@ items:
     proceed. This is consistent with the rule that if a target [quoted text from core@1.4:359.3 removed]
     the information is no longer available, the [quoted text from core@1.4:359.3 removed] [core@1.4:359.3.e.12].
 - id: r-alpha-strike-might-reduction
-  verdict: correct
-  note: ''
+  verdict: incorrect
+  note: 'revised after a second read, before the judge ran: was correct; answer never addresses Alpha
+    Strike''s damage split or removing targets'
   question: What if the friendly unit's might is reduced?
   as_of: '2026-10-01'
   reference: 'If the friendly target remains legal but has lower might when Alpha Strike resolves, Alpha
@@ -744,8 +745,9 @@ items:
     from core@1.4:464.2 removed] these triggers [quoted text from core@1.4:464.2 removed], and then the
     Defending Player [core@1.4:464.2.e.1].
 - id: r-empower-empower-timing
-  verdict: correct
-  note: ''
+  verdict: incorrect
+  note: 'revised after a second read, before the judge ran: was correct; answer: only when directed by
+    an effect; reference: own Main Phase, open state'
   question: When can I activate an Empower ability?
   as_of: '2026-10-01'
   reference: 'By default, you can activate it only while its source is not Empowered and during your own
@@ -790,8 +792,9 @@ items:
 
     Thus, the question cannot be answered with the given information.'
 - id: r-hidden-blade-draw-if-illegal
-  verdict: correct
-  note: ''
+  verdict: not_answered
+  note: 'revised after a second read, before the judge ran: was correct; answer concludes it cannot be
+    determined'
   question: If Hidden Blade's target becomes illegal, does that target's controller draw?
   as_of: '2026-10-01'
   reference: 'No.
@@ -842,8 +845,9 @@ items:
     do not confirm that it is unaffected by illegal targets in this specific case. Therefore, based on
     the provided information, it cannot be determined with certainty. [core@1.4:359.3.e.5]'
 - id: r-equipment-equipment-control-change
-  verdict: not_answered
-  note: ''
+  verdict: correct
+  note: 'revised after a second read, before the judge ran: was not_answered; answer: stays attached,
+    original controller keeps it, as the reference'
   question: What happens to attached equipment when I take control of an enemy unit?
   as_of: '2026-10-01'
   reference: 'The equipment stays attached and keeps its existing controller; you take control only of
@@ -1280,8 +1284,9 @@ items:
     Therefore, it is not possible to determine when a reaction to Fallen Feline's play effect can occur
     based on the provided content. [none]
 - id: r-movement-failed-move-linked-instructions
-  verdict: correct
-  note: ''
+  verdict: incorrect
+  note: 'revised after a second read, before the judge ran: was correct; answer says the linked instruction
+    does not execute; reference says it does'
   question: Does a later linked instruction still execute if a move is prevented or cannot happen?
   as_of: '2026-10-01'
   reference: 'If the move is prevented or cannot happen for a reason other than an illegal or unavailable
@@ -1360,8 +1365,9 @@ items:
     and the rule allows creation at any playable location on the board, placing the permanent at a battlefield
     is permissible.
 - id: v-teammate-spells-2v2-current
-  verdict: incorrect
-  note: ''
+  verdict: correct
+  note: 'revised after a second read, before the judge ran: was incorrect; answer: only when invited,
+    the current reference'
   question: In 2v2, can my teammate play spells during my turn whenever they want?
   as_of: '2026-10-01'
   reference: 'Up to v1.2 the turn player''s teammates could play spells and abilities on the turn player''s
@@ -1435,8 +1441,9 @@ items:
   answer: If an uncontrolled battlefield's ability says a specific player controls it, then that specific
     player controls the ability [core@1.4:190.6.c].
 - id: v-teammate-conquer-scoring-v1.3
-  verdict: correct
-  note: ''
+  verdict: incorrect
+  note: 'revised after a second read, before the judge ran: was correct; answer ends on yes; the v1.3
+    answer is no'
   question: In 2v2, if my teammate controlled a battlefield during my Beginning Phase, can the other team
     still score it by conquering it this turn?
   as_of: '2026-05-27'
@@ -1622,8 +1629,9 @@ items:
     This question is dated 2026-10-01, so the right answer is the CURRENT answer described above.'
   answer: Your [quoted text from core@1.4:167.1 removed] at the end of each player's turn [core@1.4:167.1].
 - id: v-c-cost-two-domains-v1.3
-  verdict: correct
-  note: ''
+  verdict: not_answered
+  note: 'revised after a second read, before the judge ran: was correct; answer says the passages do not
+    answer it'
   question: On a card with two domains, how is a [C] in its cost paid?
   as_of: '2026-05-27'
   reference: 'Until v1.4 a [C] on a card with no domain or several domains was treated as [A], a power
