@@ -23,7 +23,7 @@ from rb_errata import recall
 from rb_errata.labels import counterparts as counterparts_mod
 from rb_errata.labels.review import load_questions
 
-SNAPSHOT = Path("evals/runs/recall-as-of-qwen3-2026-10-04T1415Z")
+SNAPSHOT = Path("evals/runs/recall-as-of-qwen3-2026-11-03T0304Z")
 K = 5
 
 

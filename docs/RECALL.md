@@ -540,3 +540,12 @@ every committed snapshot shares:
 
 Slice 12's taxonomy for the best run: 77 misses become 76 (version-change
 `below-cutoff` 8 becomes 7; the retired Legion question was a rank-8 miss).
+
+### Rerun on the corrected set: `recall-as-of-qwen3-2026-11-03T0304Z` (user's machine)
+
+Same configuration, corpus and embedder digest; questions `ab0ebc0a9492`
+(after A44). Expert rulings identical to the October run on every k (62% /
+38% at recall@5), so retrieval reproduced exactly. Version-change 45/56 =
+80% [68%, 89%]: the 43 shared hits plus both relabelled `-v1.2` questions.
+Now the current best (site, taxonomy, `make mcp-check` baseline). Taxonomy:
+76 misses (47 below the cutoff, 23 card, 2 rules-only, 4 unclassified).

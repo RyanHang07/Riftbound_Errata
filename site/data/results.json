@@ -584,7 +584,7 @@
    "latency_s": null
   },
   {
-   "run": "recall-as-of-qwen3-2026-10-04T1415Z",
+   "run": "recall-as-of-qwen3-2026-11-03T0304Z",
    "label": "+ Qwen3 embedder",
    "decision": "best",
    "paired": "recall-as-of-2026-10-02T2251Z",
@@ -692,46 +692,46 @@
     },
     "version-change": {
      "at1": {
-      "k": 28,
-      "n": 54,
-      "p": 0.5185,
-      "lo": 0.3885,
-      "hi": 0.6461
+      "k": 30,
+      "n": 56,
+      "p": 0.5357,
+      "lo": 0.407,
+      "hi": 0.6598
      },
      "at3": {
-      "k": 40,
-      "n": 54,
-      "p": 0.7407,
-      "lo": 0.6107,
-      "hi": 0.8388
+      "k": 42,
+      "n": 56,
+      "p": 0.75,
+      "lo": 0.6231,
+      "hi": 0.8448
      },
      "at5": {
-      "k": 43,
-      "n": 54,
-      "p": 0.7963,
-      "lo": 0.671,
-      "hi": 0.8823
+      "k": 45,
+      "n": 56,
+      "p": 0.8036,
+      "lo": 0.6816,
+      "hi": 0.8866
      },
      "at10": {
-      "k": 46,
-      "n": 54,
-      "p": 0.8519,
-      "lo": 0.734,
-      "hi": 0.923
+      "k": 48,
+      "n": 56,
+      "p": 0.8571,
+      "lo": 0.7426,
+      "hi": 0.9258
      },
      "at20": {
-      "k": 50,
-      "n": 54,
-      "p": 0.9259,
-      "lo": 0.8245,
-      "hi": 0.9708
+      "k": 52,
+      "n": 56,
+      "p": 0.9286,
+      "lo": 0.8302,
+      "hi": 0.9719
      },
      "outdated_above_hit5": {
       "k": 0,
-      "n": 54,
+      "n": 56,
       "p": 0.0,
       "lo": 0.0,
-      "hi": 0.0664
+      "hi": 0.0642
      },
      "vs_paired": {
       "gained": 12,
@@ -887,13 +887,16 @@
      }
     }
    },
-   "latency_s": null
+   "latency_s": {
+    "median": 0.031,
+    "p90": 0.0363
+   }
   },
   {
    "run": "recall-lexical-qwen3-2026-10-04T1423Z",
    "label": "Keyword search only",
    "decision": "reference",
-   "paired": "recall-as-of-qwen3-2026-10-04T1415Z",
+   "paired": "recall-as-of-qwen3-2026-11-03T0304Z",
    "amendment": "A31",
    "method": "postgres full-text (stemmed terms ORed), as_of filter",
    "embed_model": "qwen3-embedding:0.6b",
@@ -1199,7 +1202,7 @@
    "run": "recall-hybrid-qwen3-2026-10-04T1423Z",
    "label": "Hybrid (vector + keyword, RRF)",
    "decision": "dropped",
-   "paired": "recall-as-of-qwen3-2026-10-04T1415Z",
+   "paired": "recall-as-of-qwen3-2026-11-03T0304Z",
    "amendment": "A31",
    "method": "RRF(vector, full-text) k=60 over top 50 each, as_of filter",
    "embed_model": "qwen3-embedding:0.6b",
@@ -1505,7 +1508,7 @@
    "run": "recall-rerank-qwen3-2026-10-04T1446Z",
    "label": "Reranker (bge-reranker-base)",
    "decision": "dropped",
-   "paired": "recall-as-of-qwen3-2026-10-04T1415Z",
+   "paired": "recall-as-of-qwen3-2026-11-03T0304Z",
    "amendment": "A38",
    "method": "cross-encoder over vector top N + full-text top N, as_of filter",
    "embed_model": "qwen3-embedding:0.6b",
@@ -2351,7 +2354,7 @@
   "hi": 0.9862
  },
  "taxonomy": {
-  "run": "recall-as-of-qwen3-2026-10-04T1415Z",
+  "run": "recall-as-of-qwen3-2026-11-03T0304Z",
   "cutoff": 5,
   "categories": [
    "below-cutoff",

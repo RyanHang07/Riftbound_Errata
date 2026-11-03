@@ -30,7 +30,7 @@ EFFECTIVE = Path("data/effective_dates.json")
 # (A24 to A38); `paired` names the run each row was compared against.
 NAIVE = "recall-2026-10-02T2236Z"
 AS_OF = "recall-as-of-2026-10-02T2251Z"
-QWEN3 = "recall-as-of-qwen3-2026-10-04T1415Z"
+QWEN3 = "recall-as-of-qwen3-2026-11-03T0304Z"
 _ROWS = [
     # (run, label, decision, paired against, amendment)
     (NAIVE, "Naive vector search, nomic", "baseline", None, "A24"),
