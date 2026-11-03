@@ -18,6 +18,7 @@ import statistics
 import sys
 from datetime import UTC, date, datetime
 from pathlib import Path
+from typing import Any
 
 from rb_errata import db, recall
 from rb_errata.agent import graph as agent_graph
@@ -28,8 +29,21 @@ from rb_errata.labels import counterparts as counterparts_mod
 from rb_errata.labels.power import mcnemar_p, wilson
 from rb_errata.labels.review import load_questions
 
+PARTIAL = "answers.partial.json"
+# What must match for a resumed run to be one experiment (as in answers.py).
+SAME = ("agent", "generator", "template_sha256", "retrieval", "corpus_chunks_sha256",
+        "questions_sha256")  # fmt: skip
 
-def run(settings: Settings, confidence_path: Path | None, limit: int | None = None) -> Path:
+
+def run(
+    settings: Settings,
+    confidence_path: Path | None,
+    limit: int | None = None,
+    resume: Path | None = None,
+) -> Path:
+    """The agent over every question, saved after each one (A51's lesson, met
+    again here: the first agent run died at question ~20 on a database
+    timeout). `make agent-run RESUME=<dir>` continues a stopped run."""
     from rb_errata.answers import _row
     from rb_errata.ollama import Ollama, checked_digest
 
@@ -40,17 +54,56 @@ def run(settings: Settings, confidence_path: Path | None, limit: int | None = No
     db.init(settings)
     if recall._db_corpus(settings) != recall._manifest_corpus():
         raise SystemExit("database differs from data/corpus.json; run `make ingest` first")
-    stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")
-    out_dir = recall.RUNS / f"agent-{settings.embed_profile}-{stamp}"
-    if out_dir.exists():
-        raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
+    meta: dict[str, Any] = {
+        "agent": {"threshold": agent_graph.THRESHOLD,
+                  "k": [agent_graph.K_FIRST, agent_graph.K_RETRY],
+                  "confidence_model": str(confidence_path) if model else None},
+        "generator": {"model": settings.gen_model, "digest": gen_digest,
+                      "think": settings.gen_think, "temperature": settings.gen_temperature,
+                      "seed": settings.gen_seed, "num_ctx": settings.gen_num_ctx,
+                      "max_tokens": settings.gen_max_tokens},
+        "template_sha256": prompt.TEMPLATE_SHA256,
+        "retrieval": {"method": "as-of", "k": agent_graph.K_FIRST},
+        "corpus_chunks_sha256": json.loads(recall.CORPUS.read_text())["chunks_sha256"],
+        "questions_sha256": hashlib.sha256(
+            Path("evals/questions.yaml").read_bytes()).hexdigest(),
+    }  # fmt: skip
+    rows: list[dict[str, Any]] = []
+    placement, earlier_retries = None, 0
+    if resume is not None:
+        saved = json.loads((resume / PARTIAL).read_text())
+        changed = [k for k in SAME if saved[k] != meta[k]]
+        if changed:
+            raise SystemExit(
+                f"cannot resume {resume}: {', '.join(changed)} changed since it started"
+            )
+        out_dir, rows = resume, saved["answers"]
+        placement = saved["placement"]["gpu_fraction"]
+        earlier_retries = saved.get("ollama_retries", 0)
+    else:
+        stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")
+        out_dir = recall.RUNS / f"agent-{settings.embed_profile}-{stamp}"
+        if out_dir.exists():
+            raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
+        out_dir.mkdir(parents=True)
+
+    def save(name: str) -> None:
+        (out_dir / name).write_text(json.dumps({
+            "captured_at": datetime.now(UTC).isoformat(timespec="seconds"), **meta,
+            "placement": {"gpu_fraction": placement, "cpu_only": settings.cpu_only},
+            "ollama_retries": earlier_retries + client.retries,
+            "answers": rows,
+        }, indent=1) + "\n")  # fmt: skip
+
     graph = agent_graph.build(agent_graph.Deps.live(settings, client, model))
     questions = load_questions()[:limit] if limit else load_questions()
+    done = {r["id"] for r in rows}
     cp = counterparts_mod.load()
-    rows, placement = [], None
     try:
         for n, q in enumerate(questions, 1):
-            if n == 1 or n % 20 == 0:
+            if q["id"] in done:
+                continue
+            if n == 1 or n % 10 == 0:
                 print(f"  agent {n}/{len(questions)}", file=sys.stderr, flush=True)
             day = date.fromisoformat(str(q["as_of"]))
             state, wall = agent_graph.ask(graph, q["question"], day)
@@ -80,27 +133,17 @@ def run(settings: Settings, confidence_path: Path | None, limit: int | None = No
                 "quotes_removed": state["quotes_removed"],
                 "answer": state["answer"],
             })  # fmt: skip
+            save(PARTIAL)
+    except BaseException:
+        print(f"\nstopped after {len(rows)} questions, saved in {out_dir / PARTIAL}.\n"
+              f"Continue with: make agent-run CONF={confidence_path or ''} RESUME={out_dir}",
+              file=sys.stderr)  # fmt: skip
+        raise
     finally:
         client.close()
         flush()
-    out_dir.mkdir(parents=True)
-    (out_dir / "answers.json").write_text(json.dumps({
-        "captured_at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "agent": {"threshold": agent_graph.THRESHOLD, "k": [agent_graph.K_FIRST,
-                  agent_graph.K_RETRY], "confidence_model": str(confidence_path) if model
-                  else None},
-        "generator": {"model": settings.gen_model, "digest": gen_digest,
-                      "think": settings.gen_think, "temperature": settings.gen_temperature,
-                      "seed": settings.gen_seed, "num_ctx": settings.gen_num_ctx,
-                      "max_tokens": settings.gen_max_tokens},
-        "template_sha256": prompt.TEMPLATE_SHA256,
-        "retrieval": {"method": "as-of", "k": agent_graph.K_FIRST},
-        "placement": {"gpu_fraction": placement, "cpu_only": settings.cpu_only},
-        "corpus_chunks_sha256": json.loads(recall.CORPUS.read_text())["chunks_sha256"],
-        "questions_sha256": hashlib.sha256(
-            Path("evals/questions.yaml").read_bytes()).hexdigest(),
-        "answers": rows,
-    }, indent=1) + "\n")  # fmt: skip
+    save("answers.json")
+    (out_dir / PARTIAL).unlink()
     return out_dir
 
 

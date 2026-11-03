@@ -13,6 +13,14 @@ import psycopg
 
 from rb_errata.config import Settings
 
+# Found on the first agent run: at question ~20 one connection took longer
+# than the 5 s timeout ("connection timeout expired") while Docker was also
+# starting Phoenix, and the run died. A process that has reached the database
+# before retries a failed connection; one that never has fails at once, so
+# doctor and the tools still report "unreachable" in seconds.
+RETRY_WAITS_S: tuple[float, ...] = (3.0, 10.0, 30.0)
+_reached = False
+
 
 def connect(settings: Settings, *, timeout_s: int = 5) -> psycopg.Connection[tuple[object, ...]]:
     # A short connect timeout: doctor must report "unreachable" in seconds,
@@ -20,12 +28,27 @@ def connect(settings: Settings, *, timeout_s: int = 5) -> psycopg.Connection[tup
     # search_path picks the embedder profile's schema (Settings.db_schema), so
     # every query below runs unchanged against whichever corpus is selected.
     # `public` stays on the path for the vector type itself.
-    return psycopg.connect(
-        settings.database_url,
-        connect_timeout=timeout_s,
-        autocommit=True,
-        options=f"-c search_path={settings.db_schema},public",
-    )
+    global _reached
+    import sys
+    import time
+
+    for wait in (*RETRY_WAITS_S, None):
+        try:
+            conn = psycopg.connect(
+                settings.database_url,
+                connect_timeout=timeout_s,
+                autocommit=True,
+                options=f"-c search_path={settings.db_schema},public",
+            )
+            _reached = True
+            return conn
+        except psycopg.OperationalError as exc:
+            if wait is None or not _reached:
+                raise
+            print(f"  database connection failed ({type(exc).__name__}); retrying in "
+                  f"{wait:.0f} s", file=sys.stderr, flush=True)  # fmt: skip
+            time.sleep(wait)
+    raise AssertionError("unreachable")
 
 
 def schema(dims: int, name: str = "public") -> str:

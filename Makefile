@@ -141,7 +141,7 @@ confidence:  ## slice 13: confidence score and calibration: make confidence RUN=
 	$(UV) python -m rb_errata.cli confidence $(RUN) $(if $(JUDGE),--judge $(JUDGE),)
 
 agent-run:  ## slice 14: the agent over every question: make agent-run CONF=evals/runs/answers-.../confidence.json
-	$(UV) python -m rb_errata.cli agent-run $(if $(CONF),--conf $(CONF),) $(if $(LIMIT),--limit $(LIMIT),)
+	$(UV) python -m rb_errata.cli agent-run $(if $(CONF),--conf $(CONF),) $(if $(LIMIT),--limit $(LIMIT),) $(if $(RESUME),--resume $(RESUME),)
 
 agent-compare:  ## agent vs slice 11, paired: make agent-compare A=evals/runs/answers-... B=evals/runs/agent-...
 	$(UV) python -m rb_errata.cli agent-compare $(A) $(B) $(if $(JUDGE),--judge $(JUDGE),)

@@ -3,6 +3,8 @@ Dropped requests are retried and counted; a never-connected client fails fast.""
 
 from __future__ import annotations
 
+from typing import cast
+
 import httpx
 import pytest
 
@@ -98,3 +100,28 @@ def test_hung_embedding_is_retried_too(monkeypatch: pytest.MonkeyPatch) -> None:
     c = Ollama(Settings(), transport=httpx.MockTransport(handler))
     c.embed(["first"])
     assert c.embed(["second"]) == [[0.0]] and c.retries == 1
+
+
+def test_database_retries_only_after_a_first_connection(monkeypatch: pytest.MonkeyPatch) -> None:
+    import psycopg
+
+    from rb_errata import db
+
+    calls = {"n": 0}
+    sentinel = object()
+
+    def fake_connect(*_: object, **__: object) -> object:
+        calls["n"] += 1
+        if calls["n"] in (1, 3):
+            raise psycopg.OperationalError("connection timeout expired")
+        return sentinel
+
+    monkeypatch.setattr(db, "RETRY_WAITS_S", (0.0, 0.0, 0.0))
+    monkeypatch.setattr(db, "_reached", False)
+    monkeypatch.setattr(psycopg, "connect", fake_connect)
+    with pytest.raises(psycopg.OperationalError):
+        db.connect(Settings())  # never reached: fails at once (doctor stays fast)
+    assert calls["n"] == 1
+    assert cast(object, db.connect(Settings())) is sentinel  # reached now
+    assert cast(object, db.connect(Settings())) is sentinel  # call 3 failed, was retried
+    assert calls["n"] == 4

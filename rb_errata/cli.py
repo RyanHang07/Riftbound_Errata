@@ -275,7 +275,10 @@ def _agent_run(args: argparse.Namespace) -> int:
 
     from rb_errata.agent.evaluate import run
 
-    out = run(config.load(), Path(args.conf) if args.conf else None, args.limit)
+    out = run(
+        config.load(), Path(args.conf) if args.conf else None, args.limit,
+        Path(args.resume) if args.resume else None,
+    )  # fmt: skip
     print(f"agent answers written to {out}/; next: make judge RUN={out}")
     return 0
 
@@ -497,6 +500,7 @@ def main(argv: list[str] | None = None) -> int:
         if name == "agent-run":
             p.add_argument("--conf", help="confidence.json from `make confidence`")
             p.add_argument("--limit", type=int)
+            p.add_argument("--resume", help="continue a stopped run: its evals/runs/agent-... dir")
         if name == "agent-compare":
             p.add_argument("a")
             p.add_argument("b")

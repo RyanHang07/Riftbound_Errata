@@ -1971,3 +1971,12 @@ is calibrated (ECE 0.068, Brier skill +0.23), its skill mostly separating
 answers from non-answers. No stronger judge is needed (brief section 7: let
 the kappa decide). Next: the injection run and the agent, which uses this
 `confidence.json`.
+
+**Addendum to A51 (same day):** the first agent run died at question ~20 on a
+database connection timeout ("connection timeout expired", while Docker was
+also starting Phoenix; Phoenix itself was unreachable, so no spans were
+exported). `db.connect` now retries after 3, 10 and 30 s once the process
+has reached the database (a never-reached database still fails at once, so
+doctor stays fast), and `make agent-run` saves after every question with
+`RESUME=` to continue, refusing if the agent, generator, prompt, retrieval,
+corpus or questions changed.
