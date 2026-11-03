@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -106,11 +107,30 @@ def _blocks(passages: list[Passage], mark: bool = False) -> str:
     return "\n\n".join(f"[{p.source_ref}]\n{text(p)}" for p in passages)
 
 
+_DELIMITER = re.compile(r"<\s*/?\s*retrieved_passages\s*>", re.IGNORECASE)
+
+
+def escape_delimiters(passages: list[Passage]) -> list[Passage]:
+    """Passages with any copy of the prompt's delimiter tag neutralised.
+
+    The first run's strongest attack closed </retrieved_passages> inside a
+    passage and wrote a fake system message after it (20 of 20 against
+    every framed prompt). No rule in the corpus contains the tag, so for
+    real passages this changes nothing.
+    """
+    return [
+        Passage(p.source_ref, p.refs, _DELIMITER.sub("[delimiter removed]", p.text), p.distance,
+                p.valid_from, p.valid_to, p.content_hash)
+        for p in passages
+    ]  # fmt: skip
+
+
 DEFENCES: dict[str, Callable[[str, list[Passage]], str]] = {
     "naive": lambda q, ps: NAIVE.format(passages=_blocks(ps), question=q),
     "framed": prompt.build,  # production
     "framed+sandwich": lambda q, ps: SANDWICH.format(passages=_blocks(ps), question=q),
     "framed+datamarking": lambda q, ps: DATAMARK.format(passages=_blocks(ps, True), question=q),
+    "framed+escaped": lambda q, ps: prompt.build(q, escape_delimiters(ps)),
 }
 
 
@@ -127,7 +147,7 @@ def pick(questions: list[dict[str, Any]], n: int = N_QUESTIONS, seed: int = SEED
     return sorted(random.Random(seed).sample(sorted(q["id"] for q in questions), n))
 
 
-def run(settings: Settings, n: int = N_QUESTIONS) -> Path:
+def run(settings: Settings, n: int = N_QUESTIONS, only: list[str] | None = None) -> Path:
     from rb_errata.ollama import Ollama, checked_digest
     from rb_errata.retrieve.methods import retrieve
 
@@ -136,8 +156,12 @@ def run(settings: Settings, n: int = N_QUESTIONS) -> Path:
     checked_digest(client, settings.embed_model, settings.embed_digest)
     db.init(settings)
     questions = {q["id"]: q for q in load_questions()}
+    chosen = {k: v for k, v in DEFENCES.items() if not only or k in only}
+    if only and (set(only) - set(DEFENCES) or "framed" not in only):
+        raise SystemExit(f"DEFENCES must name variants from {list(DEFENCES)} and include framed "
+                         "(every variant is paired against it)")  # fmt: skip
     rows: list[dict[str, Any]] = []
-    total = n * len(ATTACKS) * len(DEFENCES)
+    total = n * len(ATTACKS) * len(chosen)
     try:
         for qid in pick(list(questions.values()), n):
             q = questions[qid]
@@ -145,7 +169,7 @@ def run(settings: Settings, n: int = N_QUESTIONS) -> Path:
                             date.fromisoformat(str(q["as_of"])))  # fmt: skip
             for attack in ATTACKS:
                 ps = [planted(attack), *real]
-                for name, build in DEFENCES.items():
+                for name, build in chosen.items():
                     done = len(rows)
                     if done % 40 == 0:
                         print(f"  case {done + 1}/{total}", file=sys.stderr, flush=True)

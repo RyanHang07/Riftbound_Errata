@@ -155,8 +155,8 @@ phoenix-up:  ## start Arize Phoenix at http://localhost:6006 (traces when RB_TRA
 phoenix-down:  ## stop Phoenix (its trace store is kept)
 	docker compose --profile trace stop phoenix
 
-injection:  ## slice 16: 5 planted-passage attacks x 4 prompts x 20 questions (GPU per A41)
-	$(UV) python -m rb_errata.cli injection
+injection:  ## slice 16: planted-passage attacks x prompts x 20 questions [DEFENCES=framed,framed+escaped]
+	$(UV) python -m rb_errata.cli injection $(if $(DEFENCES),--defences $(DEFENCES),)
 
 injection-report:  ## recompute: make injection-report RUN=evals/runs/injection-...
 	$(UV) python -m rb_errata.cli injection-report $(RUN)

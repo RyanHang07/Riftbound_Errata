@@ -1980,3 +1980,17 @@ has reached the database (a never-reached database still fails at once, so
 doctor stays fast), and `make agent-run` saves after every question with
 `RESUME=` to continue, refusing if the agent, generator, prompt, retrieval,
 corpus or questions changed.
+
+### A53. Slice 16 result: framing stops instructions, not a closed delimiter (2026-11-03)
+
+Production prompt: 36% of 100 planted-passage attacks succeed, against 69%
+with no framing (p = 2e-10). By attack: override 5%, citation hijack 0%,
+leak 0%, fake errata 75%, and **fake end of block 100%** under every framed
+variant. Sandwich (31%) and datamarking (40%) did not beat production
+significantly. Proposed fix: escape the delimiter tag in passage text, a
+byte-for-byte no-op on the real corpus (none of its 7,848 rules contains the
+tag or `</`). Measured first as `framed+escaped`, prediction committed; it
+goes into `prompt.build` only if it wins, and since real prompts would not
+change, slice 11's answers stay valid. The fake errata is the open problem:
+a false rule in the corpus's own voice; provenance (only Riot's documents
+are ingested) is the defence, not the prompt.

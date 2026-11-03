@@ -321,10 +321,10 @@ def _ask(args: argparse.Namespace) -> int:
     return 0
 
 
-def _injection(_: argparse.Namespace) -> int:
+def _injection(args: argparse.Namespace) -> int:
     from rb_errata.injection import run
 
-    out = run(config.load())
+    out = run(config.load(), only=args.defences.split(",") if args.defences else None)
     print((out / "report.md").read_text())
     print(f"written to {out}/")
     return 0
@@ -497,6 +497,8 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--notes", required=True, help="Riot's patch notes URL")
         if name == "confidence":
             p.add_argument("--judge", help="judge slug when a run has several judgments files")
+        if name == "injection":
+            p.add_argument("--defences", help="comma-separated variants, framed included")
         if name == "agent-run":
             p.add_argument("--conf", help="confidence.json from `make confidence`")
             p.add_argument("--limit", type=int)

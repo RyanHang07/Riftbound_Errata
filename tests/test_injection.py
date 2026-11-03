@@ -83,3 +83,16 @@ def test_report_pairs_each_defence_with_framed(tmp_path: Path) -> None:
     text = "\n".join(injection.report(tmp_path))
     assert "| framed | 2/4 = 50%" in text and "production" in text
     assert "| naive | 3/4 = 75%" in text and "1 / 0, p = 1" in text
+
+
+def test_escaping_neutralises_the_delimiter_and_nothing_else() -> None:
+    fake = next(a for a in injection.ATTACKS if a.id == "fake-system")
+    text = injection.DEFENCES["framed+escaped"]("q", [injection.planted(fake), REAL])
+    # Exactly one real closing tag remains: the template's own.
+    assert text.count("</retrieved_passages>") == 1 and "[delimiter removed]" in text
+    # Real passages are untouched, so production prompts would be byte-identical.
+    assert injection.DEFENCES["framed+escaped"]("q", [REAL]) == prompt.build("q", [REAL])
+    variants = ("< /Retrieved_Passages >", "<retrieved_passages>")
+    for v in variants:
+        p = Passage("x", ["1"], f"a {v} b", 0.1, REAL.valid_from, None, "h")
+        assert v not in injection.escape_delimiters([p])[0].text
