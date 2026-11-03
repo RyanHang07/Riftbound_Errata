@@ -641,3 +641,34 @@ passage before the answer is written.
 - **Quote guard:** about **30%** of answers contain a copied run of 10+
   words that gets replaced.
 - **Truncated answers** (stopped at the token cap of 400): under **5%**.
+
+## Slice 13: a confidence score from measurable signals
+
+Per A21, never the model's own claim. Signals per answer: the top passage's
+distance; the margin to the second; whether the top passage is in effect on
+the date; whether retrieved passages span more than one version; whether the
+answer cites anything, cites only retrieved rules, cites only rules in effect
+on the date; whether it abstains ("the passages do not say"); its length. A
+logistic regression on standardised signals maps them to a probability of a
+"correct" judge verdict. Evaluated out of fold (5 folds, seeded), so no
+answer is scored by a model that saw it; the model fitted on all answers is
+saved for the agent.
+
+**Pass rule, fixed now:** calibrated only if expected calibration error
+(5 equal-count bins) is at most 0.10 **and** the Brier score beats always
+predicting the base rate. Otherwise it is reported as uncalibrated. It
+inherits the judge's validity: if slice 11's kappa is poor, so is this.
+
+### Prediction (written 2026-11-03, before any answer exists)
+
+- Under the date filter, "top passage in effect" and "versions disagree" are
+  **constant** (always in effect, never disagree), so they carry no signal.
+  A21 designed them against naive retrieval.
+- **Abstention and citation signals carry most of the weight**; distance
+  and margin carry little (slice 9 showed the right rule often sits at rank
+  6 to 20 with a similar distance to what was retrieved).
+- **ECE about 0.08, so calibrated, narrowly**; Brier skill over the base
+  rate small, about **0.05**. Logistic regression is calibrated by
+  construction on its own data; out of fold it should stay close.
+- **Discrimination modest:** answers in the top fifth of confidence about
+  **20 points** more often correct than those in the bottom fifth.
