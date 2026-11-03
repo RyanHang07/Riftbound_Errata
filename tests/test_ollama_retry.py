@@ -82,3 +82,19 @@ def test_hung_generation_times_out_and_is_retried(monkeypatch: pytest.MonkeyPatc
     c.generate("first", max_tokens=5)  # cold: the long timeout
     assert c.generate("second", max_tokens=5).text == "fine" and c.retries == 1
     assert seen[0] == s.http_timeout_s and seen[1] == seen[2] == s.gen_timeout_s
+
+
+def test_hung_embedding_is_retried_too(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The second hang (question ~210) could be the search's embedding call.
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise httpx.ReadTimeout("stuck")
+        return httpx.Response(200, json={"embeddings": [[0.0]]})
+
+    monkeypatch.setattr(Ollama, "RETRY_WAITS_S", (0.0, 0.0, 0.0))
+    c = Ollama(Settings(), transport=httpx.MockTransport(handler))
+    c.embed(["first"])
+    assert c.embed(["second"]) == [[0.0]] and c.retries == 1

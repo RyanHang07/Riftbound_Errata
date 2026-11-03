@@ -158,6 +158,9 @@ class Ollama:
                 "truncate": False,
                 "options": self._placement(),
             },
+            # Same rule as generate: once connected, a stuck embedding (a query
+            # embeds in milliseconds) is retried instead of waiting 600 s.
+            timeout=self._s.gen_timeout_s if self._connected else None,
         )
         embeddings: list[list[float]] = data["embeddings"]
         return embeddings
