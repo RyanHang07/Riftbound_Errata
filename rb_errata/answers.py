@@ -100,6 +100,10 @@ def run(settings: Settings, limit: int | None = None) -> Path:
                 "id": q["id"],
                 "stratum": q["stratum"],
                 "retrieved": [p.source_ref for p in passages],
+                # Slice 13's signals: distances for margin, every rule number
+                # inside the chunks for "cites only what was retrieved".
+                "distances": [round(p.distance, 4) for p in passages],
+                "retrieved_refs": sorted(set().union(*(p.qualified_refs for p in passages))),
                 "hit_rank": graded["hit_rank"],
                 "prompt_sha256": hashlib.sha256(text.encode()).hexdigest(),
                 "prompt_tokens": g.prompt_tokens,

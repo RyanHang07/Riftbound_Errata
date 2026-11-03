@@ -252,6 +252,22 @@ def _answers_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _confidence(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.confidence import evaluate
+
+    run = Path(args.dir)
+    judged = sorted(run.glob("judgments-*.json"))
+    if args.judge:
+        judged = [run / f"judgments-{args.judge}.json"]
+    if len(judged) != 1:
+        print(f"need exactly one judgments file in {run}, or JUDGE=<slug>", file=sys.stderr)
+        return 1
+    print("\n".join(evaluate(run, judged[0])))
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -370,6 +386,7 @@ def main(argv: list[str] | None = None) -> int:
         "answer-sample": (_answer_sample, "slice 11: draw the blind hand-label sample"),
         "judge": (_judge, "slice 11: LLM judge over a run's answers, then the report"),
         "answers-report": (_answers_report, "slice 11: accuracy and kappa from committed files"),
+        "confidence": (_confidence, "slice 13: fit and check the confidence score on a run"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -393,6 +410,7 @@ def main(argv: list[str] | None = None) -> int:
             "answer-sample",
             "judge",
             "answers-report",
+            "confidence",
         ):
             p.add_argument("dir")
         if name == "recall":
@@ -400,6 +418,8 @@ def main(argv: list[str] | None = None) -> int:
         if name == "add-version":
             p.add_argument("version", help="MAJOR.MINOR, like 1.5")
             p.add_argument("--notes", required=True, help="Riot's patch notes URL")
+        if name == "confidence":
+            p.add_argument("--judge", help="judge slug when a run has several judgments files")
         if name == "answers":
             p.add_argument("--limit", type=int, help="first N questions only (a quick check)")
         if name == "version-impact":

@@ -1863,3 +1863,18 @@ GPU (A41). Prediction committed first (`docs/RECALL.md`, slice 11).
   unconditioned, per stratum, Wilson intervals; kappa (correct vs not, and
   all three verdicts) with a seeded bootstrap interval, the confusion matrix
   and both raters' "correct" rates.
+
+### A47. Slice 13 built: the confidence score and its calibration check (2026-11-03)
+
+`make confidence RUN=` after slice 11's judge. A21's signals, recomputable
+from the committed run (top distance, margin, top passage in effect,
+versions disagreeing, citations present / only retrieved / only in effect,
+abstention, length), into an L2 logistic regression (numpy, Newton's method,
+standardised; constant signals get zero weight). The verdict uses only
+out-of-fold probabilities (5 folds, seeded). Pass rule fixed in the
+prediction: ECE at most 0.10 over 5 equal-count bins and Brier better than
+the base rate, else "uncalibrated". The model fitted on all answers is saved
+as `confidence.json` (numbers only) for the agent. A test feeds it labels
+unrelated to every signal and requires "Uncalibrated": the check cannot call
+noise skill. `make answers` now records distances and every retrieved rule
+number, which these signals need.
