@@ -137,7 +137,7 @@ def test_report_conditions_on_hits_and_computes_kappa(
         "judgments": [{"id": k, "verdict": v, "reason": ""} for k, v in verdicts.items()],
     }))  # fmt: skip
     review = tmp_path / "review.yaml"
-    review.write_text(json.dumps({"items": [
+    review.write_text(json.dumps({"run": tmp_path.name, "items": [
         {"id": "a", "verdict": "correct"}, {"id": "b", "verdict": "incorrect"},
         {"id": "d", "verdict": "incorrect"},
     ]}))  # fmt: skip
@@ -147,3 +147,14 @@ def test_report_conditions_on_hits_and_computes_kappa(
     assert "| expert-ruling | 2/3 = 67%" in text and "| 3/4 = 75%" in text
     assert "Judge against hand labels (3 answers)" in text
     assert "hand 33%, judge 67%" in text
+
+
+def test_no_kappa_against_another_runs_labels(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    review = tmp_path / "review.yaml"
+    review.write_text(
+        json.dumps({"run": "answers-x", "items": [{"id": "a", "verdict": "correct"}]})
+    )
+    monkeypatch.setattr(answers, "REVIEW", review)
+    assert "No kappa here" in answers.agreement_lines({"a": "correct"}, "agent-y")[0]

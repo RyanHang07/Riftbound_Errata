@@ -311,12 +311,23 @@ def report(run_dir: Path) -> list[str]:
                 f"{sum(verdict[a['id']] == 'not_answered' for a in mine)} | "
                 f"{sum(verdict[a['id']] == 'unparsed' for a in mine)} |"
             )
-        lines += ["", *agreement_lines(verdict)]
+        lines += ["", *agreement_lines(verdict, run_dir.name)]
     return lines
 
 
-def agreement_lines(verdict: dict[str, str]) -> list[str]:
-    """Kappa between the judge and the hand labels, where both exist."""
+def agreement_lines(verdict: dict[str, str], run: str) -> list[str]:
+    """Kappa between the judge and the hand labels, where both exist.
+
+    Only for the run the labels were drawn from: hand labels grade specific
+    answer texts. Found on the agent run, whose report first compared the
+    labels of slice 11's answers with verdicts on the agent's different answers.
+    """
+    labelled_run = (
+        (yaml.safe_load(REVIEW.read_text()) or {}).get("run") if REVIEW.exists() else None
+    )
+    if labelled_run and labelled_run != run:
+        return [f"No kappa here: the hand labels grade {labelled_run}'s answers, not this run's. "
+                "This judge's validity rests on that run's kappa.", ""]  # fmt: skip
     hand = {i["id"]: i["verdict"] for i in _review_items() if i.get("verdict")}
     both = [i for i in hand if i in verdict and verdict[i] != "unparsed"]
     if not both:

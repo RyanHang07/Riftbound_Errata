@@ -17,15 +17,5 @@ Usable only if the kappa below says so. Accuracy given a hit is the headline; un
 | expert-ruling-faq | 1/3 = 33% [6%, 79%] | 2/8 = 25% [7%, 59%] | 0 | 0 |
 | version-change | 31/45 = 69% [54%, 80%] | 37/56 = 66% [53%, 77%] | 0 | 0 |
 
-### Judge against hand labels (60 answers)
-
-- correct vs not: kappa 0.59 [0.37, 0.79] (moderate)
-- three verdicts: kappa 0.35 [0.22, 0.50] (fair)
-- "correct" rate on these answers: hand 53%, judge 60%
-
-| hand \ judge | correct | incorrect | not_answered |
-|---|---|---|---|
-| correct | 28 | 4 | 0 |
-| incorrect | 1 | 8 | 0 |
-| not_answered | 7 | 12 | 0 |
+No kappa here: the hand labels grade answers-qwen3-2026-11-03T0511Z's answers, not this run's. This judge's validity rests on that run's kappa.
 

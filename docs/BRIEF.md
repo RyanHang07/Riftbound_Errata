@@ -1994,3 +1994,22 @@ goes into `prompt.build` only if it wins, and since real prompts would not
 change, slice 11's answers stay valid. The fake errata is the open problem:
 a false rule in the corpus's own voice; provenance (only Riot's documents
 are ingested) is the defence, not the prompt.
+
+### A54. Slice 14 and the injection fix: two null results, and GPU noise (2026-11-03)
+
+- **Agent:** +5 points overall (45% to 50%), p = 0.08; on re-searched
+  questions 15 gained, 6 lost, p = 0.08; generation time +123%. Not shown to
+  help; reported as a null result. Router 80%.
+- **Generation on the GPU is not deterministic** at temperature 0 with a
+  fixed seed: 49 of 100 identical prompts gave a different-length answer
+  across two runs, and 10% of identical-prompt answers flipped judge verdict
+  in the agent comparison. Every paired comparison of generated answers
+  carries this noise; A51's "a resumed answer is the same answer" holds for
+  settings, not text. Likely cause (not tested): Ollama's batching and
+  prompt-cache reuse on the GPU. A CPU-only rerun, or `OLLAMA_NUM_PARALLEL=1`,
+  is the test.
+- **Escaped delimiter: not adopted.** The fake system message works 19 of 20
+  without the closing tag. The defence is provenance (Riot's documents
+  only), extended to any third-party text before slice 10 ingests it.
+- Fixed: a run's report computed kappa against hand labels from a different
+  run; kappa now appears only for the labelled run.
