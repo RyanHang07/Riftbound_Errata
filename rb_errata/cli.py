@@ -268,6 +268,54 @@ def _confidence(args: argparse.Namespace) -> int:
     return 0
 
 
+def _agent_run(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.agent.evaluate import run
+
+    out = run(config.load(), Path(args.conf) if args.conf else None, args.limit)
+    print(f"agent answers written to {out}/; next: make judge RUN={out}")
+    return 0
+
+
+def _agent_compare(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.agent.evaluate import compare
+
+    lines = compare(Path(args.a), Path(args.b), args.judge)
+    (Path(args.b) / "compare.md").write_text("\n".join(lines) + "\n")
+    print("\n".join(lines))
+    return 0
+
+
+def _ask(args: argparse.Namespace) -> int:
+    import json
+    from datetime import date
+    from pathlib import Path
+
+    from rb_errata.agent import graph
+    from rb_errata.ollama import Ollama
+
+    settings = config.load()
+    model = json.loads(Path(args.conf).read_text()) if args.conf else None
+    client = Ollama(settings)
+    try:
+        g = graph.build(graph.Deps.live(settings, client, model))
+        day = date.fromisoformat(args.as_of) if args.as_of else date.today()
+        state, secs = graph.ask(g, args.question, day)
+    finally:
+        client.close()
+        from rb_errata.agent.tracing import flush
+
+        flush()
+    for w in state.get("warnings", []):
+        print(f"WARNING: {w}\n")
+    print(state["answer"])
+    print(f"\n[{' -> '.join(state['steps'])}; confidence {state['confidences']}; {secs:.1f} s]")
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -387,6 +435,9 @@ def main(argv: list[str] | None = None) -> int:
         "judge": (_judge, "slice 11: LLM judge over a run's answers, then the report"),
         "answers-report": (_answers_report, "slice 11: accuracy and kappa from committed files"),
         "confidence": (_confidence, "slice 13: fit and check the confidence score on a run"),
+        "agent-run": (_agent_run, "slice 14: the agent over the question set"),
+        "agent-compare": (_agent_compare, "slice 14: agent vs slice 11 answers, paired"),
+        "ask": (_ask, "slice 14: ask the agent one question"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -420,6 +471,17 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--notes", required=True, help="Riot's patch notes URL")
         if name == "confidence":
             p.add_argument("--judge", help="judge slug when a run has several judgments files")
+        if name == "agent-run":
+            p.add_argument("--conf", help="confidence.json from `make confidence`")
+            p.add_argument("--limit", type=int)
+        if name == "agent-compare":
+            p.add_argument("a")
+            p.add_argument("b")
+            p.add_argument("--judge")
+        if name == "ask":
+            p.add_argument("question")
+            p.add_argument("--as-of", help="YYYY-MM-DD; default today")
+            p.add_argument("--conf", help="confidence.json from `make confidence`")
         if name == "answers":
             p.add_argument("--limit", type=int, help="first N questions only (a quick check)")
         if name == "version-impact":

@@ -339,6 +339,73 @@ class Backend:
             raise ToolError("Ollama unreachable; start Ollama, then retry") from None
 
 
+class AgentBackend(Backend):
+    """The agent (slice 14) behind the `ask` tool: the search's checks plus the
+    generator's pin, and the saved confidence model if one is configured."""
+
+    _graph: Any = field(default=None, init=False)
+    _model: dict[str, Any] | None = field(default=None, init=False)
+
+    def ask(self, question: str, as_of: date) -> tuple[Any, dict[str, Any] | None]:
+        import httpx
+        import psycopg
+
+        from rb_errata import config
+        from rb_errata.agent import graph
+        from rb_errata.ollama import PinError, checked_digest
+
+        settings = config.load()
+        try:
+            if self._graph is None:
+                self.search(question, 1, as_of)  # opens the client, runs the one-time checks
+                checked_digest(self._client, settings.gen_model, settings.gen_digest)
+                if settings.confidence_model:
+                    path = Path(settings.confidence_model)
+                    if not path.exists():
+                        raise ToolError(f"confidence model {path} not found; check .env")
+                    self._model = json.loads(path.read_text())
+                self._graph = graph.build(graph.Deps.live(settings, self._client, self._model))
+            state, _ = graph.ask(self._graph, question, as_of)
+            return state, self._model
+        except PinError as e:
+            raise ToolError(f"generator check failed: {e}") from None
+        except psycopg.OperationalError:
+            raise ToolError("database unreachable; run `make db-up`") from None
+        except httpx.TransportError:
+            raise ToolError("Ollama unreachable; start Ollama, then retry") from None
+
+
+def ask(
+    question: str, as_of: str | None, run: Callable[[str, date], tuple[Any, Any]]
+) -> dict[str, Any]:
+    """The agent's answer with its citations, sources, confidence and its standing."""
+    if not question.strip():
+        raise ToolError("question: empty")
+    day = _date(as_of)
+    state, model = run(question, day)
+    cited = sorted(set(re.findall(r"core@\d+\.\d+:\d{3}(?:\.[0-9a-z]+)*", state["answer"])))
+    conf = state.get("confidence")
+    if conf is None:
+        standing = "no confidence model configured (set RB_CONFIDENCE_MODEL)"
+    elif model and model.get("calibrated"):
+        standing = f"calibrated (ECE {model['ece']}, judged against {model['judge']})"
+    else:
+        standing = "UNCALIBRATED: do not read this number as a probability"
+    return {
+        "as_of": day.isoformat(),
+        "answer": state["answer"],
+        "citations": cited,
+        "confidence": round(conf, 3) if conf is not None else None,
+        "confidence_standing": standing,
+        "re_searched": state["attempts"] > 0,
+        "warnings": state.get("warnings", []),
+        "sources": [
+            {"ref": p.source_ref, **_window_fields(p.document.split("@", 1)[1])}
+            for p in state["passages"]
+        ],
+    }
+
+
 def search_rules(question: str, as_of: str | None, k: int, search: Search) -> dict[str, Any]:
     if not question.strip():
         raise ToolError("question: empty")

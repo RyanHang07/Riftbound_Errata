@@ -17,7 +17,7 @@ export const NAV: DocGroup[] = [
   ] },
   { group: "Tools reference", hue: "var(--d-mind)", pages: [
     { slug: "search-rules", title: "search_rules", lede: "Find the rules that answer a question, using only rules in force on a date." },
-    { slug: "ask", title: "ask", lede: "The full agent: an answer with versioned citations and a confidence score.", soon: true },
+    { slug: "ask", title: "ask", lede: "The full agent: an answer with versioned citations and a confidence score." },
     { slug: "what-changed", title: "what_changed", lede: "How a rule changed between two versions, word by word." },
     { slug: "get-rule", title: "get_rule", lede: "The exact text of one rule in one version." },
     { slug: "list-versions", title: "list_versions", lede: "Every rules version and the dates it was in force." },

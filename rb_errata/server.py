@@ -34,7 +34,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
 
 server = MCPServer("rb-errata", instructions=INSTRUCTIONS)
-_backend = tools.Backend()
+_backend = tools.AgentBackend()
 
 
 @server.tool(annotations=READ_ONLY)
@@ -46,6 +46,20 @@ def search_rules(question: str, as_of: str | None = None, k: int = 5) -> dict[st
     datable version are refused. k is how many passages to return (1 to 20).
     """
     return tools.search_rules(question, as_of, k, _backend.search)
+
+
+@server.tool(annotations=READ_ONLY)
+def ask(question: str, as_of: str | None = None) -> dict[str, Any]:
+    """Answer a rules question as of a date with the local agent (slice 14).
+
+    The agent searches the rules in force on as_of (YYYY-MM-DD, default
+    today), answers with the local model, checks its confidence and searches
+    wider once if it is low. Returns the answer, the rules it cites, the
+    sources it read with their validity dates, a confidence score with its
+    calibration standing, and any freshness warnings. Slower than
+    search_rules: it runs a local model.
+    """
+    return tools.ask(question, as_of, _backend.ask)
 
 
 @server.tool(annotations=READ_ONLY)

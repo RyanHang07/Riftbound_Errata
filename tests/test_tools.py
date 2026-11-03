@@ -232,6 +232,7 @@ def test_server_lists_four_read_only_tools_and_returns_errors() -> None:
 
     listed, bad = anyio.run(go)
     assert sorted(t.name for t in listed) == [
+        "ask",
         "get_rule",
         "list_versions",
         "search_rules",
@@ -317,3 +318,20 @@ def test_pending_version_is_listed_and_marks_older_rules_replaced(
     assert tools._window_fields(newest)["newer_version_exists"] is True
     with raises("registered but not ingested"):
         tools.parse_ref("core@9.0:100")
+
+
+def test_ask_reports_citations_and_calibration_standing() -> None:
+    p = passage("core@1.4:419.4", "2026-07-24", None)
+    state = {"answer": "Yes [core@1.4:419.4.b] and [core@1.4:419.4.b].", "confidence": 0.71,
+             "attempts": 1, "warnings": [], "passages": [p]}  # fmt: skip
+    out = tools.ask("q", "2026-10-01", lambda q, d: (state, {"calibrated": False}))
+    assert out["citations"] == ["core@1.4:419.4.b"] and out["re_searched"] is True
+    assert out["confidence_standing"].startswith("UNCALIBRATED")
+    ok = {"calibrated": True, "ece": 0.06, "judge": "judgments-x.json"}
+    assert tools.ask("q", None, lambda q, d: (state, ok))["confidence_standing"].startswith(
+        "calibrated"
+    )
+    none = tools.ask("q", None, lambda q, d: ({**state, "confidence": None}, None))
+    assert none["confidence"] is None and "no confidence model" in none["confidence_standing"]
+    with raises("question: empty"):
+        tools.ask(" ", None, lambda q, d: (state, None))

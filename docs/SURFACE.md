@@ -2,7 +2,7 @@
 
 **Status (A43):** the public site is built in `site/` (`make site-dev` to
 view it locally); not deployed until the legal gate. The MCP server is built
-(`rb_errata/server.py`, `make mcp`; setup in the site's Claude Desktop page).
+(`rb_errata/server.py`, `make mcp`; setup in the site's Claude Desktop page), including `ask`, backed by the slice 14 agent (A48).
 The local app is not built yet.
 
 *Designed 2026-10-06 (A33), built in slices 15 and 17. Written before the

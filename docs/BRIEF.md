@@ -1878,3 +1878,25 @@ as `confidence.json` (numbers only) for the agent. A test feeds it labels
 unrelated to every signal and requires "Uncalibrated": the check cannot call
 noise skill. `make answers` now records distances and every retrieved rule
 number, which these signals need.
+
+### A48. Slice 14 built: the agent, its traces, and the `ask` tool (2026-11-03)
+
+`rb_errata/agent/`: a LangGraph graph (route, retrieve, answer, check,
+re_search, finish) with dependencies injected, so every path is tested with
+fakes. Route asks the generator (JSON) whether a card is named; unparsed is
+`None`, never guessed. Re-search fires once when slice 13's confidence is
+below 0.5 and widens k from 5 to 10, aimed at slice 12's rank 6 to 10 misses.
+No confidence model means no loop, stated in the output. Every node is an
+OpenTelemetry span with OpenInference kinds (AGENT, LLM, RETRIEVER, CHAIN),
+exported only when `RB_TRACE_ENDPOINT` is set, to Arize Phoenix 20.27.0
+(Docker, pinned by digest, compose profile `trace`, localhost only). Spans
+carry refs and quote-guarded answers, never passage text.
+
+`make agent-run` writes slice 11's answers format, so `make judge` grades it
+unchanged; `make agent-compare` pairs it with slice 11 by question (exact
+McNemar, overall, per stratum, re-searched only), grades the router against
+source categories, and compares Ollama's own generation time. `make ask`
+asks one question. The MCP server gains `ask` (SURFACE.md's fifth tool),
+whose output carries `confidence_standing`: "UNCALIBRATED" whenever
+`confidence.json` failed its pass rule, so a number that is not a
+probability is never presented as one.

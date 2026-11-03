@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact answers answer-sample judge answers-report confidence site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact answers answer-sample judge answers-report confidence agent-run agent-compare ask phoenix-up phoenix-down site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -139,6 +139,21 @@ answers-report:  ## accuracy and kappa, offline: make answers-report RUN=evals/r
 
 confidence:  ## slice 13: confidence score and calibration: make confidence RUN=evals/runs/answers-...
 	$(UV) python -m rb_errata.cli confidence $(RUN) $(if $(JUDGE),--judge $(JUDGE),)
+
+agent-run:  ## slice 14: the agent over every question: make agent-run CONF=evals/runs/answers-.../confidence.json
+	$(UV) python -m rb_errata.cli agent-run $(if $(CONF),--conf $(CONF),) $(if $(LIMIT),--limit $(LIMIT),)
+
+agent-compare:  ## agent vs slice 11, paired: make agent-compare A=evals/runs/answers-... B=evals/runs/agent-...
+	$(UV) python -m rb_errata.cli agent-compare $(A) $(B) $(if $(JUDGE),--judge $(JUDGE),)
+
+ask:  ## ask the agent: make ask Q="..." [AS_OF=2026-05-01] [CONF=.../confidence.json]
+	$(UV) python -m rb_errata.cli ask "$(Q)" $(if $(AS_OF),--as-of $(AS_OF),) $(if $(CONF),--conf $(CONF),)
+
+phoenix-up:  ## start Arize Phoenix at http://localhost:6006 (traces when RB_TRACE_ENDPOINT is set)
+	docker compose --profile trace up -d phoenix
+
+phoenix-down:  ## stop Phoenix (its trace store is kept)
+	docker compose --profile trace stop phoenix
 
 check-updates:  ## is a newer Core Rules version out? (mirror manifest + Riot Rules Hub; exit 1 if so)
 	$(UV) python -m rb_errata.cli check-updates

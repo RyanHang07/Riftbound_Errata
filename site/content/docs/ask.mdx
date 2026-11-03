@@ -1,5 +1,30 @@
-<Callout>Not built yet. It needs answer generation, a checked grader and a calibrated confidence score first (slices 11 to 14).</Callout>
+## Input
 
-## What it will return
+<Params>
+  <Param name="question" type="string, required">The rules question, in plain language.</Param>
+  <Param name="as_of" type="date, default today">YYYY-MM-DD. The agent only reads rules in force on this date.</Param>
+</Params>
 
-An answer, the rules it cites with versions, the sources it read, and a confidence score that has been checked against real accuracy.
+## What happens
+
+1. **Route:** the local model decides whether the question names a specific card. Card text is not in the corpus yet, so those answers carry a note saying so.
+2. **Retrieve:** the five passages that best match, from rules in force on the date.
+3. **Answer:** the local model answers from those passages, citing each rule. Any long run of copied rule text is replaced before you see it.
+4. **Check:** a confidence score from measurable signals, never the model's own claim, plus a warning if a newer rules version is published but not loaded yet.
+5. **Re-search once** if confidence is low: ten passages instead of five, then answer again.
+
+## Output
+
+`answer`, `citations` (version-qualified rule references), `sources` (each with its validity dates), `confidence`, `confidence_standing` and `warnings`.
+
+<Callout>`confidence_standing` says whether the score passed its calibration check. If it says UNCALIBRATED, the number is not a probability. With no confidence model configured, there is no score and no re-search.</Callout>
+
+## From the terminal
+
+```
+make ask Q="Does a countered spell still count for Legion?" AS_OF=2026-05-01
+```
+
+## Errors
+
+The same as [search_rules](/docs/search-rules/), plus **generator check failed** when the answer model's pin does not match: run `make doctor`.

@@ -23,5 +23,19 @@ services:
       timeout: 3s
       retries: 30
 
+  # Slice 14: Arize Phoenix, the trace viewer for the agent. Only with
+  # `make phoenix-up` (profile "trace"), so `make db-up` stays one container.
+  # Pinned by tag and digest like the database. Bound to localhost: traces
+  # hold answers and rule references, and stay on this machine.
+  phoenix:
+    profiles: ["trace"]
+    image: arizephoenix/phoenix:version-20.27.0@sha256:4d575d1b335bfef4d8af7d321ef44551d410858a32c3f9073b6a6c4444d85b11
+    ports: ["127.0.0.1:6006:6006"]
+    volumes:
+      - phoenix:/mnt/data
+    environment:
+      PHOENIX_WORKING_DIR: /mnt/data
+
 volumes:
   pgdata:
+  phoenix:

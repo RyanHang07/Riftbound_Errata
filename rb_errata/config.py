@@ -71,6 +71,11 @@ class Settings:
     judge_digest: str = ""
     judge_max_tokens: int = 200
 
+    # --- Agent (slice 14) ------------------------------------------------
+    # Path to a confidence.json written by `make confidence`. Empty: the agent
+    # answers without a confidence score and never re-searches, and says so.
+    confidence_model: str = ""
+
     # --- Reranking (slice 9) ---------------------------------------------
     # A cross-encoder reads the question and one passage together and scores
     # the pair, which a vector (one per side, compared afterwards) cannot.
