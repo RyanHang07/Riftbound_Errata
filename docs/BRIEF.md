@@ -1934,3 +1934,21 @@ subclassed a dataclass without `@dataclass`, so its `field()` defaults stayed
 `Field` objects and the agent was never built; the MCP `ask` tool shipped in
 A48 had the same crash. Fixed, with a regression test. Also: tabs unmounted
 on switch and lost their results; every screen now stays mounted.
+
+### A51. The first answers run died at question ~50; runs now survive it (2026-11-03)
+
+On the user's machine, `make answers` stopped between questions 40 and 60:
+Ollama closed the connection without a response ("Server disconnected"),
+and the 40+ answers already made were lost because the run wrote only at the
+end. Cause on Ollama's side not yet known (a crashed model runner or a
+server restart; its log will say).
+
+- `Ollama._post` retries a dropped request after 5, 20 and 60 s, counting
+  every retry; the count is recorded in the run (`ollama_retries`) and shown
+  in its report. A client that never connected still fails at once, so
+  "Ollama unreachable" stays fast in doctor and the tools.
+- `make answers` saves after every answer (`answers.partial.json`);
+  `make answers RESUME=<dir>` continues, refusing if the generator, prompt,
+  retrieval, corpus or questions changed since the run began. Temperature 0
+  and a fixed seed make a resumed answer the one the uninterrupted run would
+  have produced, on the same placement.

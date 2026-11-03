@@ -60,7 +60,20 @@ def _row(passages: list[Any]) -> dict[str, Any]:
     ]}  # fmt: skip
 
 
-def run(settings: Settings, limit: int | None = None) -> Path:
+PARTIAL = "answers.partial.json"
+# What must match for a resumed run to be one experiment, not two spliced.
+SAME = ("generator", "template_sha256", "retrieval", "corpus_chunks_sha256", "questions_sha256")
+
+
+def run(settings: Settings, limit: int | None = None, resume: Path | None = None) -> Path:
+    """Answer every question, saving after each one.
+
+    Found on the first full run: Ollama dropped a connection at question ~50
+    and every answer so far was lost. Now each answer is written to
+    answers.partial.json as it is made, and `make answers RESUME=<dir>`
+    continues a stopped run, refusing if anything that defines the experiment
+    (generator, prompt, retrieval, corpus, questions) has changed.
+    """
     from rb_errata.ollama import Ollama, checked_digest
     from rb_errata.retrieve.methods import retrieve
 
@@ -73,20 +86,58 @@ def run(settings: Settings, limit: int | None = None) -> Path:
     db.init(settings)
     if recall._db_corpus(settings) != recall._manifest_corpus():
         raise SystemExit("database differs from data/corpus.json; run `make ingest` first")
-    stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")
-    out_dir = recall.RUNS / f"answers-{settings.embed_profile}-{stamp}"
-    if out_dir.exists():
-        raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
+    meta: dict[str, Any] = {
+        "generator": {"model": settings.gen_model, "digest": gen_digest,
+                      "think": settings.gen_think, "temperature": settings.gen_temperature,
+                      "seed": settings.gen_seed, "num_ctx": settings.gen_num_ctx,
+                      "max_tokens": settings.gen_max_tokens},
+        "template_sha256": prompt.TEMPLATE_SHA256,
+        "retrieval": {"method": METHOD, "k": K, "embed_model": settings.embed_model,
+                      "embed_digest": embed_digest},
+        "corpus_chunks_sha256": json.loads(recall.CORPUS.read_text())["chunks_sha256"],
+        "questions_sha256": hashlib.sha256(
+            Path("evals/questions.yaml").read_bytes()).hexdigest(),
+    }  # fmt: skip
+    rows: list[dict[str, Any]] = []
+    placement, retries = None, 0
+    if resume is not None:
+        saved = json.loads((resume / PARTIAL).read_text())
+        changed = [k for k in SAME if saved[k] != meta[k]]
+        if changed:
+            raise SystemExit(
+                f"cannot resume {resume}: {', '.join(changed)} changed since it started"
+            )
+        out_dir, rows = resume, saved["answers"]
+        placement, retries = saved["placement"]["gpu_fraction"], saved.get("ollama_retries", 0)
+    else:
+        stamp = datetime.now(UTC).strftime("%Y-%m-%dT%H%MZ")
+        out_dir = recall.RUNS / f"answers-{settings.embed_profile}-{stamp}"
+        if out_dir.exists():
+            raise SystemExit(f"{out_dir} already exists; wait a minute and rerun")
+        out_dir.mkdir(parents=True)
+
+    def save(name: str) -> None:
+        (out_dir / name).write_text(json.dumps({
+            "captured_at": datetime.now(UTC).isoformat(timespec="seconds"), **meta,
+            # A41: GPU and CPU can produce different text at temperature 0, so a
+            # comparison must never mix placements. Recorded, never assumed.
+            "placement": {"gpu_fraction": placement, "cpu_only": settings.cpu_only},
+            "ollama_retries": retries,
+            "answers": rows,
+        }, indent=1) + "\n")  # fmt: skip
+
+    done_ids = {r["id"] for r in rows}
     questions = load_questions()[:limit] if limit else load_questions()
     cp = counterparts_mod.load()
-    rows, placement = [], None
     client = Ollama(settings)
     try:
         started = time.perf_counter()
         for n, q in enumerate(questions, 1):
+            if q["id"] in done_ids:
+                continue
             if n == 1 or n % 20 == 0:
-                done = time.perf_counter() - started
-                print(f"  answer {n}/{len(questions)}, {done:.0f}s elapsed", file=sys.stderr,
+                spent = time.perf_counter() - started
+                print(f"  answer {n}/{len(questions)}, {spent:.0f}s elapsed", file=sys.stderr,
                       flush=True)  # fmt: skip
             day = date.fromisoformat(str(q["as_of"]))
             passages = retrieve(METHOD, settings, client, q["question"], K, day)
@@ -115,26 +166,16 @@ def run(settings: Settings, limit: int | None = None) -> Path:
                 "quotes_removed": quoted,
                 "answer": answer,
             })  # fmt: skip
+            retries = client.retries + (saved.get("ollama_retries", 0) if resume else 0)
+            save(PARTIAL)
+    except BaseException:
+        print(f"\nstopped after {len(rows)} answers, saved in {out_dir / PARTIAL}.\n"
+              f"Continue with: make answers RESUME={out_dir}", file=sys.stderr)  # fmt: skip
+        raise
     finally:
         client.close()
-    out_dir.mkdir(parents=True)
-    (out_dir / "answers.json").write_text(json.dumps({
-        "captured_at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "generator": {"model": settings.gen_model, "digest": gen_digest,
-                      "think": settings.gen_think, "temperature": settings.gen_temperature,
-                      "seed": settings.gen_seed, "num_ctx": settings.gen_num_ctx,
-                      "max_tokens": settings.gen_max_tokens},
-        "template_sha256": prompt.TEMPLATE_SHA256,
-        "retrieval": {"method": METHOD, "k": K, "embed_model": settings.embed_model,
-                      "embed_digest": embed_digest},
-        # A41: GPU and CPU can produce different text at temperature 0, so a
-        # comparison must never mix placements. Recorded, never assumed.
-        "placement": {"gpu_fraction": placement, "cpu_only": settings.cpu_only},
-        "corpus_chunks_sha256": json.loads(recall.CORPUS.read_text())["chunks_sha256"],
-        "questions_sha256": hashlib.sha256(
-            Path("evals/questions.yaml").read_bytes()).hexdigest(),
-        "answers": rows,
-    }, indent=1) + "\n")  # fmt: skip
+    save("answers.json")
+    (out_dir / PARTIAL).unlink()
     (out_dir / "report.md").write_text("\n".join(report(out_dir)) + "\n")
     return out_dir
 
@@ -244,6 +285,7 @@ def report(run_dir: Path) -> list[str]:
         f"{len(answers)} answers. Seconds per answer (prefill + decode, Ollama's clock): "
         f"median {statistics.median(total):.2f}, p90 {p90:.2f}."
         f" Answer tokens: median {statistics.median(a['answer_tokens'] for a in answers):.0f}.",
+        f"Ollama connections dropped and retried: {snap.get('ollama_retries', 0)}. "
         f"Stopped at the token cap: {sum(a['done_reason'] == 'length' for a in answers)}. "
         f"Answers with copied rule text removed: {sum(a['quotes_removed'] > 0 for a in answers)}.",
         "",

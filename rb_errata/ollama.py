@@ -65,11 +65,20 @@ def checked_digest(client: Ollama, tag: str, pinned: str) -> str:
 
 
 class Ollama:
+    # Found on the first full answers run (slice 11): Ollama dropped a connection
+    # mid-run ("Server disconnected without sending a response") and the whole
+    # run died. Ollama restarts a crashed model runner on the next request, so
+    # a dropped connection is retried after a pause; every retry is counted
+    # and recorded with the run, never hidden.
+    RETRY_WAITS_S: tuple[float, ...] = (5.0, 20.0, 60.0)
+
     def __init__(self, settings: Settings, transport: httpx.BaseTransport | None = None) -> None:
         self._s = settings
         self._http = httpx.Client(
             base_url=settings.ollama_url, timeout=settings.http_timeout_s, transport=transport
         )
+        self.retries = 0
+        self._connected = False  # set by the first successful request
 
     def close(self) -> None:
         self._http.close()
@@ -80,10 +89,27 @@ class Ollama:
         return {"num_gpu": 0} if self._s.cpu_only else {}
 
     def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
-        r = self._http.post(path, json=body)
-        r.raise_for_status()
-        data: dict[str, Any] = r.json()
-        return data
+        import sys
+        import time
+
+        for wait in (*self.RETRY_WAITS_S, None):
+            try:
+                r = self._http.post(path, json=body)
+                r.raise_for_status()
+                data: dict[str, Any] = r.json()
+                self._connected = True
+                return data
+            except (httpx.RemoteProtocolError, httpx.ReadError, httpx.ConnectError) as exc:
+                # A session that never connected fails at once, so doctor and
+                # the tools still report "Ollama unreachable" in seconds; a
+                # connection lost mid-run (the runner restarting) is retried.
+                if wait is None or (isinstance(exc, httpx.ConnectError) and not self._connected):
+                    raise
+                self.retries += 1
+                print(f"  Ollama dropped the request ({type(exc).__name__}); retrying in "
+                      f"{wait:.0f} s", file=sys.stderr, flush=True)  # fmt: skip
+                time.sleep(wait)
+        raise AssertionError("unreachable")
 
     def version(self) -> str:
         r = self._http.get("/api/version")

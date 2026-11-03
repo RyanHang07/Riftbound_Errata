@@ -213,9 +213,11 @@ def _version_impact(args: argparse.Namespace) -> int:
 
 
 def _answers(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
     from rb_errata.answers import run
 
-    out = run(config.load(), args.limit)
+    out = run(config.load(), args.limit, Path(args.resume) if args.resume else None)
     print((out / "report.md").read_text())
     print(f"answers and report written to {out}/")
     return 0
@@ -505,6 +507,9 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--conf", help="confidence.json from `make confidence`")
         if name == "answers":
             p.add_argument("--limit", type=int, help="first N questions only (a quick check)")
+            p.add_argument(
+                "--resume", help="continue a stopped run: its evals/runs/answers-... dir"
+            )
         if name == "version-impact":
             p.add_argument("version")
         if name == "recall-compare":

@@ -125,8 +125,8 @@ mcp:  ## run the MCP server on stdio (what Claude Desktop starts; Ctrl+C to stop
 mcp-check:  ## the MCP server over stdio vs the committed snapshot (needs db-up and Ollama)
 	$(UV) python -m rb_errata.cli mcp-check
 
-answers:  ## slice 11: answer every question (GPU per A41): make answers [LIMIT=5]
-	$(UV) python -m rb_errata.cli answers $(if $(LIMIT),--limit $(LIMIT),)
+answers:  ## slice 11: answer every question (GPU per A41): make answers [LIMIT=5] [RESUME=evals/runs/answers-...]
+	$(UV) python -m rb_errata.cli answers $(if $(LIMIT),--limit $(LIMIT),) $(if $(RESUME),--resume $(RESUME),)
 
 answer-sample:  ## the blind hand-label sample: make answer-sample RUN=evals/runs/answers-...
 	$(UV) python -m rb_errata.cli answer-sample $(RUN)
