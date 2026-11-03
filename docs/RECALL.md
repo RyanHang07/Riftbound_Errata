@@ -549,3 +549,33 @@ Same configuration, corpus and embedder digest; questions `ab0ebc0a9492`
 80% [68%, 89%]: the 43 shared hits plus both relabelled `-v1.2` questions.
 Now the current best (site, taxonomy, `make mcp-check` baseline). Taxonomy:
 76 misses (47 below the cutoff, 23 card, 2 rules-only, 4 unclassified).
+
+## Slice 18: integrating a new rules version (Radiance, v1.5, as the test)
+
+Radiance's Core Rules (PDF last updated 2026-10-09; patch notes say effective
+16 Oct 2026) were in force for 18 days before anything here noticed. This
+slice builds the path a new version takes: discover it (`make
+check-updates`), register it (`make add-version`), see what it touches
+(`make version-impact`), warn at query time while it is not ingested, then
+the existing `make fetch dates ingest` and `make recall`. The next real test
+is Legacy (set 6, listed for 29 January 2027).
+
+### Prediction (written 2026-11-03, before v1.5 is diffed, ingested or searched)
+
+- **v1.4 to v1.5 diff:** about **80 changed** (40 to 160), **60 added**
+  (25 to 150), **15 removed** (0 to 40). v1.3 to v1.4 was a restructure (201
+  / 426 / 116); the Radiance notes describe three keywords and
+  clarifications.
+- **Impact on the labels:** about **10%** of the 168 ruling questions (5 to
+  20%) cite a v1.4 rule that changes or disappears in v1.5. Their labels stay
+  right (dated 1 Oct 2026, before Radiance) but are what a later
+  current-dated question set would have to recheck.
+- **Recall after ingesting v1.5: 224 of 224 questions return the same top 20
+  refs** as `recall-as-of-qwen3-2026-11-03T0304Z`. Every question is dated
+  before 16 Oct, the date filter removes v1.5 chunks before ranking, and the
+  scan is exact, so v1.4 chunks only change their `valid_to`.
+- **Embedding work:** under **25%** of v1.5's chunks need a new embedding;
+  the rest hit the cache because their text equals a v1.4 chunk's.
+- **Freshness warning:** before ingestion, `search_rules` dated after 15 Oct
+  warns that v1.5 is not ingested; after, it warns nothing and reports v1.5
+  in effect.
