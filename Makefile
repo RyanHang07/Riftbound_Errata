@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact answers answer-sample judge answers-report confidence agent-run agent-compare ask phoenix-up phoenix-down site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact answers answer-sample judge answers-report confidence agent-run agent-compare ask phoenix-up phoenix-down injection injection-report site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -154,6 +154,12 @@ phoenix-up:  ## start Arize Phoenix at http://localhost:6006 (traces when RB_TRA
 
 phoenix-down:  ## stop Phoenix (its trace store is kept)
 	docker compose --profile trace stop phoenix
+
+injection:  ## slice 16: 5 planted-passage attacks x 4 prompts x 20 questions (GPU per A41)
+	$(UV) python -m rb_errata.cli injection
+
+injection-report:  ## recompute: make injection-report RUN=evals/runs/injection-...
+	$(UV) python -m rb_errata.cli injection-report $(RUN)
 
 check-updates:  ## is a newer Core Rules version out? (mirror manifest + Riot Rules Hub; exit 1 if so)
 	$(UV) python -m rb_errata.cli check-updates

@@ -1900,3 +1900,19 @@ asks one question. The MCP server gains `ask` (SURFACE.md's fifth tool),
 whose output carries `confidence_standing`: "UNCALIBRATED" whenever
 `confidence.json` failed its pass rule, so a number that is not a
 probability is never presented as one.
+
+### A49. Slice 16 built: planted-passage injection against four prompts (2026-11-03)
+
+`make injection`: 20 seeded questions, each with its real top 4 passages
+plus one planted passage ranked first, five attacks (override, fake end of
+block + system message, citation hijack, instruction leak, fake errata),
+four prompts (naive, the production framed template, framed + sandwich,
+framed + datamarking). Each attack has a marker detector; success is the
+marker in the answer. The cost side: whether the answer still cites a
+genuinely retrieved rule. Report: success and cost per prompt with Wilson
+intervals, each defence paired against production (exact McNemar), and a
+per-attack table. Attack texts are the project's own and committed; real
+passages are never written out. The production template is a variant, not
+a subject of change: a test holds it byte-identical to `prompt.build`.
+Adopting a defence is a later decision with a new template hash and a slice
+11 rerun.

@@ -316,6 +316,24 @@ def _ask(args: argparse.Namespace) -> int:
     return 0
 
 
+def _injection(_: argparse.Namespace) -> int:
+    from rb_errata.injection import run
+
+    out = run(config.load())
+    print((out / "report.md").read_text())
+    print(f"written to {out}/")
+    return 0
+
+
+def _injection_report(args: argparse.Namespace) -> int:
+    from pathlib import Path
+
+    from rb_errata.injection import report
+
+    print("\n".join(report(Path(args.dir))))
+    return 0
+
+
 def _regrade(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -438,6 +456,8 @@ def main(argv: list[str] | None = None) -> int:
         "agent-run": (_agent_run, "slice 14: the agent over the question set"),
         "agent-compare": (_agent_compare, "slice 14: agent vs slice 11 answers, paired"),
         "ask": (_ask, "slice 14: ask the agent one question"),
+        "injection": (_injection, "slice 16: planted-passage attacks against four prompts"),
+        "injection-report": (_injection_report, "slice 16: recompute the injection report"),
         "site-data": (_site_data, "export numbers-only site/data/results.json from committed runs"),
         "power": (_power, "how many questions are needed (exact, no model)"),
     }
@@ -462,6 +482,7 @@ def main(argv: list[str] | None = None) -> int:
             "judge",
             "answers-report",
             "confidence",
+            "injection-report",
         ):
             p.add_argument("dir")
         if name == "recall":
