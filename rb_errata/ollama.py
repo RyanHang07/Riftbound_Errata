@@ -88,18 +88,22 @@ class Ollama:
         # keeps the whole model on the CPU; omitting it lets Ollama decide.
         return {"num_gpu": 0} if self._s.cpu_only else {}
 
-    def _post(self, path: str, body: dict[str, Any]) -> dict[str, Any]:
+    def _post(
+        self, path: str, body: dict[str, Any], timeout: float | None = None
+    ) -> dict[str, Any]:
         import sys
         import time
 
         for wait in (*self.RETRY_WAITS_S, None):
             try:
-                r = self._http.post(path, json=body)
+                r = self._http.post(path, json=body, timeout=timeout or self._s.http_timeout_s)
                 r.raise_for_status()
                 data: dict[str, Any] = r.json()
                 self._connected = True
                 return data
-            except (httpx.RemoteProtocolError, httpx.ReadError, httpx.ConnectError) as exc:
+            except (
+                httpx.RemoteProtocolError, httpx.ReadError, httpx.ConnectError, httpx.ReadTimeout
+            ) as exc:  # fmt: skip
                 # A session that never connected fails at once, so doctor and
                 # the tools still report "Ollama unreachable" in seconds; a
                 # connection lost mid-run (the runner restarting) is retried.
@@ -181,6 +185,10 @@ class Ollama:
                     **self._placement(),
                 },
             },
+            # The first request of a session may include loading a model from
+            # disk: it gets the long timeout. After that, gen_timeout_s (still
+            # room for a cold load of a second model) separates slow from stuck.
+            timeout=self._s.gen_timeout_s if self._connected else None,
         )
         return Generation(
             text=str(data.get("response", "")),

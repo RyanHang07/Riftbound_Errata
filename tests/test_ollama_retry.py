@@ -62,3 +62,23 @@ def test_gives_up_after_the_last_wait(monkeypatch: pytest.MonkeyPatch) -> None:
     with pytest.raises(httpx.RemoteProtocolError):
         c.generate("q", max_tokens=5)
     assert c.retries == 3
+
+
+def test_hung_generation_times_out_and_is_retried(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Found at question ~140 of the first full run: a request hung silently.
+    seen: list[float] = []
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        seen.append(request.extensions["timeout"]["read"])
+        if calls["n"] == 2:
+            raise httpx.ReadTimeout("stuck")
+        return httpx.Response(200, json=OK)
+
+    monkeypatch.setattr(Ollama, "RETRY_WAITS_S", (0.0, 0.0, 0.0))
+    s = Settings()
+    c = Ollama(s, transport=httpx.MockTransport(handler))
+    c.generate("first", max_tokens=5)  # cold: the long timeout
+    assert c.generate("second", max_tokens=5).text == "fine" and c.retries == 1
+    assert seen[0] == s.http_timeout_s and seen[1] == seen[2] == s.gen_timeout_s

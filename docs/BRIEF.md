@@ -1952,3 +1952,10 @@ server restart; its log will say).
   retrieval, corpus or questions changed since the run began. Temperature 0
   and a fixed seed make a resumed answer the one the uninterrupted run would
   have produced, on the same placement.
+
+**Addendum (same day):** the resumed design met its second failure mode at
+question ~140: a request hung with no error, and the run sat silent for the
+600 s HTTP timeout. Generation now has its own timeout, `gen_timeout_s =
+240` (three times the slowest measured CPU answer, A23; the first request of
+a session keeps the long one for a cold model load), and a timeout is
+retried like a dropped connection. Progress prints every 10 questions.

@@ -108,6 +108,12 @@ class Settings:
     # A first call loads the model from disk; on a 16 GB CPU box that can take
     # tens of seconds, so a short timeout would report a healthy model as down.
     http_timeout_s: float = 600.0
+    # One generation, once the model is loaded. Found on the first full answers
+    # run: at question ~140 a request hung with no error and the run sat
+    # silent for the full 600 s above. The slowest measured CPU answer (prompt
+    # 863, answer 400 tokens) took 77 s (A23); 240 s is three times that, so a
+    # request this slow is stuck, not slow, and is retried.
+    gen_timeout_s: float = 240.0
 
     @property
     def judge(self) -> tuple[str, str]:

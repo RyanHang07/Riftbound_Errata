@@ -135,7 +135,7 @@ def run(settings: Settings, limit: int | None = None, resume: Path | None = None
         for n, q in enumerate(questions, 1):
             if q["id"] in done_ids:
                 continue
-            if n == 1 or n % 20 == 0:
+            if n == 1 or n % 10 == 0:
                 spent = time.perf_counter() - started
                 print(f"  answer {n}/{len(questions)}, {spent:.0f}s elapsed", file=sys.stderr,
                       flush=True)  # fmt: skip
