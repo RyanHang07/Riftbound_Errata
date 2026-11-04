@@ -943,7 +943,7 @@ the server, on the new corpus.
 |---|---|---|
 | 224 of 224 identical top-20 refs after ingesting v1.5 | 224 of 224 | Right. |
 | freshness warning before ingest, none after | after: none, v1.5 in effect today; before: not observed on the user's machine (unit-tested only) | Right for after; before untested in the field. |
-| under 25% of v1.5 chunks embedded fresh | not recorded: the ingest's count line was only in the user's terminal | Pending. |
+| under 25% of v1.5 chunks embedded fresh | 47% (494 of 1,053), counted in A59 | **Wrong.** |
 
 Every number the question set measures is unchanged by a new version, which
 is what the date filter promises: a new rules version can only change
@@ -1004,3 +1004,37 @@ keyed by a chunk's text, so the same number can be counted from the
 database: a v1.5 chunk came from the cache exactly when an earlier version
 has a chunk with identical text. `make version-reuse V=1.5` counts it. The
 A55 prediction stands: **under 25% of v1.5 chunks embedded fresh**.
+
+### Results: `evals/runs/determinism-2026-11-04T2223Z` and `make version-reuse V=1.5`
+
+| mode | GPU share | identical on all 3 repeats | first answer = control's repeat 2 | s per answer |
+|---|---|---|---|---|
+| gpu (control, no warm-up) | 100% | 4 of 10 | control | 2.69 |
+| gpu-warm | 100% | 10 of 10 | 10 of 10 | 2.21 |
+| cpu-warm | 0% | 10 of 10 | 1 of 10 | 24.19 |
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| GPU control: 3 to 6 of 10 identical, A56 again | 4 of 10 | Right. |
+| GPU with warm-up: 10 of 10 | 10 of 10 | Right. |
+| CPU with warm-up: 10 of 10 | 10 of 10 | Right. |
+| GPU warm-up answer = control's repeat 2: 10 of 10 | 10 of 10 | Right. |
+| warm-up costs under 50% more time per answer on GPU | 2.21 s against 2.69 s: no measurable cost | Right, but the comparison is unfair: the control ran first and its time includes loading the model. |
+| v1.5: under 25% of chunks embedded fresh | 494 of 1,053 (47%) fresh, 559 from cache | **Wrong.** |
+
+**What it says:** the prompt cache was the whole story. With the warm-up,
+the same prompt gives the same text every time on both GPU and CPU, and the
+GPU warm-up answer is exactly the text a cached repeat gave before, so the
+fix changes which of the two old answers is kept, not the model's behaviour.
+The fix stays on by default. GPU and CPU still give different text from
+each other (1 of 10 match): each is now repeatable on its own, but runs are
+comparable only on the same placement, which `make doctor`'s placement line
+already records.
+
+**Why v1.5 reused less than predicted (likely, not tested):** the impact
+report matched only 81 changed and 159 added rules by wording, but v1.5 also
+renumbered sections (for example 477.1.a became 479.2.a). A chunk's text
+starts with its rule numbers, so a renumbered rule with unchanged wording is
+new text to the cache. The prediction counted wording changes and missed
+renumbering. It costs only embedding time at ingest (about 500 chunks), and
+retrieval was unchanged (224 of 224).
