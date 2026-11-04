@@ -349,10 +349,19 @@ def test_required_notice_is_verbatim_everywhere() -> None:
     # the project's title); the site, the local app and the README carry it.
     want = (
         'rb_errata was created under Riot Games\' "Legal Jibber Jabber" policy using assets '
-        "owned by Riot Games. Riot Games does not endorse or sponsor this project."
+        "owned by Riot Games. Riot Games does not endorse or sponsor this project. "
+        "rb_errata isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot "
+        "Games or anyone officially involved in producing or managing Riot Games properties. Riot "
+        "Games, and all associated properties are trademarks or registered trademarks of Riot "
+        "Games, Inc."
     )
     assert want == tools.NOTICE and tools.list_versions()["notice"] == want
-    assert want in Path("README.md").read_text()
+    readme = Path("README.md").read_text()
+    first, second = want.split(" rb_errata isn't", 1)
+    assert first in readme and "rb_errata isn't" + second in readme
     html = "rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy"
     assert html in Path("site/app/layout.tsx").read_text()
     assert html in Path("app/src/App.tsx").read_text()
+    general = "rb_errata isn&apos;t endorsed by Riot Games and doesn&apos;t reflect the views"
+    assert general in Path("site/app/layout.tsx").read_text()
+    assert general in Path("app/src/App.tsx").read_text()

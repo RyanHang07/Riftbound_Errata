@@ -1,6 +1,8 @@
 # rb_errata
 
 > rb_errata was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+>
+> rb_errata isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 
 Answers rules questions for Riot's Riftbound TCG correctly **as of a date**.
 

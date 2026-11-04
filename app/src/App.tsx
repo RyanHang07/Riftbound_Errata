@@ -32,7 +32,7 @@ export default function App() {
       </main>
       {/* Required verbatim by Riot's Legal Jibber Jabber (section 6) and the Riftbound Developer API Policy. */}
       <footer className="mt-16 border-t border-line pt-4 text-xs text-muted">
-        rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+        rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project. rb_errata isn&apos;t endorsed by Riot Games and doesn&apos;t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
       </footer>
       {open && <RuleDrawer refId={open} onClose={() => setOpen(null)} />}
     </div>

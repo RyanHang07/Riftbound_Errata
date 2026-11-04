@@ -34,11 +34,17 @@ from rb_errata.ingest.rules import Rule
 from rb_errata.ingest.sources import CORE_RULES
 from rb_errata.retrieve.vector import Passage
 
-# Required verbatim wherever the project is shared (Riot's Legal Jibber Jabber,
-# section 6; Riftbound Developer API Policy, Brand Integrity). docs/LEGAL.md.
+# Required verbatim wherever the project is shared: Riot's Legal Jibber Jabber
+# section 6 (also the Riftbound policy's Brand Integrity), then the General
+# Developer Policies' boilerplate. docs/LEGAL.md.
 NOTICE = (
     'rb_errata was created under Riot Games\' "Legal Jibber Jabber" policy using assets '
-    "owned by Riot Games. Riot Games does not endorse or sponsor this project."
+    "owned by Riot Games. Riot Games does not endorse or sponsor this project. "
+    # Riot's General Developer Policies, Core Policies: a second required boilerplate.
+    "rb_errata isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot "
+    "Games or anyone officially involved in producing or managing Riot Games properties. Riot "
+    "Games, and all associated properties are trademarks or registered trademarks of Riot "
+    "Games, Inc."
 )
 CORPUS = Path("data/corpus.json")
 EFFECTIVE = Path("data/effective_dates.json")

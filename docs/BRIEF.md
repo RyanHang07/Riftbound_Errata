@@ -2050,3 +2050,13 @@ must register it"). Slice 10 changes: card text only from Riot's API ("No
 external or unofficial materials"), official English text displayed, so it
 waits on an approved API key. Unread: the general developer policies and
 API Terms (AI and data-storage clauses).
+
+**Addendum to A57 (same day):** the General Developer Policies and API Terms,
+read. A second required boilerplate, now beside the first everywhere
+(tested). New blocker before deploying: "Products cannot closely resemble
+Riot's games or products in style or function", and the site and local app
+use the League client's Hextech look by design; restyling is the user's
+decision. New slice 10 constraint: API card data should not be passed to a
+third party (the API Terms' "transmit ... in any manner not authorized", the
+Riftbound policy's "middle-man" use), which includes a cloud model behind
+MCP, until Riot says otherwise. No clause on AI in any of the four documents.

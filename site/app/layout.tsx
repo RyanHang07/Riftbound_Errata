@@ -29,6 +29,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <br />
             {/* Required verbatim by Riot's Legal Jibber Jabber (section 6) and the Riftbound Developer API Policy (Brand Integrity). */}
             rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+            <br />
+            rb_errata isn&apos;t endorsed by Riot Games and doesn&apos;t reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
           </div>
         </footer>
         <CommandMenu />
