@@ -2080,7 +2080,10 @@ corrected flip card). Class names are kept, so pages did not change shape.
 Checked in both themes at 1280 and 360 px: no horizontal overflow.
 
 Rename: identifiers no longer carry the trademark. Clone commands, the
-GitHub link constant and the Claude Desktop path now say `rb_errata`; the
+GitHub link constant and the Claude Desktop path now say `RB_Errata`, the
+name the user gave the repository; the
 game's name stays only where it describes what the project is for, as the
 required notice itself does. The repository itself is renamed by the user
-on GitHub (this session cannot), after which the old URL redirects.
+on GitHub (done the same day), after which the old URL redirects. The
+Compose project name is now pinned to `rb_errata`, since Docker names
+volumes after the folder and a renamed folder would start an empty database.

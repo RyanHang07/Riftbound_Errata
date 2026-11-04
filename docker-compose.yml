@@ -1,3 +1,7 @@
+# Fixed project name: Docker otherwise names the volumes after the folder,
+# so renaming the folder (A58) would start an empty database.
+name: rb_errata
+
 services:
   db:
     # Pinned by tag AND digest. The tag says what we meant (pgvector 0.8.1 on
