@@ -212,6 +212,13 @@ def _version_impact(args: argparse.Namespace) -> int:
     return 0
 
 
+def _version_reuse(args: argparse.Namespace) -> int:
+    from rb_errata.ingest.updates import reuse
+
+    print(reuse(args.version))
+    return 0
+
+
 def _answers(args: argparse.Namespace) -> int:
     from pathlib import Path
 
@@ -468,6 +475,7 @@ def main(argv: list[str] | None = None) -> int:
         "check-updates": (_check_updates, "slice 18: is a newer rules version out? exit 1 if so"),
         "add-version": (_add_version, "slice 18: register a new rules version (pinned SHA-1)"),
         "version-impact": (_version_impact, "slice 18: what a version changes, which labels"),
+        "version-reuse": (_version_reuse, "how much of a version was new text (from the cache)"),
         "answers": (_answers, "slice 11: generate an answer for every question (GPU per A41)"),
         "answer-sample": (_answer_sample, "slice 11: draw the blind hand-label sample"),
         "judge": (_judge, "slice 11: LLM judge over a run's answers, then the report"),
@@ -536,7 +544,7 @@ def main(argv: list[str] | None = None) -> int:
         if name == "integrate":
             p.add_argument("version", help="MAJOR.MINOR, like 1.5")
             p.add_argument("--notes", required=True, help="Riot's patch notes URL")
-        if name == "version-impact":
+        if name in ("version-impact", "version-reuse"):
             p.add_argument("version")
         if name == "recall-compare":
             p.add_argument("a")

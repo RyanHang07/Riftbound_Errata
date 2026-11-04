@@ -11,7 +11,7 @@ endif
 
 UV := uv run
 
-.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact integrate answers answer-sample judge answers-report confidence agent-run agent-compare ask phoenix-up phoenix-down injection injection-report app-install app-build app app-dev determinism site-data site-install site-dev site-build
+.PHONY: help install db-up db-down db-init db-reset verify lint typecheck test fmt doctor doctor-cpu fetch dates dates-debug inspect ingest search diff drift show regrade check-candidates questions power counterparts recall recall-report recall-compare taxonomy mcp mcp-check check-updates add-version version-impact version-reuse integrate answers answer-sample judge answers-report confidence agent-run agent-compare ask phoenix-up phoenix-down injection injection-report app-install app-build app app-dev determinism site-data site-install site-dev site-build
 
 help:  ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-10s %s\n", $$1, $$2}'
@@ -173,7 +173,7 @@ app:  ## run the local app at http://localhost:8765 (needs db-up and Ollama; Ctr
 app-dev:  ## front-end development with hot reload at http://localhost:5173 (run `make app` too)
 	cd app && npm run dev
 
-determinism:  ## same 10 prompts 3x on GPU and 3x on CPU: is identical input identical output? (~15 min)
+determinism:  ## same 10 prompts 3x in 3 modes (GPU, GPU+warm-up, CPU+warm-up): repeatable? (~30 min)
 	$(UV) python -m rb_errata.cli determinism
 
 check-updates:  ## is a newer Core Rules version out? (mirror manifest + Riot Rules Hub; exit 1 if so)
@@ -184,6 +184,9 @@ add-version:  ## register a new version: make add-version V=1.5 NOTES=https://pl
 
 integrate:  ## all of it: register, fetch, date, impact, ingest, recall, mcp-check: make integrate V=1.5 NOTES=...
 	$(UV) python -m rb_errata.cli integrate $(V) --notes "$(NOTES)"
+
+version-reuse:  ## how much of a version was new text: make version-reuse V=1.5
+	$(UV) python -m rb_errata.cli version-reuse $(V)
 
 version-impact:  ## what a version changes and which labels cite it: make version-impact V=1.5
 	$(UV) python -m rb_errata.cli version-impact $(V)

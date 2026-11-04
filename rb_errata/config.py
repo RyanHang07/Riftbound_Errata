@@ -61,6 +61,11 @@ class Settings:
     # build; the instruct build's answers were 43 to 81 tokens. A truncated
     # answer is recorded (done_reason "length"), never silently kept.
     gen_max_tokens: int = 400
+    # A59. Ollama reuses a cached prompt prefix, and a request computed from a
+    # different cache state gives slightly different text (A56). A 1-token
+    # warm-up with the identical request first puts every measured request in
+    # the same state: prompt cached. Costs one extra prompt evaluation.
+    gen_warmup: bool = True
 
     # --- Judge (slice 11) ------------------------------------------------
     # Empty means "the generator": the cheapest judge, and the one most likely

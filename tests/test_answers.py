@@ -164,3 +164,16 @@ def test_identical_counts_prompts_with_one_distinct_output() -> None:
     from rb_errata.determinism import identical
 
     assert identical([["a", "a", "a"], ["a", "b", "a"], ["c", "c", "c"]]) == 2
+
+
+def test_same_as_compares_first_answer_to_the_controls_repeat_two() -> None:
+    from rb_errata.determinism import same_as
+
+    control = [["x", "a", "a"], ["y", "b", "b"]]
+    assert same_as([["a", "a", "a"], ["z", "z", "z"]], control) == 1
+
+
+def test_fresh_count_counts_every_copy_of_new_text() -> None:
+    from rb_errata.ingest.updates import fresh_count
+
+    assert fresh_count(["old", "new", "new", "old2"], {"old", "old2"}) == 2

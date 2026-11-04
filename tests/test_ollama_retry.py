@@ -125,3 +125,44 @@ def test_database_retries_only_after_a_first_connection(monkeypatch: pytest.Monk
     assert cast(object, db.connect(Settings())) is sentinel  # reached now
     assert cast(object, db.connect(Settings())) is sentinel  # call 3 failed, was retried
     assert calls["n"] == 4
+
+
+def test_warmup_primes_the_cache_with_the_identical_request() -> None:
+    """A59: one 1-token request with the same prompt and options first, so the
+    measured request always starts with its prompt cached (A56)."""
+    import json
+
+    seen: list[dict[str, object]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(json.loads(request.content))
+        n = len(seen)
+        return httpx.Response(200, json={**OK, "prompt_eval_count": 900 if n == 1 else 1,
+                                         "prompt_eval_duration": 10 if n == 1 else 2})  # fmt: skip
+
+    g = Ollama(Settings(), transport=httpx.MockTransport(handler)).generate("q", max_tokens=50)
+    warm, real = seen
+    opts_w, opts_r = (
+        cast(dict[str, object], warm["options"]),
+        cast(dict[str, object], real["options"]),
+    )
+    assert (opts_w["num_predict"], opts_r["num_predict"]) == (1, 50)
+    assert {**opts_w, "num_predict": 50} == opts_r and warm["prompt"] == real["prompt"]
+    # the prompt's size and read time include the warm-up, so doctor's rate holds
+    assert (g.prompt_tokens, g.prompt_ns) == (901, 12)
+
+
+def test_warmup_off_sends_one_request() -> None:
+    from dataclasses import replace
+
+    n = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal n
+        n += 1
+        return httpx.Response(200, json=OK)
+
+    Ollama(replace(Settings(), gen_warmup=False), transport=httpx.MockTransport(handler)).generate(
+        "q", max_tokens=5
+    )
+    assert n == 1

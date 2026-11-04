@@ -266,6 +266,41 @@ def impact(version: str) -> list[str]:
     return lines
 
 
+def fresh_count(target: list[str], earlier: set[str]) -> int:
+    """How many of a version's chunks had to be embedded fresh. Pure.
+
+    The embedding cache is keyed by a chunk's text, so a chunk came from the
+    cache exactly when an earlier version has one with identical text. Every
+    copy of a new text counts, as in the ingest (pipeline._embed_all)."""
+    return sum(1 for h in target if h not in earlier)
+
+
+def reuse(version: str) -> str:
+    """The ingest's "N embedded, M from cache" for `version`, recounted from
+    the database (A59: Radiance's line was never seen)."""
+    from rb_errata import config, db
+
+    doc_id = f"core@{version}"
+    settings = config.load()
+    with db.connect(settings) as conn:
+        rows = conn.execute(
+            "SELECT document_id, content_hash FROM chunks WHERE model_digest = "
+            "(SELECT model_digest FROM chunks WHERE document_id = %s LIMIT 1)",
+            (doc_id,),
+        ).fetchall()
+    target = [str(h) for d, h in rows if d == doc_id]
+    if not target:
+        raise SystemExit(f"{doc_id}: no chunks in the database; run `make ingest`")
+    earlier = {
+        str(h)
+        for d, h in rows
+        if str(d).startswith("core@") and vkey(str(d).split("@")[1]) < vkey(version)
+    }
+    fresh = fresh_count(target, earlier)
+    return (f"{doc_id}: {len(target)} chunks, {fresh} embedded fresh "
+            f"({fresh / len(target):.0%}), {len(target) - fresh} from cache")  # fmt: skip
+
+
 def write_impact(version: str) -> Path:
     IMPACT.mkdir(parents=True, exist_ok=True)
     out = IMPACT / f"core-{version}.md"

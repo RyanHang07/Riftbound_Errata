@@ -172,22 +172,32 @@ class Ollama:
         # identical settings; json_mode asks Ollama to constrain output to JSON,
         # so a verdict is parsed, never pattern-matched out of prose.
         extra: dict[str, Any] = {"format": "json"} if json_mode else {}
+        body: dict[str, Any] = {
+            "model": model or self._s.gen_model,
+            "prompt": prompt,
+            "stream": False,
+            "think": self._s.gen_think,
+            **extra,
+            "options": {
+                "temperature": self._s.gen_temperature,
+                "seed": self._s.gen_seed,
+                "num_ctx": self._s.gen_num_ctx,
+                "num_predict": max_tokens,
+                **self._placement(),
+            },
+        }
+        primed: dict[str, Any] = {}
+        if self._s.gen_warmup:
+            # Same request, 1 token: afterwards the prompt is in the cache, as
+            # it is for every repeat, so the measured request below starts
+            # from the same state each time (A56, A59). The output is unused.
+            warm = {**body, "options": {**body["options"], "num_predict": 1}}
+            primed = self._post(
+                "/api/generate", warm, timeout=self._s.gen_timeout_s if self._connected else None
+            )
         data = self._post(
             "/api/generate",
-            {
-                "model": model or self._s.gen_model,
-                "prompt": prompt,
-                "stream": False,
-                "think": self._s.gen_think,
-                **extra,
-                "options": {
-                    "temperature": self._s.gen_temperature,
-                    "seed": self._s.gen_seed,
-                    "num_ctx": self._s.gen_num_ctx,
-                    "num_predict": max_tokens,
-                    **self._placement(),
-                },
-            },
+            body,
             # The first request of a session may include loading a model from
             # disk: it gets the long timeout. After that, gen_timeout_s (still
             # room for a cold load of a second model) separates slow from stuck.
@@ -196,10 +206,15 @@ class Ollama:
         return Generation(
             text=str(data.get("response", "")),
             thinking=str(data.get("thinking", "") or ""),
-            prompt_tokens=int(data.get("prompt_eval_count", 0)),
-            prompt_ns=int(data.get("prompt_eval_duration", 0)),
+            # The prompt is evaluated during the warm-up, so its count and time
+            # are added in: prompt_tokens keeps meaning "this prompt's size"
+            # and prompt_ns "time to read it" (doctor's prefill rate uses both).
+            prompt_tokens=int(primed.get("prompt_eval_count", 0))
+            + int(data.get("prompt_eval_count", 0)),
+            prompt_ns=int(primed.get("prompt_eval_duration", 0))
+            + int(data.get("prompt_eval_duration", 0)),
             answer_tokens=int(data.get("eval_count", 0)),
             answer_ns=int(data.get("eval_duration", 0)),
-            load_ns=int(data.get("load_duration", 0)),
+            load_ns=int(primed.get("load_duration", 0)) + int(data.get("load_duration", 0)),
             done_reason=str(data.get("done_reason", "")),
         )

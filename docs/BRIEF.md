@@ -2087,3 +2087,16 @@ required notice itself does. The repository itself is renamed by the user
 on GitHub (done the same day), after which the old URL redirects. The
 Compose project name is now pinned to `rb_errata`, since Docker names
 volumes after the folder and a renamed folder would start an empty database.
+
+### A59. Warm-up before every generation (2026-11-04)
+
+A56's fix, applied: every `generate` first sends the identical request with a
+1-token answer (`RB_GEN_WARMUP`, on by default), so each measured request
+starts with its prompt cached, the state that made repeats 2 and 3 match.
+This changes how every future answer, verdict and agent step is generated;
+earlier runs stay as they were and are not regenerated. The warm-up's prompt
+count and time are added into each answer's record, so `prompt_tokens`
+still means the prompt's size and doctor's prefill rate is unchanged.
+`make determinism` now runs a GPU control without it, GPU with it and CPU
+with it. `make version-reuse V=1.5` recounts the "embedded / from cache"
+line from the database. Predictions in `docs/RECALL.md` (written first).
