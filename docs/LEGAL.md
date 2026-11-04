@@ -48,7 +48,11 @@ policies against the project, not legal advice; quotes are Riot's wording.*
   notices (done, tested); crediting Near's rulings; no logos.
 - **Done 2026-11-04 (A58):** restyle of the site and local app; project
   identifiers and the GitHub repository renamed to `RB_Errata`.
-- **Before the site is deployed or the project promoted:** register the product on the Riot Developer
+- **Submitted 2026-11-04:** product registered on the Riot Developer Portal,
+  product URL `https://ryanhang07.github.io/RB_Errata` (GitHub Pages, the
+  README), verified by `riot.txt`. Awaiting Riot's review.
+- **Before the site is deployed or the project promoted:** Riot's approval of the
+  registration; then register the product on the Riot Developer
   Portal (Riot audits it, and every new feature after).
 - **Before slice 10 (card database):** an approved API key; card text only
   from Riot's API; ask Riot whether API card text may reach a cloud model
