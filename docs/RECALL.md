@@ -928,3 +928,43 @@ Answers are stored as hashes and lengths only.
   llama.cpp's CPU path at temperature 0 should be deterministic.
 - If both hold, CPU runs become the reference for any comparison that has to
   separate an effect from noise, at about 20 times the time.
+
+### Results: Radiance integrated on the user's machine (`make integrate`)
+
+`add-version`: SHA-1 `5c7946f7...`, **cdn-verified** (Riot's CDN served the
+same bytes), mirror pinned at `b50b9c4f`. `dates`: **2026-10-16, stated**,
+one distinct date. `version-impact` reproduced the cloud dry run (81 / 159 /
+44). Corpus `c295cdf1` to `543172e7`: v1.5 adds 1,053 chunks; v1.4 now ends
+2026-10-16. `make recall METHOD=as-of`: `recall-as-of-qwen3-2026-11-04T1806Z`.
+`make mcp-check`: 224 of 224 identical to the 3 November snapshot, through
+the server, on the new corpus.
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| 224 of 224 identical top-20 refs after ingesting v1.5 | 224 of 224 | Right. |
+| freshness warning before ingest, none after | after: none, v1.5 in effect today; before: not observed on the user's machine (unit-tested only) | Right for after; before untested in the field. |
+| under 25% of v1.5 chunks embedded fresh | not recorded: the ingest's count line was only in the user's terminal | Pending. |
+
+Every number the question set measures is unchanged by a new version, which
+is what the date filter promises: a new rules version can only change
+answers for dates after it takes effect.
+
+### Results: `evals/runs/determinism-2026-11-04T1830Z`
+
+Prompts identical on all three repeats: GPU 4 of 10, CPU 2 of 10. **Repeats
+2 and 3 matched on all 10 prompts in both placements; repeat 1 differed.**
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| GPU about 5 of 10 | 4 of 10 | Close. |
+| CPU all 10 | 2 of 10 | **Wrong.** |
+
+**What it says:** the noise is not GPU arithmetic; it is Ollama's prompt
+cache. A request whose prompt is already in the cache (repeats 2 and 3)
+reuses it and gives the same text every time; a request computed from
+scratch, or from a different cached prefix, gives slightly different text.
+So an answer depends on what was generated just before it. That explains
+A54's 10% verdict flips and why a resumed run does not reproduce text. The
+fix is to make every request's cache state the same: either no reuse (if
+Ollama exposes it), or a warm-up request per prompt before the measured one.
+Not applied yet: it changes how every future run is generated.

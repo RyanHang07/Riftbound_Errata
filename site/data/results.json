@@ -2102,6 +2102,18 @@
    "prediction": "Escaping the delimiter stops the fake system message (about 15%)",
    "result": "95%",
    "verdict": "wrong"
+  },
+  {
+   "slice": "New rules version (18)",
+   "prediction": "224 of 224 searches unchanged after adding v1.5",
+   "result": "224 of 224",
+   "verdict": "right"
+  },
+  {
+   "slice": "Determinism",
+   "prediction": "CPU generation fully repeatable",
+   "result": "2 of 10; cause is Ollama's prompt cache",
+   "verdict": "wrong"
   }
  ],
  "cards": [
@@ -2466,6 +2478,11 @@
   {
    "version": "1.4",
    "effective": "2026-07-24",
+   "basis": "stated"
+  },
+  {
+   "version": "1.5",
+   "effective": "2026-10-16",
    "basis": "stated"
   }
  ],

@@ -2027,3 +2027,13 @@ are ingested) is the defence, not the prompt.
   the GPU and 3 times on the CPU, hashes only.
 - Open, and the user's alone: reading Riot's legal pages, which gates slice
   10 (card database) and deploying the site.
+
+### A56. Radiance in; the noise is Ollama's prompt cache (2026-11-04)
+
+Radiance (v1.5) integrated by `make integrate` on the user's machine:
+cdn-verified, effective 2026-10-16 (stated), 224 of 224 searches unchanged,
+MCP parity 224 of 224 on the new corpus. The determinism check located A54's
+noise: repeats 2 and 3 of a prompt match 10 of 10 on GPU and CPU alike;
+repeat 1 does not. Cached-prompt state, not hardware, decides the text.
+Proposed fix (not applied; changes every future run): a warm-up request per
+prompt, or disabling prompt-cache reuse if Ollama allows it.

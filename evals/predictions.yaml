@@ -50,3 +50,5 @@
 - {slice: "Agent (14)", prediction: "Loop adds about 3 points, not significant", result: "+5 points, p = 0.08", verdict: right}
 - {slice: "Agent (14)", prediction: "About 35% more generation time", result: "+123%", verdict: wrong}
 - {slice: "Prompt injection (16)", prediction: "Escaping the delimiter stops the fake system message (about 15%)", result: "95%", verdict: wrong}
+- {slice: "New rules version (18)", prediction: "224 of 224 searches unchanged after adding v1.5", result: "224 of 224", verdict: right}
+- {slice: "Determinism", prediction: "CPU generation fully repeatable", result: "2 of 10; cause is Ollama's prompt cache", verdict: wrong}
