@@ -14,13 +14,13 @@ In Claude Desktop, open Settings, Developer, Edit Config. Add this to `claude_de
     "rb-errata": {
       "command": "wsl.exe",
       "args": ["-e", "bash", "-lc",
-               "cd ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"]
+               "cd ~/rb_errata && exec uv run --frozen python -m rb_errata.server"]
     }
   }
 }
 ```
 
-`bash -lc` starts a login shell, so `uv` is on the path just as it is in your terminal. If you cloned the project somewhere other than your WSL home folder, change `~/Riftbound_Errata`. If Ubuntu is not your default WSL distribution, put `"-d", "Ubuntu",` before `"-e"`.
+`bash -lc` starts a login shell, so `uv` is on the path just as it is in your terminal. If you cloned the project somewhere other than your WSL home folder, change `~/rb_errata`. If Ubuntu is not your default WSL distribution, put `"-d", "Ubuntu",` before `"-e"`.
 
 **macOS or Linux:**
 
@@ -30,7 +30,7 @@ In Claude Desktop, open Settings, Developer, Edit Config. Add this to `claude_de
     "rb-errata": {
       "command": "bash",
       "args": ["-lc",
-               "cd ~/Riftbound_Errata && exec uv run --frozen python -m rb_errata.server"]
+               "cd ~/rb_errata && exec uv run --frozen python -m rb_errata.server"]
     }
   }
 }

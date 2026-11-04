@@ -3,7 +3,7 @@
 // browser-side fetch would fail for some visitors. Any failure, including a
 // private repository, returns null and the button shows no count rather than
 // a wrong one.
-export const REPO = "RyanHang07/Riftbound_Errata";
+export const REPO = "RyanHang07/rb_errata";
 
 export async function stars(): Promise<number | null> {
   try {
