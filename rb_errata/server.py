@@ -33,7 +33,7 @@ INSTRUCTIONS = (
 logging.getLogger("httpx").setLevel(logging.WARNING)
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
 
-server = MCPServer("rb-errata", instructions=INSTRUCTIONS)
+server = MCPServer("rb-errata", instructions=f"{INSTRUCTIONS} {tools.NOTICE}")
 _backend = tools.AgentBackend()
 
 

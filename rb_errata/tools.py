@@ -34,6 +34,12 @@ from rb_errata.ingest.rules import Rule
 from rb_errata.ingest.sources import CORE_RULES
 from rb_errata.retrieve.vector import Passage
 
+# Required verbatim wherever the project is shared (Riot's Legal Jibber Jabber,
+# section 6; Riftbound Developer API Policy, Brand Integrity). docs/LEGAL.md.
+NOTICE = (
+    'rb_errata was created under Riot Games\' "Legal Jibber Jabber" policy using assets '
+    "owned by Riot Games. Riot Games does not endorse or sponsor this project."
+)
 CORPUS = Path("data/corpus.json")
 EFFECTIVE = Path("data/effective_dates.json")
 RAW = Path("data/raw")
@@ -230,7 +236,7 @@ def list_versions(effective: Path = EFFECTIVE) -> dict[str, Any]:
                 "searchable": False,
                 "reason": row.get("reason") or "no known effective date",
             })  # fmt: skip
-    return {"document": "Riftbound Core Rules", "versions": out}
+    return {"document": "Riftbound Core Rules", "versions": out, "notice": NOTICE}
 
 
 # --- what_changed --------------------------------------------------------------

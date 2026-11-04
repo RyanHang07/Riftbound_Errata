@@ -25,7 +25,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <footer>
           <div>
             Built by RyanHang07. Rulings in the question set are adapted from Riftbound FAQ by Christian &ldquo;Near&rdquo; Ivicevic, CC BY-SA 4.0.
-            Riftbound is a trademark of Riot Games; this is an unofficial fan project, and no Riot rule text appears on this site.
+            No Riot rule text appears on this site.
+            <br />
+            {/* Required verbatim by Riot's Legal Jibber Jabber (section 6) and the Riftbound Developer API Policy (Brand Integrity). */}
+            rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
           </div>
         </footer>
         <CommandMenu />

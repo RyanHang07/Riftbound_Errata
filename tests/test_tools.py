@@ -342,3 +342,17 @@ def test_agent_backend_starts_empty() -> None:
     # field() defaults stayed Field objects, so "build on first use" never ran.
     be = tools.AgentBackend()
     assert be._graph is None and be._model is None and be._client is None
+
+
+def test_required_notice_is_verbatim_everywhere() -> None:
+    # Riot requires this exact sentence (Legal Jibber Jabber section 6, with
+    # the project's title); the site, the local app and the README carry it.
+    want = (
+        'rb_errata was created under Riot Games\' "Legal Jibber Jabber" policy using assets '
+        "owned by Riot Games. Riot Games does not endorse or sponsor this project."
+    )
+    assert want == tools.NOTICE and tools.list_versions()["notice"] == want
+    assert want in Path("README.md").read_text()
+    html = "rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy"
+    assert html in Path("site/app/layout.tsx").read_text()
+    assert html in Path("app/src/App.tsx").read_text()

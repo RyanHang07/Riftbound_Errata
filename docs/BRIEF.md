@@ -2037,3 +2037,16 @@ noise: repeats 2 and 3 of a prompt match 10 of 10 on GPU and CPU alike;
 repeat 1 does not. Cached-prompt state, not hardware, decides the text.
 Proposed fix (not applied; changes every future run): a warm-up request per
 prompt, or disabling prompt-cache reuse if Ollama allows it.
+
+### A57. The legal gate, read (2026-11-04)
+
+Riot's Legal Jibber Jabber and the Riftbound Developer API Policy, read from
+text the user pasted; analysis with quotes in `docs/LEGAL.md`. Done now: the
+required notice, verbatim, on the site, local app, README and MCP server
+(tested). Before deploying the site or promoting the project: rename the
+repository so it does not carry the "Riftbound" trademark, and register the
+product on the Riot Developer Portal ("If your product serves players, you
+must register it"). Slice 10 changes: card text only from Riot's API ("No
+external or unofficial materials"), official English text displayed, so it
+waits on an approved API key. Unread: the general developer policies and
+API Terms (AI and data-storage clauses).

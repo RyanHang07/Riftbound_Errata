@@ -30,6 +30,10 @@ export default function App() {
         <div hidden={tab !== "What changed"}><ChangedView /></div>
         <div hidden={tab !== "Versions"}><VersionsView /></div>
       </main>
+      {/* Required verbatim by Riot's Legal Jibber Jabber (section 6) and the Riftbound Developer API Policy. */}
+      <footer className="mt-16 border-t border-line pt-4 text-xs text-muted">
+        rb_errata was created under Riot Games&apos; &ldquo;Legal Jibber Jabber&rdquo; policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.
+      </footer>
       {open && <RuleDrawer refId={open} onClose={() => setOpen(null)} />}
     </div>
   );
