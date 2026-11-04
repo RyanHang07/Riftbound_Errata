@@ -17,7 +17,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Linked, not next/font: next/font downloads at build time, and a
             build must not fail because a font host is unreachable. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" />
       </head>
       <body>
         <Nav stars={count} />

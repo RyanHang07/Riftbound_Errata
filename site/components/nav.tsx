@@ -1,7 +1,7 @@
 "use client";
-// Top nav. One diamond slides between the active section links (A39 build
-// notes): hidden on the landing page, dropping in the first time a section
-// is active, by click or by loading straight into it.
+// Top nav. One underline slides between the active section links (A39
+// behaviour, restyled in A58): hidden on the landing page, appearing in
+// place the first time a section is active, by click or by loading into it.
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -16,15 +16,15 @@ const LINKS = [
 export function Nav({ stars }: { stars: number | null }) {
   const path = usePathname() || "/";
   const refs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [dia, setDia] = useState<{ x: number; on: boolean; jump: boolean }>({ x: 0, on: false, jump: true });
+  const [dia, setDia] = useState<{ x: number; w: number; on: boolean; jump: boolean }>({ x: 0, w: 0, on: false, jump: true });
   const active = LINKS.findIndex((l) => l.match(path));
 
   useLayoutEffect(() => {
     const place = () => {
       const a = refs.current[active];
       if (active < 0 || !a || !a.offsetParent) return setDia((d) => ({ ...d, on: false }));
-      const x = a.offsetLeft + a.offsetWidth / 2;
-      setDia((d) => (d.on ? { x, on: true, jump: false } : { x, on: false, jump: true }));
+      const x = a.offsetLeft, w = a.offsetWidth;
+      setDia((d) => (d.on ? { x, w, on: true, jump: false } : { x, w, on: false, jump: true }));
     };
     place();
     addEventListener("resize", place);
@@ -40,7 +40,8 @@ export function Nav({ stars }: { stars: number | null }) {
     <header className="nav">
       <div className="nav-inner">
         <Link className="brand" href="/">
-          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="14" height="17" rx="2" fill="none" stroke="currentColor" strokeWidth="1.8" /><rect x="7" y="2" width="14" height="17" rx="2" fill="var(--bg)" stroke="currentColor" strokeWidth="1.8" /><path d="M10 8h8M10 11.5h8M10 15h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+          {/* A page with one line struck (red) and one inserted (green): an erratum. */}
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2.5" width="16" height="19" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M7.5 8h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity=".45" /><path d="M7.5 12h9" stroke="var(--del)" strokeWidth="1.8" strokeLinecap="round" /><path d="M7.5 16h6" stroke="var(--ins)" strokeWidth="1.8" strokeLinecap="round" /></svg>
           <span className="brand-name">rb_errata</span>
         </Link>
         <nav className="nav-links" aria-label="Main">
@@ -49,7 +50,7 @@ export function Nav({ stars }: { stars: number | null }) {
               {l.label}
             </Link>
           ))}
-          <span className={`nav-dia${dia.on ? " on" : ""}${dia.jump ? " jump" : ""}`} style={{ "--x": `${dia.x}px` } as React.CSSProperties} aria-hidden="true" />
+          <span className={`nav-dia${dia.on ? " on" : ""}${dia.jump ? " jump" : ""}`} style={{ "--x": `${dia.x}px`, "--w": `${dia.w}px` } as React.CSSProperties} aria-hidden="true" />
         </nav>
         <div className="nav-right">
           <button className="search-btn" type="button" aria-label="Search documentation" onClick={() => dispatchEvent(new Event("open-command-menu"))}>

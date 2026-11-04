@@ -3,7 +3,7 @@ import { best, counts, interval, pct, predictions, pValue, runs, taxonomy, type 
 
 export const metadata: Metadata = { title: "Results · rb_errata" };
 
-const TIER: Partial<Record<Run["decision"], string>> = { baseline: "bronze", kept: "silver", best: "gold" };
+const TIER: Partial<Record<Run["decision"], string>> = { baseline: "base", kept: "kept", best: "best" };
 const KEPT: Record<Run["decision"], [string, string]> = {
   baseline: ["wait", "baseline"], kept: ["good", "kept"], best: ["good", "current best"],
   reference: ["wait", "reference"], dropped: ["bad", "dropped"],
@@ -51,9 +51,9 @@ export default function Results() {
           </table>
         </div>
         <div className="legend">
-          <span><i style={{ "--c": "var(--m-bronze)" } as React.CSSProperties} />Baseline</span>
-          <span><i style={{ "--c": "var(--m-silver)" } as React.CSSProperties} />Kept</span>
-          <span><i style={{ "--c": "var(--m-gold)" } as React.CSSProperties} />Current best</span>
+          <span><i style={{ "--c": "var(--tier-base)" } as React.CSSProperties} />Baseline</span>
+          <span><i style={{ "--c": "var(--tier-kept)" } as React.CSSProperties} />Kept</span>
+          <span><i style={{ "--c": "var(--tier-best)" } as React.CSSProperties} />Current best</span>
           <span>No edge: tested and dropped</span>
         </div>
         <h2>Why the current best misses</h2>

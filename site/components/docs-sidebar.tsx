@@ -10,7 +10,7 @@ export function DocsSidebar() {
     <aside className="sidebar" aria-label="Documentation">
       {NAV.map((g) => (
         <div key={g.group}>
-          <h4 style={{ "--sec": g.hue } as React.CSSProperties}>{g.group}</h4>
+          <h4>{g.group}</h4>
           {g.pages.map((p) => (
             <Link key={p.slug} href={`/docs/${p.slug}/`} aria-current={p.slug === current ? "page" : undefined}>
               {g.group === "Tools reference" ? <code>{p.title}</code> : p.title}
@@ -19,7 +19,7 @@ export function DocsSidebar() {
           ))}
         </div>
       ))}
-      <h4 style={{ "--sec": "var(--d-order)" } as React.CSSProperties}>Measured</h4>
+      <h4>Measured</h4>
       <Link href="/results/">Results</Link>
     </aside>
   );

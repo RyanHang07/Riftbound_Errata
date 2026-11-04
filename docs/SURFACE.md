@@ -4,6 +4,9 @@
 view it locally); not deployed until the legal gate. The MCP server is built
 (`rb_errata/server.py`, `make mcp`; setup in the site's Claude Desktop page), including `ask`, backed by the slice 14 agent (A48).
 The local app is built (`app/`, `make app`, A50).
+**Look (A58):** sections 4 to 6 below describe the Hextech look, which
+A58 replaced with an errata sheet to meet Riot's resemblance rule; they are
+kept as history. The current tokens are in `site/app/globals.css`.
 
 *Designed 2026-10-06 (A33), built in slices 15 and 17. Written before the
 code so the agent (slice 14) is built to serve it.*

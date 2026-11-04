@@ -2060,3 +2060,27 @@ decision. New slice 10 constraint: API card data should not be passed to a
 third party (the API Terms' "transmit ... in any manner not authorized", the
 Riftbound policy's "middle-man" use), which includes a cloud model behind
 MCP, until Riot says otherwise. No clause on AI in any of the four documents.
+
+### A58. Errata-sheet restyle and repository rename (2026-11-04)
+
+The user chose to restyle now (A57 addendum: "Products cannot closely
+resemble Riot's games or products in style or function"). The site and the
+local app drop the League client's Hextech language (A33 to A40, SURFACE
+section 6) for an errata sheet: paper and ink surfaces, a red strike for
+removed text, a green underline for inserted text, one blue accent for
+links and actions, § as the only marker. Newsreader, IBM Plex Sans and IBM
+Plex Mono replace Marcellus, Source Sans 3 and JetBrains Mono. Both follow
+the reader's light or dark setting (the A39 dark-only rule existed to keep
+the client's look, so it goes with it). Removed: gold frames, cut corners,
+diamonds, glows, card-shaped panels, the drifting question cards, motes,
+the flipping card, the Riftbound domain hues on doc sections and the
+bronze/silver/gold result tiers. The thesis card becomes a static redline
+exhibit with both answers visible at once (same refs and dates as A44's
+corrected flip card). Class names are kept, so pages did not change shape.
+Checked in both themes at 1280 and 360 px: no horizontal overflow.
+
+Rename: identifiers no longer carry the trademark. Clone commands, the
+GitHub link constant and the Claude Desktop path now say `rb_errata`; the
+game's name stays only where it describes what the project is for, as the
+required notice itself does. The repository itself is renamed by the user
+on GitHub (this session cannot), after which the old URL redirects.

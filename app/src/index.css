@@ -1,23 +1,54 @@
 @import "tailwindcss";
 
-/* The site's Hextech palette (A40), dark only: one product, two surfaces. */
-@theme {
-  --color-void: #010a13;
-  --color-panel: #0a1428;
-  --color-line: #1e2328;
-  --color-gold: #c8aa6e;
-  --color-gold-deep: #785a28;
-  --color-parchment: #f0e6d2;
-  --color-muted: #a09b8c;
-  --color-hex: #0ac8b9;
-  --color-hex-pale: #cdfafa;
-  --color-warn: #e8a33d;
-  --font-display: "Marcellus", Georgia, serif;
-  --font-sans: "Source Sans 3", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+/* The site's errata-sheet palette (A58), following the reader's light or
+   dark setting. Replaces the Hextech palette (A40): Riot's policy rules out
+   products that closely resemble its own in style. Utilities read these
+   tokens through @theme inline, so one class works in both themes. */
+:root {
+  --bg: #f6f7f4; --surface: #ffffff; --surface-2: #eceee8; --fg: #1b1e22; --head: #0e1013;
+  --muted: #5e646b; --line: #d7dad3; --line-strong: #b9bdb5;
+  --accent: #1e4fd8; --accent-hover: #1a43b8; --accent-soft: rgba(30,79,216,.10); --on-accent: #ffffff;
+  --warn: #a15c07; --scrim: rgba(14,16,19,.35);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121416; --surface: #1a1d20; --surface-2: #22262a; --fg: #e6e8e3; --head: #f6f7f3;
+    --muted: #9ba1a7; --line: #2e3338; --line-strong: #454b51;
+    --accent: #7c9bff; --accent-hover: #9cb3ff; --accent-soft: rgba(124,155,255,.14); --on-accent: #0b1020;
+    --warn: #e8a33d; --scrim: rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121416; --surface: #1a1d20; --surface-2: #22262a; --fg: #e6e8e3; --head: #f6f7f3;
+  --muted: #9ba1a7; --line: #2e3338; --line-strong: #454b51;
+  --accent: #7c9bff; --accent-hover: #9cb3ff; --accent-soft: rgba(124,155,255,.14); --on-accent: #0b1020;
+  --warn: #e8a33d; --scrim: rgba(0,0,0,.6);
+  color-scheme: dark;
 }
 
-html { background: var(--color-void); color: var(--color-parchment); font-family: var(--font-sans); }
-body { margin: 0; min-height: 100vh; }
-::selection { background: var(--color-gold-deep); color: var(--color-parchment); }
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-head: var(--head);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-warn: var(--warn);
+  --color-scrim: var(--scrim);
+  --font-display: "Newsreader", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+html { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+body { margin: 0; min-height: 100vh; background: var(--bg); }
+::selection { background: var(--accent-soft); color: var(--head); }
 input, textarea, select, button { font: inherit; }

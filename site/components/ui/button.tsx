@@ -1,5 +1,6 @@
-// shadcn-style Button: variants through cva, styling through the Hextech
-// classes in globals.css (cut-corner frame drawn as fill + inset face).
+// shadcn-style Button: variants through cva, styling through the classes in
+// globals.css. "magic" and "gold" are kept as variant names so call sites
+// don't change; they now mean primary (ink) and secondary (outlined).
 import { cva, type VariantProps } from "class-variance-authority";
 import Link from "next/link";
 import { cn } from "@/lib/utils";

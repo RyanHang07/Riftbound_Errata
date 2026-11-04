@@ -13,11 +13,11 @@ export default function App() {
   return (
     <div className="mx-auto max-w-4xl px-4 pb-24">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-4">
-        <div className="font-display text-xl text-gold">rb_errata <span className="font-sans text-sm text-muted">· local</span></div>
+        <div className="font-display text-xl text-accent">rb_errata <span className="font-sans text-sm text-muted">· local</span></div>
         <nav className="flex gap-1">
           {TABS.map((t) => (
             <button key={t} onClick={() => setTab(t)}
-              className={`rounded px-3 py-1.5 text-sm uppercase tracking-wider ${tab === t ? "bg-panel text-gold" : "text-muted hover:text-parchment"}`}>
+              className={`rounded px-3 py-1.5 text-[15px] font-medium ${tab === t ? "bg-accent-soft text-head" : "text-muted hover:text-head"}`}>
               {t}
             </button>
           ))}
@@ -53,7 +53,7 @@ function useCall<T>() {
 }
 
 const Panel = ({ children, className = "" }: { children: ReactNode; className?: string }) =>
-  <div className={`rounded border border-line bg-panel p-4 ${className}`}>{children}</div>;
+  <div className={`rounded border border-line bg-surface p-4 ${className}`}>{children}</div>;
 
 const ErrorBox = ({ text }: { text: string | null }) =>
   text ? <Panel className="mt-4 border-red-900 text-red-300">{text}</Panel> : null;
@@ -68,12 +68,12 @@ function QueryForm({ onSubmit, busy, label, extra }: { onSubmit: (q: string, d: 
   return (
     <form onSubmit={submit} className="space-y-3">
       <textarea value={q} onChange={(e) => setQ(e.target.value)} rows={3} placeholder="Does a countered spell still count for Legion?"
-        className="w-full rounded border border-line bg-panel p-3 outline-none focus:border-gold-deep" />
+        className="w-full rounded border border-line bg-surface p-3 outline-none focus:border-accent" />
       <div className="flex flex-wrap items-center gap-3">
         <label className="text-sm text-muted">As of <input type="date" value={d} onChange={(e) => setD(e.target.value)}
-          className="ml-2 rounded border border-line bg-panel px-2 py-1 text-parchment" /></label>
+          className="ml-2 rounded border border-line bg-surface px-2 py-1 text-head" /></label>
         {extra}
-        <button disabled={busy} className="ml-auto rounded bg-gold-deep px-4 py-1.5 text-parchment hover:bg-gold hover:text-void disabled:opacity-50">
+        <button disabled={busy} className="ml-auto rounded bg-accent px-4 py-1.5 text-on-accent hover:bg-accent-hover disabled:opacity-50">
           {busy ? "Working…" : label}
         </button>
       </div>
@@ -87,7 +87,7 @@ function Cited({ text, onOpen }: { text: string; onOpen: (r: string) => void }) 
   let last = 0;
   for (const m of text.matchAll(REF)) {
     parts.push(text.slice(last, m.index));
-    parts.push(<button key={m.index} onClick={() => onOpen(m[0])} className="rounded bg-void px-1 font-mono text-sm text-hex hover:text-hex-pale">{m[0]}</button>);
+    parts.push(<button key={m.index} onClick={() => onOpen(m[0])} className="rounded bg-surface-2 px-1 font-mono text-sm text-accent hover:text-head hover:underline">{m[0]}</button>);
     last = (m.index ?? 0) + m[0].length;
   }
   parts.push(text.slice(last));
@@ -119,11 +119,11 @@ function AskView({ onOpen }: { onOpen: (r: string) => void }) {
               {data.re_searched && <span className="text-muted">searched twice (low first confidence)</span>}
             </div>
           </Panel>
-          <h3 className="mt-6 font-display text-gold">Sources</h3>
+          <h3 className="mt-6 font-display text-accent">Sources</h3>
           <ul className="mt-2 space-y-2">
             {data.sources.map((s) => (
               <li key={s.ref}><Panel className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <button onClick={() => onOpen(s.ref)} className="font-mono text-hex hover:text-hex-pale">{s.ref}</button>
+                <button onClick={() => onOpen(s.ref)} className="font-mono text-accent hover:text-head hover:underline">{s.ref}</button>
                 <WindowLine w={s} />
               </Panel></li>
             ))}
@@ -138,7 +138,7 @@ function Confidence({ value, standing }: { value: number | null; standing: strin
   if (value === null) return <span className="text-muted">No confidence score: {standing}</span>;
   const uncalibrated = standing.startsWith("UNCALIBRATED");
   return (
-    <span title={standing} className={`rounded px-2 py-0.5 ${uncalibrated ? "border border-warn/60 text-warn" : "bg-hex/15 text-hex-pale"}`}>
+    <span title={standing} className={`rounded px-2 py-0.5 ${uncalibrated ? "border border-warn/60 text-warn" : "bg-accent-soft text-head"}`}>
       confidence {Math.round(value * 100)}%{uncalibrated ? " · uncalibrated, not a probability" : ""}
     </span>
   );
@@ -148,7 +148,7 @@ function SearchView({ onOpen }: { onOpen: (r: string) => void }) {
   const { data, error, busy, run } = useCall<SearchResult>();
   const [k, setK] = useState(5);
   const kField = <label className="text-sm text-muted">Results <input type="number" min={1} max={20} value={k}
-    onChange={(e) => setK(Number(e.target.value))} className="ml-2 w-16 rounded border border-line bg-panel px-2 py-1 text-parchment" /></label>;
+    onChange={(e) => setK(Number(e.target.value))} className="ml-2 w-16 rounded border border-line bg-surface px-2 py-1 text-head" /></label>;
   return (
     <section>
       <QueryForm busy={busy} label="Search" extra={kField} onSubmit={(q, d) => run(api.search(q, d, k))} />
@@ -168,7 +168,7 @@ function PassageCard({ p, onOpen }: { p: Passage; onOpen: (r: string) => void })
   return (
     <li><Panel>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <button onClick={() => onOpen(p.ref)} className="font-mono text-hex hover:text-hex-pale">{p.ref}</button>
+        <button onClick={() => onOpen(p.ref)} className="font-mono text-accent hover:text-head hover:underline">{p.ref}</button>
         <WindowLine w={p} />
       </div>
       <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{p.text}</p>
@@ -192,7 +192,7 @@ function ChangedView() {
     if (versions.length > 1 && !from) { setFrom(versions[versions.length - 2]); setTo(versions[versions.length - 1]); }
   }, [versions, from]);
   const pick = (value: string, set: (v: string) => void) => (
-    <select value={value} onChange={(e) => set(e.target.value)} className="rounded border border-line bg-panel px-2 py-1">
+    <select value={value} onChange={(e) => set(e.target.value)} className="rounded border border-line bg-surface px-2 py-1">
       {versions.map((v) => <option key={v}>{v}</option>)}
     </select>
   );
@@ -202,13 +202,13 @@ function ChangedView() {
         <span className="text-sm text-muted">From</span>{pick(from, setFrom)}
         <span className="text-sm text-muted">to</span>{pick(to, setTo)}
         <input value={ref} onChange={(e) => setRef(e.target.value)} placeholder="optional: core@1.4:419.4.b"
-          className="min-w-56 flex-1 rounded border border-line bg-panel px-2 py-1 font-mono text-sm" />
-        <button disabled={busy} className="rounded bg-gold-deep px-4 py-1.5 hover:bg-gold hover:text-void disabled:opacity-50">{busy ? "Working…" : "Compare"}</button>
+          className="min-w-56 flex-1 rounded border border-line bg-surface px-2 py-1 font-mono text-sm" />
+        <button disabled={busy} className="rounded bg-accent px-4 py-1.5 text-on-accent hover:bg-accent-hover disabled:opacity-50">{busy ? "Working…" : "Compare"}</button>
       </form>
       <p className="mt-2 text-sm text-muted">Rules are matched by wording, never by number: Riot renumbers hundreds at every update.</p>
       <ErrorBox text={error} />
       {data && "status" in data && (
-        <Panel className="mt-4"><p className="font-display text-gold">{data.status}</p><Diff old={data.old} next={data.new} /></Panel>
+        <Panel className="mt-4"><p className="font-display text-accent">{data.status}</p><Diff old={data.old} next={data.new} /></Panel>
       )}
       {data && "counts" in data && (
         <div className="mt-4 space-y-3">
@@ -226,7 +226,7 @@ const Diff = ({ old, next }: { old: { ref: string; text: string } | null; next: 
       const s = side as { ref: string; text: string } | null;
       return (
         <div key={label as string}>
-          <div className="text-xs uppercase tracking-wider text-muted">{label as string} {s && <span className="font-mono normal-case text-hex">{s.ref}</span>}</div>
+          <div className="text-xs font-medium text-muted">{label as string} {s && <span className="font-mono normal-case text-accent">{s.ref}</span>}</div>
           <p className="mt-1 text-sm leading-relaxed">{s ? s.text : <em className="text-muted">none</em>}</p>
         </div>
       );
@@ -240,7 +240,7 @@ function VersionsView() {
     <ol className="space-y-2">
       {rows.map((v) => (
         <li key={v.version}><Panel className={`flex flex-wrap items-center justify-between gap-2 ${v.searchable ? "" : "opacity-70"}`}>
-          <span className="font-display text-lg text-gold">v{v.version}</span>
+          <span className="font-display text-lg text-accent">v{v.version}</span>
           {v.searchable && v.valid_from
             ? <span className="text-sm text-muted">in force {fmt(v.valid_from)} to {fmt(v.valid_to ?? null)}{v.date_basis === "announcement-date" && " · date from the announcement"}</span>
             : <span className="text-sm text-warn">not searchable: {v.reason}</span>}
@@ -263,11 +263,11 @@ function RuleDrawer({ refId, onClose }: { refId: string; onClose: () => void }) 
     return () => window.removeEventListener("keydown", esc);
   }, [onClose]);
   return (
-    <div className="fixed inset-0 z-10 flex justify-end bg-void/70" onClick={onClose}>
-      <aside className="h-full w-full max-w-md overflow-y-auto border-l border-gold-deep bg-panel p-5" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-10 flex justify-end bg-scrim" onClick={onClose}>
+      <aside className="h-full w-full max-w-md overflow-y-auto border-l border-line-strong bg-surface p-5" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <span className="font-mono text-hex">{refId}</span>
-          <button onClick={onClose} className="text-muted hover:text-parchment" aria-label="Close">✕</button>
+          <span className="font-mono text-accent">{refId}</span>
+          <button onClick={onClose} className="text-muted hover:text-head" aria-label="Close">✕</button>
         </div>
         {error && <p className="mt-4 text-red-300">{error}</p>}
         {!rule && !error && <p className="mt-4 text-muted">Reading the rules PDF (the first rule from a version takes a few seconds)…</p>}

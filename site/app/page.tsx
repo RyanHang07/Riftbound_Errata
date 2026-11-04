@@ -1,6 +1,4 @@
-import { Drift } from "@/components/hero/drift";
-import { FlipCard } from "@/components/hero/flip-card";
-import { Motes } from "@/components/hero/motes";
+import { Redline } from "@/components/hero/redline";
 import { StatTiles } from "@/components/stat-tiles";
 import { Button } from "@/components/ui/button";
 import { REPO } from "@/lib/github";
@@ -13,11 +11,9 @@ export default function Home() {
   return (
     <main>
       <section className="hero-band" aria-label="Introduction">
-        <Motes />
-        <Drift />
         <div className="hero-inner">
           <div className="hero">
-            <p className="dateline"><span className="dia" aria-hidden="true" /><span>Core Rules <b>v{current.version}</b></span><span>In force since {fmtDate(current.effective!)}</span></p>
+            <p className="dateline"><span>Core Rules <b>v{current.version}</b></span><span>In force since {fmtDate(current.effective!)}</span></p>
             <h1>Rules change.<br /><em>Search engines don&apos;t notice.</em></h1>
             <p>Ask a Riftbound rules question with a date. rb_errata answers from the rules that were in force that day, and cites the exact rule and version, like <code className="inline">core@1.4:419.4.a</code>. It runs on your own computer, offline.</p>
             <div className="actions">
@@ -25,9 +21,9 @@ export default function Home() {
               <Button href={`https://github.com/${REPO}`} variant="gold">GitHub</Button>
             </div>
           </div>
-          <FlipCard />
+          <Redline />
         </div>
-        <div className="timeline" aria-label="Core Rules versions">
+        <div className="timeline" aria-label="Core Rules versions" style={{ "--n": known.length } as React.CSSProperties}>
           <ol>
             {known.map((v) => (
               <li key={v.version} className={v === current ? "now" : undefined}><b>v{v.version}</b>{fmtDate(v.effective!)}</li>

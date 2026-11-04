@@ -12,7 +12,7 @@ export async function DocsPage({ slug }: { slug: string }) {
   const headings = toc(slug);
   return (
     <>
-      <article className="doc" style={{ "--sec": page.hue } as React.CSSProperties}>
+      <article className="doc">
         <div className="crumbs">Docs / <b>{page.group}</b></div>
         <h1>{page.title}</h1>
         <p className="lede">{page.lede}</p>
