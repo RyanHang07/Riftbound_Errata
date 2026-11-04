@@ -52,8 +52,8 @@ policies against the project, not legal advice; quotes are Riot's wording.*
   product URL `https://ryanhang07.github.io/RB_Errata` (GitHub Pages, the
   README), verified by `riot.txt`. Awaiting Riot's review.
 - **Before the site is deployed or the project promoted:** Riot's approval of the
-  registration; then register the product on the Riot Developer
-  Portal (Riot audits it, and every new feature after).
+  registration. After that, every new feature goes through Riot's audit on
+  the product's portal page.
 - **Before slice 10 (card database):** an approved API key; card text only
   from Riot's API; ask Riot whether API card text may reach a cloud model
   through MCP, and keep it local until answered.
