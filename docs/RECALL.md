@@ -968,3 +968,39 @@ A54's 10% verdict flips and why a resumed run does not reproduce text. The
 fix is to make every request's cache state the same: either no reuse (if
 Ollama exposes it), or a warm-up request per prompt before the measured one.
 Not applied yet: it changes how every future run is generated.
+
+## Warm-up fix: does a primed cache make answers repeatable? (A59)
+
+A56 put the noise in Ollama's prompt cache: repeats 2 and 3 of a prompt
+matched 10 of 10 on both GPU and CPU, repeat 1 did not. The fix: before each
+measured request, send the identical request with a 1-token answer, so every
+measured request starts from the same state (its prompt already cached),
+which is the state repeats 2 and 3 had. On by default (`RB_GEN_WARMUP`),
+so it applies to answers, the judge, the agent and the tools alike.
+
+`make determinism` now runs three modes on the same 10 prompts, 3 repeats
+each: GPU without warm-up (A56 again, as the control), GPU with warm-up, CPU
+with warm-up. It also compares each warm-up answer to the control's repeat
+2, and times every mode.
+
+### Prediction (written 2026-11-04, before the code exists)
+
+- **GPU, no warm-up:** A56 again. Repeats 2 and 3 match on 10 of 10;
+  identical on all three repeats for 3 to 6 of 10.
+- **GPU, warm-up:** identical on all three repeats for **10 of 10**.
+- **CPU, warm-up:** **10 of 10**.
+- **Warm-up answer = control's repeat 2:** 10 of 10 on GPU. Same cache
+  state, same text.
+- **Cost:** the warm-up adds one prompt evaluation per request, no
+  generated text. Time per answer on GPU goes up by **under 50%**.
+- If GPU warm-up is below 10 of 10, the cache is not the whole story, and
+  the next suspect is batch-size-dependent kernels; the fix then does not
+  ship as a default.
+
+### Pending from Radiance: how much of v1.5 was new text
+
+The ingest's "N embedded, M from cache" line was never seen. The cache is
+keyed by a chunk's text, so the same number can be counted from the
+database: a v1.5 chunk came from the cache exactly when an earlier version
+has a chunk with identical text. `make version-reuse V=1.5` counts it. The
+A55 prediction stands: **under 25% of v1.5 chunks embedded fresh**.
