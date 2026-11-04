@@ -16,7 +16,7 @@
     "effective": "2025-10-24",
     "reason": "no stated date; announcement publish date used",
     "candidates": [],
-    "page_sha1": "126e167a313f509a322833212442b58996c5ac34",
+    "page_sha1": "4aa858818a79a1c21c830cb6af76b044c5f5e6e7",
     "basis": "announcement-date"
   },
   {
@@ -28,10 +28,10 @@
     "candidates": [
       {
         "date": "2025-12-12",
-        "offset": 83830
+        "offset": 89189
       }
     ],
-    "page_sha1": "63a6faa95793836c1009ab74ed36d0241392c042",
+    "page_sha1": "9e67de3b20b5ceae89ff75689bdd204e6b638e3c",
     "basis": "stated"
   },
   {
@@ -41,7 +41,7 @@
     "effective": "2026-03-30",
     "reason": "no stated date; announcement publish date used",
     "candidates": [],
-    "page_sha1": "9ceca3fdaf4328cfb6bec635fc9212d372c1bee0",
+    "page_sha1": "1d156b02a302f43296b9d8b22d00db95d87697c3",
     "basis": "announcement-date"
   },
   {
@@ -53,10 +53,45 @@
     "candidates": [
       {
         "date": "2026-07-24",
-        "offset": 82356
+        "offset": 87715
       }
     ],
-    "page_sha1": "89a01b3dac549b42917b607ed9f25b78ed925bfa",
+    "page_sha1": "5930f10d73682cd49e39d3f88f3cbf981aaec9c6",
+    "basis": "stated"
+  },
+  {
+    "version": "1.5",
+    "url": "https://playriftbound.com/en-us/news/announcements/core-rules-radiance-patch-notes-effective-october-16-2026/",
+    "status": "known",
+    "effective": "2026-10-16",
+    "reason": "one distinct date",
+    "candidates": [
+      {
+        "date": "2026-10-16",
+        "offset": 34
+      },
+      {
+        "date": "2026-10-16",
+        "offset": 774
+      },
+      {
+        "date": "2026-10-16",
+        "offset": 1619
+      },
+      {
+        "date": "2026-10-16",
+        "offset": 1967
+      },
+      {
+        "date": "2026-10-16",
+        "offset": 86310
+      },
+      {
+        "date": "2026-10-16",
+        "offset": 86482
+      }
+    ],
+    "page_sha1": "d310fba2b11b4cd45ae9f2fdd3c0084348904684",
     "basis": "stated"
   }
 ]

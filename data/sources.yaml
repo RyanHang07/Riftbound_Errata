@@ -63,3 +63,12 @@
     - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/816d3b32d32a9966fc73367efb690fcbb4c195ca/sources/CR-v1.4.pdf
   patch_notes: https://playriftbound.com/en-us/news/announcements/core-rules-vendetta-patch-notes/
   provenance: cdn-verified
+
+- version: "1.5"
+  name: Radiance
+  sha1: 5c7946f7c3b8c6e0faff85ab6dadc6d2e721ea94
+  urls:
+    - https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/5c7946f7c3b8c6e0faff85ab6dadc6d2e721ea94.pdf
+    - https://raw.githubusercontent.com/ChristianIvicevic/riftboundfaq/b50b9c4f4782ba0b515afc97ec94f40332121de4/sources/CR-v1.5.pdf
+  patch_notes: https://playriftbound.com/en-us/news/announcements/core-rules-radiance-patch-notes-effective-october-16-2026/
+  provenance: cdn-verified
