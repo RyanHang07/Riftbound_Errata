@@ -1,0 +1,6 @@
+# GitHub Pages: serves README.md as the project page and riot.txt for
+# Riot's product URL check. Code folders are left out of the build.
+title: rb_errata
+description: Rules answered as of a date, with versioned citations. Runs locally.
+include: [riot.txt]
+exclude: [site, app, evals, data, tests, rb_errata, uv.lock, pyproject.toml, Makefile, docker-compose.yml, .github]
